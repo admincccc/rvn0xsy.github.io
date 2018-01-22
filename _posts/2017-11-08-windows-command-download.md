@@ -2,7 +2,7 @@
 layout: post
 title:  "Windows下命令行下载文件总结"
 date:   2017-11-08
-categories: windows
+categories: 内网渗透
 permalink: /archivers/2017-11-08/1
 ---
 Windows下命令行下载文件总结

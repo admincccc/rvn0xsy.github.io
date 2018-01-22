@@ -2,7 +2,7 @@
 layout: post
 title:  "折腾Postgresql数据库"
 date:   2017-10-17
-categories: sql postgresql database
+categories: database
 permalink: /archivers/2017-10-17/1
 description: "折腾Postgresql数据库的一些随笔"
 ---

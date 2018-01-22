@@ -2,7 +2,7 @@
 layout: post
 title:  "搭建Mattermost并开启Https"
 date:   2017-11-16
-categories: Mattermost
+categories: 高效
 permalink: /archivers/2017-11-16/1
 description: "本文记录一下搭建Mattermost服务的过程"
 ---

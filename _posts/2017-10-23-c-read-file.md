@@ -2,7 +2,7 @@
 layout: post
 title:  "C语言读取文件"
 date:   2017-10-23
-categories: C 读取文件
+categories: C++/C
 permalink: /archivers/2017-10-23/2
 description: "C语言读取文件"
 ---
