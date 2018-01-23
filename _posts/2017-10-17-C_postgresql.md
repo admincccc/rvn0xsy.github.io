@@ -2,7 +2,7 @@
 layout: post
 title:  "使用C++操作Postgresql"
 date:   2017-10-18
-categories: database c++/c
+categories: database C++/C
 permalink: /archivers/2017-10-17/2
 description: "本文简述一下近期想做的一个项目铺垫，使用C++操作Postgresql"
 ---
