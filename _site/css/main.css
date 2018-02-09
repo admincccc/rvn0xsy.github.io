@@ -272,4 +272,6 @@ code {
 
 .post-content img {
   width: 80%;
-  height: 60%; }
+  height: 60%;
+  border-radius: 10px;
+  border: 2px solid; }
