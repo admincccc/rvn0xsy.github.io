@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta content="倾旋的博客" property="og:site_name">
+
+  <meta content="折腾Postgresql数据库" property="og:title">
+
+
+  <meta content="article" property="og:type">
+
+
+  <meta content="折腾Postgresql数据库的一些随笔" property="og:description">
+
+
+  <meta content="http://localhost:4000/archivers/2017-10-17/1" property="og:url">
+
+
+  <meta content="2017-10-17T00:00:00+08:00" property="article:published_time">
+  <meta content="http://localhost:4000/about/" property="article:author">
+
+
+  <meta property="og:image" content="">
+
+
+  
+  <meta content="database" property="article:section">
+  
+
+
+  
+
+  <title>折腾Postgresql数据库</title>
+  <meta name="description" content="最近学习C语言，突发奇想就想着造一些轮子吧，顺便复习一下C语言。">
+<script src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+  
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/ptsans.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/firamono.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/lato.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/sourcecodepro.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/gentiumbasic.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/alegreya.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/lora.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/firasans400.css' rel='stylesheet' type='text/css'>
+  <script src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/jquery.min2.2.0.js"></script>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/opensans.css' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-hQpvDQiCJaD2H465dQfA717v7lu5qHWtDbWNPvaTJ0ID5xnPUlVXnKzq7b8YUkbN" crossorigin="anonymous">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="http://localhost:4000/archivers/2017-10-17/1">
+  <link rel="alternate" type="application/rss+xml" title="倾旋的博客" href="http://localhost:4000/feed.xml">
+</head>
+
+
+  <body>
+
+<section>
+<nav class="navbar navbar-default navbar-fixed-top">
+
+  <div class="container">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/">倾旋的博客</a>
+    </div>
+
+
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        
+        
+        <li><a href="/about/">关于我</a></li>
+
+        
+
+        
+        
+        <li><a href="/category/">Category</a></li>
+
+        
+
+        
+        
+        <li><a href="/contact/">Contact</a></li>
+
+        
+
+        
+        
+
+        
+        
+
+        
+        
+
+        
+        
+        <li><a href="/other/">其他信息</a></li>
+
+        
+
+        
+        
+        <li><a href="/tools/socat">socat 使用手册</a></li>
+
+        
+
+        
+
+
+      </ul>
+
+    <!--  <ul class="nav navbar-nav navbar-right">
+        <li><a href="#">Know More!</a></li>
+
+      </ul>-->
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+</section>
+
+<section>
+<article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <div class="jumbotron">
+    <div class="container">
+      <h1 class="post-title-main" itemprop="name headline">折腾Postgresql数据库</h1>
+      <p class="post-meta"><time datetime="2017-10-17T00:00:00+08:00" itemprop="datePublished">Oct 17, 2017</time></p>
+      
+    </div>
+
+</div>
+
+
+  <div class="post-content container" itemprop="articleBody">
+    <p>最近学习C语言，突发奇想就想着造一些轮子吧，顺便复习一下C语言。
+<!--more--></p>
+<h2 id="0x00-安装数据库">0x00 安装数据库</h2>
+
+<p>在MAC OSX下，我直接使用命令：<code class="highlighter-rouge">brew install postgresql</code> 进行安装。</p>
+
+<p>但是MAC OSX下用的不习惯，就在Docker里面又装了一个，系统是CentOS。</p>
+
+<p>使用命令：<code class="highlighter-rouge">yum -y install postgresql*</code> 一步搞定~</p>
+
+<h2 id="0x01-初始化数据库">0x01 初始化数据库</h2>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[root@5f5a39b323c9]# /etc/init.d/postgresql -h
+Usage: /etc/init.d/postgresql {start|stop|status|restart|condrestart|try-restart|reload|force-reload|initdb}
+</code></pre></div></div>
+
+<p>在这里可以启动<code class="highlighter-rouge">Postgresql</code>数据库，但是第一次启动需要初始化。</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[root@5f5a39b323c9]# /etc/init.d/postgresql start
+
+/var/lib/pgsql/data is missing. Use "service postgresql initdb" to initialize the cluster first. // 必须初始化
+                                                           [FAILED]
+[root@5f5a39b323c9]# service postgresql initdb  # 执行初始化
+Initializing database:                                     [  OK  ]
+[root@5f5a39b323c9]# /etc/init.d/postgresql start  # 启动数据库服务
+[root@5f5a39b323c9]# netstat -ano | grep 5432
+tcp        0      0 127.0.0.1:5432              0.0.0.0:*                   LISTEN      off (0.00/0/0)
+unix  2      [ ACC ]     STREAM     LISTENING     17207  /tmp/.s.PGSQL.5432
+</code></pre></div></div>
+
+<h2 id="0x02-认证方式">0x02 认证方式</h2>
+
+<p>启动完毕后就要配置账号了，但是在此之前需要看一个认证配置文件：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[root@5f5a39b323c9]# vim /var/lib/pgsql/data/pg_hba.conf
+
+---内容如下---
+
+
+# md5 为密码认证、trust为本地认证，当然支持很多方式
+# 说明：
+# METHOD can be "trust", "reject", "md5", "password", "gss", "sspi", "krb5",
+# "ident", "pam", "ldap" or "cert".  Note that "password" sends passwords
+# in clear text; "md5" is preferred since it sends encrypted passwords.
+local   all         all                                md5 
+host    all         all         127.0.0.1/32           md5
+host    all         all         ::1/128                md5
+</code></pre></div></div>
+
+<h2 id="0x03-创建用户及数据库">0x03 创建用户及数据库</h2>
+
+<p>接下来需要创建一个子账号。 在安装完毕<code class="highlighter-rouge">postgresql</code>的时候，它会在系统内部自动创建一个名为<code class="highlighter-rouge">postgres</code>的数据库管理员账号，这个账号只能从系统内部登录（待解决），我们需要用管理员用户创建一个普通用户，以供我们以后的使用。</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[root@5f5a39b323c9 cpp]# su postgres
+bash-4.1$ 
+bash-4.1$ psql
+psql (8.4.20)
+Type "help" for help.
+
+postgres=# CREATE USER pgsqler WITH PASSWORD '123456'; # 创建一个用户、密码为12356
+CREATE ROLE
+postgres=# CREATE DATABASE testdb; # 创建一个数据库
+CREATE DATABASE
+postgres=# GRANT ALL PRIVILEGES ON DATABASE testdb to pgsqler; # 将testdb这个数据库归属于pgsqler
+GRANT
+postgres=# \q # 退出
+</code></pre></div></div>
+
+<p>回到root用户，我们尝试登录数据库：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[root@5f5a39b323c9 cpp]# psql -U pgsqler -h localhost -d testdb
+Password for user pgsqler: 
+psql (8.4.20)
+Type "help" for help.
+
+testdb=&gt; 
+testdb=&gt; \q
+</code></pre></div></div>
+
+<p>一切搞定了~</p>
+
+<h2 id="0x04-常用命令总结">0x04 常用命令总结</h2>
+
+<p>登录数据库后可以输入”\?”来获得一些很方便的命令来操作数据库，而不需要去输入复杂的SQL语句：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[root@5f5a39b323c9]# psql -U pgsqler -h localhost -d testdb
+Password for user pgsqler: 
+psql (8.4.20)
+Type "help" for help.
+
+testdb=&gt; 
+testdb=&gt; \?
+General
+  \copyright             show PostgreSQL usage and distribution terms
+  \g [FILE] or ;         execute query (and send results to file or |pipe)
+  \h [NAME]              help on syntax of SQL commands, * for all commands
+  \q                     quit psql
+
+Query Buffer
+  \e [FILE]              edit the query buffer (or file) with external editor
+  \ef [FUNCNAME]         edit function definition with external editor
+  \p                     show the contents of the query buffer
+  \r                     reset (clear) the query buffer
+  \s [FILE]              display history or save it to file
+  \w FILE                write query buffer to file
+
+  ........
+
+</code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>列举数据库：\l
+选择数据库：\c 数据库名
+查看该某个库中的所有表：\dt
+切换数据库：\c interface
+查看某个库中的某个表结构：\d 表名
+查看某个库中某个表的记录：`select * from apps limit 1`;
+显示字符集：\encoding
+退出psgl：\q
+创建数据库：createdb -h 127.0.0.1 -p 5432 -U postgres testdb
+连接数据库：psql -h 127.0.0.1 -p 5432 -U postgres testdb
+删除数据库：dropdb -h 127.0.0.1 -p 5432 -U postgres testdb
+说明：-h表示主机（Host），-p表示端口（Port），-U表示用户（User）
+创建数据表：create table tbl(a int);
+删除数据表：drop table tbl;
+插入数据：insert into tbl(a) values(1);
+查看数据：select * from tbl;
+备份数据库：pg_dump -U postgres  testdb &gt; d:/testdb.dmp
+恢复数据库：psql -U postgres testdb &lt; d:/testdb.dmp
+说明：这种方法，实际上是SQL的转储，可加参数（-t）指定多个表。
+</code></pre></div></div>
+
+<h2 id="0x05-使用c操作postgresql">0x05 使用C++操作Postgresql</h2>
+
+<p><a href="http://payloads.online/archivers/2017-10-17/2">使用C++操作Postgresql</a></p>
+
+
+  </div>
+
+</article>
+
+</section>
+<nav class="navbar navbar-default navbar-fixed-bottom">
+  <div class="container footer-content">
+    Copyright @ 2018 by 倾旋<br>
+    Powered By Jekyll
+  </div>
+</nav>
+
+  </body>
+
+</html>

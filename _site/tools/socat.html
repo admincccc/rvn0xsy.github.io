@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta content="倾旋的博客" property="og:site_name">
+
+  <meta content="socat 使用手册" property="og:title">
+
+
+  <meta content="article" property="og:type">
+
+
+  <meta content="<h1 style='color:white;'>倾旋的博客</h1><h3>岁月静好，现世安稳。</h3>" property="og:description">
+
+
+  <meta content="http://localhost:4000/tools/socat" property="og:url">
+
+
+  <meta content="2017-11-09T00:00:00+08:00" property="article:published_time">
+  <meta content="http://localhost:4000/about/" property="article:author">
+
+
+  <meta property="og:image" content="">
+
+
+  
+  <meta content="内网渗透" property="article:section">
+  
+
+
+  <title>socat 使用手册</title>
+  <meta name="description" content="<h1 style='color:white;'>倾旋的博客</h1><h3>岁月静好，现世安稳。</h3>">
+<script src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+  
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/ptsans.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/firamono.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/lato.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/sourcecodepro.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/gentiumbasic.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/alegreya.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/lora.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/firasans400.css' rel='stylesheet' type='text/css'>
+  <script src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/jquery.min2.2.0.js"></script>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/opensans.css' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-hQpvDQiCJaD2H465dQfA717v7lu5qHWtDbWNPvaTJ0ID5xnPUlVXnKzq7b8YUkbN" crossorigin="anonymous">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="http://localhost:4000/tools/socat">
+  <link rel="alternate" type="application/rss+xml" title="倾旋的博客" href="http://localhost:4000/feed.xml">
+</head>
+
+
+  <body>
+
+<section>
+<nav class="navbar navbar-default navbar-fixed-top">
+
+  <div class="container">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/">倾旋的博客</a>
+    </div>
+
+
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        
+        
+        <li><a href="/about/">关于我</a></li>
+
+        
+
+        
+        
+        <li><a href="/category/">Category</a></li>
+
+        
+
+        
+        
+        <li><a href="/contact/">Contact</a></li>
+
+        
+
+        
+        
+
+        
+        
+
+        
+        
+
+        
+        
+        <li><a href="/other/">其他信息</a></li>
+
+        
+
+        
+        
+        <li><a href="/tools/socat">socat 使用手册</a></li>
+
+        
+
+        
+
+
+      </ul>
+
+    <!--  <ul class="nav navbar-nav navbar-right">
+        <li><a href="#">Know More!</a></li>
+
+      </ul>-->
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+</section>
+
+<section>
+<article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <div class="jumbotron">
+    <div class="container">
+      <h1 class="post-title-main" itemprop="name headline">socat 使用手册</h1>
+      <p class="post-meta"><time datetime="2017-11-09T00:00:00+08:00" itemprop="datePublished">Nov 9, 2017</time></p>
+      
+    </div>
+
+</div>
+
+
+  <div class="post-content container" itemprop="articleBody">
+    <p>从网上搜集的一篇比较好的文章。
+<!--more--></p>
+<h2 id="socat简介">socat简介</h2>
+
+<p>socat是一个多功能的网络工具，名字来由是” Socket CAT”，可以看作是netcat的N倍加强版，socat的官方网站：http://www.dest-unreach.org/socat/ 。</p>
+
+<p>Socat是一个两个独立数据通道之间的双向数据传输的继电器。这些数据通道包含文件、管道、设备（终端或调制解调器等）、socket（Unix，IP4，IP6 - raw，UDP，TCP）、SSL、SOCKS4客户端或代理CONNECT。</p>
+
+<p>Socat支持广播和多播、抽象Unix sockets、Linux tun/tap、GNU readline 和 PTY。它提供了分叉、记录和进程间通信的不同模式。多个选项可用于调整socat和其渠道，Socat可以作为TCP中继（一次性或守护进程），作为一个守护进程基于socksifier，作为一个shell Unix套接字接口，作为IP6的继电器，或面向TCP的程序重定向到一个串行线。</p>
+
+<p>socat的主要特点就是在两个数据流之间建立通道；且支持众多协议和链接方式：<code class="highlighter-rouge">ip, tcp, udp, ipv6, pipe,exec,system,open,proxy,openssl,socket</code>等。</p>
+
+<h2 id="socat的安装">socat的安装</h2>
+
+<h3 id="网络安装">网络安装：</h3>
+
+<ul>
+  <li>
+    <p>Debian/Ubuntu:<code class="highlighter-rouge">apt-get install socat</code></p>
+  </li>
+  <li>
+    <p>Mac OSX:<code class="highlighter-rouge">brew install socat</code></p>
+  </li>
+</ul>
+
+<p>ps:Kali linux 里已经集成了此工具</p>
+
+<h3 id="下载软件包">下载软件包</h3>
+
+<p>下载socat源代码包：http://www.dest-unreach.org/socat/download/</p>
+
+<h3 id="编译安装">编译安装</h3>
+
+<p>把下载的软件包解压后按照传统的方式编译安装：</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>./configure
+make
+make install
+</code></pre></div></div>
+
+<p>具体的细节可以参考安装文档 README 。</p>
+
+<h3 id="安装错误解决">安装错误解决</h3>
+
+<p>在编译的过程中可能遇到如下错误：</p>
+
+<p>解决方法有两种：</p>
+
+<ul>
+  <li>第一种是禁用fips，使用如下命令配置：</li>
+</ul>
+
+<p><code class="highlighter-rouge">./configure --disable-fips</code></p>
+
+<ul>
+  <li>第二种是安装fips</li>
+</ul>
+
+<p>首先到网站http://www.openssl.org/source/ 下载openssl-fips安装包，然后解压安装：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>./config
+make
+make install
+</code></pre></div></div>
+<h2 id="socat的使用">socat的使用</h2>
+
+<p>socat的具体文档参见网站：http://www.dest-unreach.org/socat/doc/socat.html 。</p>
+
+<h3 id="工作机理">工作机理</h3>
+
+<p>socat的运行有4个阶段:</p>
+
+<ul>
+  <li>
+    <p>初始化
+解析命令行以及初始化日志系统。</p>
+  </li>
+  <li>
+    <p>打开连接
+先打开第一个连接，再打开第二个连接。这个单步执行的。 如果第一个连接失败，则会直接退出。</p>
+  </li>
+  <li>
+    <p>数据转发
+谁有数据就转发到另外一个连接上, read/write互换。</p>
+  </li>
+  <li>
+    <p>关闭
+其中一个连接掉开，执行处理另外一个连接。</p>
+  </li>
+  <li>
+    <p>地址类型
+参数由2部分组成，第一个连接和第二个连接，最简单的用法就是 socat - - 其效果就是输入什么，回显什么其用法主要在于地址如何描述, 下面介绍几个常用的。</p>
+  </li>
+  <li>
+    <p>TCP</p>
+  </li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>TCP:&lt;host&gt;:&lt;port&gt; 目标机器IP对应端口port
+TCP-LISTEN:&lt;port&gt; 本机监听端口。
+</code></pre></div></div>
+
+<ul>
+  <li>UDP</li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>UDP:&lt;host&gt;:&lt;port&gt; 目标机器host对应端口port
+UDP-LISTEN:&lt;port&gt; 本机监听端口。
+</code></pre></div></div>
+<ul>
+  <li>OPENSSL</li>
+</ul>
+
+<p>需要一个证书,否则会失败提示: 2012/04/06 11:29:11 socat[1614] E SSL_connect(): error:14077410:SSL routines:SSL23_GET_SERVER_HELLO:sslv3 alert handshake failure</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>OPENSSL:&lt;host&gt;:&lt;port&gt; 目标机器host对应端口port
+OPENSSL-LISTEN:&lt;port&gt; 本机监听端口。
+</code></pre></div></div>
+
+<ul>
+  <li>TUN</li>
+</ul>
+
+<p><code class="highlighter-rouge">TUN[:&lt;if-addr&gt;/&lt;bits&gt;] 建立vpn，双方都需要root权限。</code></p>
+
+<h2 id="典型使用">典型使用</h2>
+
+<h3 id="连接目标">连接目标</h3>
+
+<p><code class="highlighter-rouge">socat - tcp:192.168.1.18:80</code></p>
+
+<p>这个命令等同于 nc 192.168.1.18 80。</p>
+
+<p>socat里面，必须有两个流，所以第一个参数-代表标准的输入输出，第二个流连接到192.168.1.18的80端口。</p>
+
+<p><code class="highlighter-rouge">socat -d -d READLINE,history=$HOME/.http_history TCP4:www.qq.com:80</code></p>
+
+<p>这个例子支持历史记录查询，类似于bash的历史记录。</p>
+
+<h3 id="反向连接">反向连接</h3>
+
+<p>再看一个反向telnet的例子：
+on server:</p>
+
+<p><code class="highlighter-rouge">socat tcp-listen:23 exec:cmd,pty,stderr</code></p>
+
+<p>这个命名把cmd绑定到端口23，同时把cmd的Stderr复位向到stdout。</p>
+
+<p>on client:</p>
+
+<p><code class="highlighter-rouge">socat readline tcp:server:23</code></p>
+
+<p>连接到服务器的23端口，即可获得一个cmd shell。readline是gnu的命令行编辑器，具有历史功能。</p>
+
+<h3 id="向远程端口发数据">向远程端口发数据</h3>
+
+<p><code class="highlighter-rouge">echo “test” | socat – tcp-connect:127.0.0.1:12345</code></p>
+
+<h3 id="本地开启端口">本地开启端口</h3>
+<p><code class="highlighter-rouge">socat tcp-l:7777,reuseaddr,fork system:bash</code></p>
+
+<p>同nc -l -p 7777 -e bash。</p>
+
+<h3 id="执行bash的完美用法">执行bash的完美用法</h3>
+
+<table>
+  <tbody>
+    <tr>
+      <td>服务端</td>
+      <td><code class="highlighter-rouge">socat tcp-l:8888 system:bash,pty,stderr</code></td>
+    </tr>
+    <tr>
+      <td>本地</td>
+      <td><code class="highlighter-rouge">socat readline tcp:$target:8888</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<p>用readline替代-，就能支持历史功能了。在这个模式下的客户端有本地一样的效果</p>
+
+<h3 id="文件传递">文件传递</h3>
+<p>再看文件传递的例子。nc也经常用来传递文件，但是nc有一个缺点，就是不知道文件什么时候传完了，一般要用Ctrl+c来终止，或者估计一个时间，用-w参数来让他自动终止。用socat就不用这么麻烦了：</p>
+
+<table>
+  <tbody>
+    <tr>
+      <td>on host 1</td>
+      <td>socat -u open:myfile.exe,binary tcp-listen:999</td>
+    </tr>
+    <tr>
+      <td>on host 2</td>
+      <td>socat -u tcp:host1:999 open:myfile.exe,create,binary</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>这个命令把文件myfile.exe用二进制的方式，从host 1 传到host 2。-u 表示数据单向流动，从第一个参数到第二个参数，-U表示从第二个到第一个。文件传完了，自动退出。</p>
+
+<h3 id="转发">转发</h3>
+
+<table>
+  <tbody>
+    <tr>
+      <td>本地端口转向远程主机</td>
+      <td>socat TCP4-LISTEN:8888 TCP4:www.qq.com:80</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>如果需要使用并发连接，则加一个fork,如下:</p>
+
+<p><code class="highlighter-rouge">socat TCP4-LISTEN:8888,fork TCP4:www.qq.com:80</code></p>
+
+<p>本地监听8888端口，来自8888的连接重定向到目标www.qq.com:80</p>
+
+<h3 id="端口映射">端口映射</h3>
+
+<p>再来一个大家喜欢用的例子。在一个NAT环境，如何从外部连接到内部的一个端口呢？只要能够在内部运行socat就可以了。</p>
+
+<table>
+  <tbody>
+    <tr>
+      <td>外部</td>
+      <td>socat tcp-listen:1234 tcp-listen:3389</td>
+    </tr>
+    <tr>
+      <td>内部</td>
+      <td>socat tcp:outerhost:1234 tcp:192.168.12.34:3389</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>这样，你外部机器上的3389就映射在内部网192.168.12.34的3389端口上。</p>
+
+<h3 id="vpn">VPN</h3>
+<p>| 服务端 | socat -d -d TCP-LISTEN:11443,reuseaddr TUN:192.168.255.1/24,up |
+| 客户端 | socat TCP:1.2.3.4:11443 TUN:192.168.255.2/24,up |</p>
+
+<h3 id="重定向">重定向</h3>
+
+<p><code class="highlighter-rouge">socat TCP4-LISTEN:80,reuseaddr,fork TCP4:192.168.123.12:8080</code></p>
+
+<table>
+  <tbody>
+    <tr>
+      <td>TCP4-LISTEN</td>
+      <td>在本地建立的是一个TCP ipv4协议的监听端口</td>
+    </tr>
+    <tr>
+      <td>reuseaddr</td>
+      <td>绑定本地一个端口；</td>
+    </tr>
+    <tr>
+      <td>fork</td>
+      <td>设定多链接模式，即当一个链接被建立后，自动复制一个同样的端口再进行监听</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>socat启动监听模式会在前端占用一个shell，因此需使其在后台执行。</p>
+
+<p><code class="highlighter-rouge">socat -d -d tcp4-listen:8900,reuseaddr,fork tcp4:10.5.5.10:3389</code></p>
+
+<p>或者</p>
+
+<p><code class="highlighter-rouge">socat -d -d -lf /var/log/socat.log TCP4-LISTEN:15000,reuseaddr,fork,su=nobody TCP4:static.5iops.com:15000</code></p>
+
+<p><code class="highlighter-rouge">-d -d -lf /var/log/socat.log</code>是参数，前面两个连续的<code class="highlighter-rouge">-d -d</code>代表调试信息的输出级别，<code class="highlighter-rouge">-lf</code>则指定输出信息的保存文件。</p>
+
+<p><code class="highlighter-rouge">TCP4-LISTEN:15000,reuseaddr,fork,su=nobody</code>是一号地址，代表在15000端口上进行TCP4协议的监听，复用绑定的IP，每次有连接到来就fork复制一个进程进行处理，同时将执行用户设置为nobody用户。</p>
+
+<p><code class="highlighter-rouge">TCP4:static.5iops.com:15000</code>是二号地址，代表将socat监听到的任何请求，转发到<code class="highlighter-rouge">static.5iops.com:15000</code>上去。</p>
+
+<h3 id="读写分流">读写分流</h3>
+<p>socat还具有一个独特的读写分流功能，比如：</p>
+
+<p><code class="highlighter-rouge">socat open:read.txt!!open:write.txt,create,append tcp-listen:80,reuseaddr,fork</code></p>
+
+<p>这个命令实现一个假的web server，客户端连过来之后，就把read.txt里面的内容发过去，同时把客户的数据保存到write.txt里面。”！！”符号用户合并读写流，前面的用于读，后面的用于写。</p>
+
+<h3 id="通过openssl来加密传输过程">通过openssl来加密传输过程</h3>
+
+<p>证书生成</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>FILENAME=60.*.*.*
+openssl genrsa -out $FILENAME.key 1024
+openssl req -new -key $FILENAME.key -x509 -days 3653 -out $FILENAME.crtcat $FILENAME.key $FILENAME.crt &gt;$FILENAME.pem
+</code></pre></div></div>
+
+<p>在当前目录下生成 <code class="highlighter-rouge">server.pem 、server.crt</code></p>
+
+<p>使用</p>
+
+<table>
+  <tbody>
+    <tr>
+      <td>服务端</td>
+      <td>socat openssl-listen:4433,reuseaddr,cert=srv.pem,cafile=srv.crt system:bash,pty,stderr</td>
+    </tr>
+    <tr>
+      <td>本地</td>
+      <td>socat readline openssl:localhost:4433,cert=srv.pem,cafile=srv.crt</td>
+    </tr>
+  </tbody>
+</table>
+
+  </div>
+
+</article>
+
+</section>
+<nav class="navbar navbar-default navbar-fixed-bottom">
+  <div class="container footer-content">
+    Copyright @ 2018 by 倾旋<br>
+    Powered By Jekyll
+  </div>
+</nav>
+
+  </body>
+
+</html>

@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta content="倾旋的博客" property="og:site_name">
+
+  <meta content="渗透中tomcat Examples目录中关于Session的分析" property="og:title">
+
+
+  <meta content="article" property="og:type">
+
+
+  <meta content="渗透中tomcat Examples目录中关于Session的分析，如何越权" property="og:description">
+
+
+  <meta content="http://localhost:4000/archivers/2017-08-17/1" property="og:url">
+
+
+  <meta content="2017-08-17T00:00:00+08:00" property="article:published_time">
+  <meta content="http://localhost:4000/about/" property="article:author">
+
+
+  <meta property="og:image" content="">
+
+
+  
+  <meta content="tomcat" property="article:section">
+  
+
+
+  
+
+  <title>渗透中tomcat Examples目录中关于Session的分析</title>
+  <meta name="description" content="渗透中tomcat Examples目录中关于Session的分析，如何越权">
+<script src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+  
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/ptsans.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/firamono.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/lato.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/sourcecodepro.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/gentiumbasic.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/alegreya.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/lora.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/firasans400.css' rel='stylesheet' type='text/css'>
+  <script src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/jquery.min2.2.0.js"></script>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/opensans.css' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-hQpvDQiCJaD2H465dQfA717v7lu5qHWtDbWNPvaTJ0ID5xnPUlVXnKzq7b8YUkbN" crossorigin="anonymous">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="http://localhost:4000/archivers/2017-08-17/1">
+  <link rel="alternate" type="application/rss+xml" title="倾旋的博客" href="http://localhost:4000/feed.xml">
+</head>
+
+
+  <body>
+
+<section>
+<nav class="navbar navbar-default navbar-fixed-top">
+
+  <div class="container">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/">倾旋的博客</a>
+    </div>
+
+
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        
+        
+        <li><a href="/about/">关于我</a></li>
+
+        
+
+        
+        
+        <li><a href="/category/">Category</a></li>
+
+        
+
+        
+        
+        <li><a href="/contact/">Contact</a></li>
+
+        
+
+        
+        
+
+        
+        
+
+        
+        
+
+        
+        
+        <li><a href="/other/">其他信息</a></li>
+
+        
+
+        
+        
+        <li><a href="/tools/socat">socat 使用手册</a></li>
+
+        
+
+        
+
+
+      </ul>
+
+    <!--  <ul class="nav navbar-nav navbar-right">
+        <li><a href="#">Know More!</a></li>
+
+      </ul>-->
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+</section>
+
+<section>
+<article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <div class="jumbotron">
+    <div class="container">
+      <h1 class="post-title-main" itemprop="name headline">渗透中tomcat Examples目录中关于Session的分析</h1>
+      <p class="post-meta"><time datetime="2017-08-17T00:00:00+08:00" itemprop="datePublished">Aug 17, 2017</time> • <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span itemprop="name">科拉实验室-倾旋</span></span></p>
+      
+    </div>
+
+</div>
+
+
+  <div class="post-content container" itemprop="articleBody">
+    <p>渗透中tomcat Examples目录中关于Session的分析，如何越权
+<!--more--></p>
+<h2 id="0x00-前言">0x00 前言</h2>
+
+<p>昨晚安装了Tomcat，想总结一下关于JSP WEB部署方面的安全加固方案，于是搜索到了一个关于tomcat服务安装时自带的一个Examples目录下的Session操作页面产生的安全隐患。</p>
+
+<p>但是参考网上的文章，发现存在一定的鸡肋问题，在文末与大家一起探讨。</p>
+
+<p>位于：<code class="highlighter-rouge">examples/servlets/sessions.html</code></p>
+
+<h2 id="0x01-环境">0x01 环境</h2>
+
+<ul>
+  <li>服务器：Windows Server 2008 R2</li>
+  <li>HTTP Server Version：Apache Tomcat/7.0.79</li>
+  <li>端口：8080</li>
+  <li>IP Address ：192.168.3.204</li>
+</ul>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-08-17/0x01.jpg" alt="访问页面" /></p>
+
+<p>访问页面如上所示，我们获得了一个Session ID，这个Session ID是代表了我们当前的一个身份会话。</p>
+
+<h2 id="0x02-关于session">0x02 关于Session</h2>
+
+<p>我们按照网上的参考文章新建几个文件：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>2017/08/17  10:24               201 index.jsp#登录后的页面，如果没有管理员Session，则会跳转到login.jsp
+2017/08/17  10:55               274 login.jsp#登录表单页面
+2017/08/17  10:25               438 login2.jsp#处理登录页面
+</code></pre></div></div>
+
+<p>index.jsp code:</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&lt;%</span>
+<span class="k">if</span><span class="o">(</span><span class="n">session</span><span class="o">.</span><span class="na">getAttribute</span><span class="o">(</span><span class="s">"login"</span><span class="o">)</span>
+<span class="o">!=</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="o">((</span><span class="n">String</span><span class="o">)</span><span class="n">session</span><span class="o">.</span><span class="na">getAttribute</span><span class="o">(</span><span class="s">"login"</span><span class="o">)).</span><span class="na">equals</span><span class="o">(</span><span class="s">"admin"</span><span class="o">))</span>
+<span class="o">{</span>
+<span class="n">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Login"</span><span class="o">);</span>
+<span class="o">}</span><span class="k">else</span><span class="o">{</span>
+<span class="n">response</span><span class="o">.</span><span class="na">sendRedirect</span><span class="o">(</span><span class="s">"login.jsp"</span><span class="o">);</span>
+<span class="o">}</span>
+<span class="o">%&gt;</span> 
+</code></pre></div></div>
+
+<p>login.jsp code:</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;html&gt;</span>
+<span class="nt">&lt;head&gt;</span>
+<span class="nt">&lt;meta</span> <span class="na">charset=</span><span class="s">"UTF-8"</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/head&gt;</span> 
+<span class="nt">&lt;body&gt;</span>
+<span class="nt">&lt;form</span> <span class="na">action=</span><span class="s">"login2.jsp"</span> <span class="na">method=</span><span class="s">"POST"</span> <span class="nt">&gt;</span>
+username:<span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">"text"</span> <span class="na">name=</span><span class="s">"username"</span><span class="nt">&gt;&lt;br&gt;</span>
+password:<span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">"text"</span> <span class="na">name=</span><span class="s">"password"</span>
+<span class="nt">&gt;&lt;br&gt;</span>
+<span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">"submit"</span> <span class="na">value=</span><span class="s">"login"</span><span class="nt">&gt;&lt;br&gt;</span>
+<span class="nt">&lt;form&gt;</span>
+<span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span>
+</code></pre></div></div>
+
+<p>login2.jsp code:</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="o">&lt;%</span>
+<span class="k">if</span>
+<span class="o">(</span><span class="n">request</span><span class="o">.</span><span class="na">getParameter</span><span class="o">(</span><span class="s">"username"</span><span class="o">)</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="n">request</span><span class="o">.</span><span class="na">getParameter</span><span class="o">(</span><span class="s">"password"</span><span class="o">)</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+	<span class="n">String</span> <span class="n">username</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="na">getParameter</span><span class="o">(</span><span class="s">"username"</span><span class="o">);</span> 
+	<span class="n">String</span> <span class="n">password</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="na">getParameter</span><span class="o">(</span><span class="s">"password"</span><span class="o">);</span> 
+	<span class="c1">//验证身份</span>
+	<span class="k">if</span> <span class="o">(</span><span class="n">username</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="s">"admin"</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="n">password</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="s">"admin"</span><span class="o">))</span> <span class="o">{</span>
+	<span class="n">session</span><span class="o">.</span><span class="na">setAttribute</span><span class="o">(</span><span class="s">"login"</span><span class="o">,</span><span class="s">"admin"</span><span class="o">);</span>
+	<span class="n">response</span><span class="o">.</span><span class="na">sendRedirect</span><span class="o">(</span><span class="s">"index.jsp"</span><span class="o">);</span>
+	<span class="o">}</span>
+	<span class="k">else</span> <span class="o">{</span>
+	<span class="n">response</span><span class="o">.</span><span class="na">sendRedirect</span><span class="o">(</span><span class="s">"login.jsp"</span><span class="o">);</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+<span class="o">%&gt;</span>
+</code></pre></div></div>
+
+<p>以上文件位于站点根目录（Webapps）下的<code class="highlighter-rouge">login</code>文件夹。</p>
+
+<p>我们通过Examples下的Session操作页面来设置一个Session内容，Name为login，Value为admin。</p>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-08-17/0x02.jpg" alt="设置Session" /></p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Session ID: 3C907C44B42E097983D71357924FE43D 
+Created: Thu Aug 17 12:16:06 CST 2017
+Last Accessed: Thu Aug 17 12:37:00 CST 2017
+The following data is in your session:
+login = admin
+</code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>GET /login/login.jsp HTTP/1.1
+Host: 192.168.3.204:8080
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:54.0) Gecko/20100101 Firefox/54.0 FirePHP/0.7.4
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3
+Accept-Encoding: gzip, deflate
+Cookie: JSESSIONID=3C907C44B42E097983D71357924FE43D
+x-insight: activate
+Connection: keep-alive
+Upgrade-Insecure-Requests: 1
+</code></pre></div></div>
+
+<p>设置成功后，我们直接访问login下的index.jsp文件，得到响应头如下：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>HTTP/1.1 302 Found
+Server: Apache-Coyote/1.1
+Location: login.jsp
+Content-Type: text/html;charset=ISO-8859-1
+Content-Length: 0
+Date: Thu, 17 Aug 2017 04:42:14 GMT
+</code></pre></div></div>
+
+<p>可以看到并没有利用成功，那么是什么原因呢？</p>
+
+<p>我们看看向Session中设置令牌的页面响应头：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>HTTP/1.1 200 OK
+Server: Apache-Coyote/1.1
+Set-Cookie: JSESSIONID=DF6A3AFB904871AC3F636C16B87B6364; Path=/examples
+Content-Type: text/html;charset=ISO-8859-1
+Content-Length: 1131
+Date: Thu, 17 Aug 2017 04:47:54 GMT
+</code></pre></div></div>
+<p>可以发现当前这个响应给Session ID设置了一个有效路径。</p>
+
+<p>我们获取到的Session是一个位于Examples文件夹的有效令牌，当我们用<code class="highlighter-rouge">/examples</code>目录下的令牌访问<code class="highlighter-rouge">/login</code>是无效的。</p>
+
+<p>我们来看看设置Session的页面源代码：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">java.io.*</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.util.*</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">javax.servlet.*</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">javax.servlet.http.*</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">SessionExample</span> <span class="kd">extends</span> <span class="n">HttpServlet</span> <span class="o">{</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">doGet</span><span class="o">(</span><span class="n">HttpServletRequest</span> <span class="n">request</span><span class="o">,</span> <span class="n">HttpServletResponse</span> <span class="n">response</span><span class="o">)</span>
+    <span class="kd">throws</span> <span class="n">IOException</span><span class="o">,</span> <span class="n">ServletException</span>
+    <span class="o">{</span>
+        <span class="n">response</span><span class="o">.</span><span class="na">setContentType</span><span class="o">(</span><span class="s">"text/html"</span><span class="o">);</span>
+        <span class="n">PrintWriter</span> <span class="n">out</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="na">getWriter</span><span class="o">();</span>
+
+        <span class="n">HttpSession</span> <span class="n">session</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="na">getSession</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>  <span class="c1">// 如果获取不到 Session 就创建一个 Session</span>
+
+        <span class="c1">// print session info</span>
+
+        <span class="n">Date</span> <span class="n">created</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Date</span><span class="o">(</span><span class="n">session</span><span class="o">.</span><span class="na">getCreationTime</span><span class="o">());</span>
+        <span class="n">Date</span> <span class="n">accessed</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Date</span><span class="o">(</span><span class="n">session</span><span class="o">.</span><span class="na">getLastAccessedTime</span><span class="o">());</span>
+        <span class="n">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"ID "</span> <span class="o">+</span> <span class="n">session</span><span class="o">.</span><span class="na">getId</span><span class="o">());</span>
+        <span class="n">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Created: "</span> <span class="o">+</span> <span class="n">created</span><span class="o">);</span>
+        <span class="n">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Last Accessed: "</span> <span class="o">+</span> <span class="n">accessed</span><span class="o">);</span>
+
+        <span class="c1">// set session info if needed</span>
+
+        <span class="n">String</span> <span class="n">dataName</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="na">getParameter</span><span class="o">(</span><span class="s">"dataName"</span><span class="o">);</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">dataName</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="n">dataName</span><span class="o">.</span><span class="na">length</span><span class="o">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">String</span> <span class="n">dataValue</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="na">getParameter</span><span class="o">(</span><span class="s">"dataValue"</span><span class="o">);</span>
+            <span class="n">session</span><span class="o">.</span><span class="na">setAttribute</span><span class="o">(</span><span class="n">dataName</span><span class="o">,</span> <span class="n">dataValue</span><span class="o">);</span>
+        <span class="o">}</span>
+
+        <span class="c1">// print session contents</span>
+
+        <span class="n">Enumeration</span> <span class="n">e</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="na">getAttributeNames</span><span class="o">();</span>
+        <span class="k">while</span> <span class="o">(</span><span class="n">e</span><span class="o">.</span><span class="na">hasMoreElements</span><span class="o">())</span> <span class="o">{</span>
+            <span class="n">String</span> <span class="n">name</span> <span class="o">=</span> <span class="o">(</span><span class="n">String</span><span class="o">)</span><span class="n">e</span><span class="o">.</span><span class="na">nextElement</span><span class="o">();</span>
+            <span class="n">String</span> <span class="n">value</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="na">getAttribute</span><span class="o">(</span><span class="n">name</span><span class="o">).</span><span class="na">toString</span><span class="o">();</span>
+            <span class="n">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">name</span> <span class="o">+</span> <span class="s">" = "</span> <span class="o">+</span> <span class="n">value</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>关于<code class="highlighter-rouge">request.getSession(true)</code>官方好像没有对Session有效路径做介绍，参考的文章中大多都说 Session是全局有效的。</p>
+
+<p>但是在Cookie中是对路径也有限制的。</p>
+
+<h2 id="0x03-成功的一次">0x03 成功的一次</h2>
+
+<p>这一次是成功了，但是项目必须部署在Examples目录下，我将Login下的文件都放入此目录。</p>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-08-17/0x03.jpg" alt="set session" /></p>
+
+<p>获得一个新的Session，并且设置login为admin。</p>
+
+<p>直接访问<code class="highlighter-rouge">http://192.168.3.204:8080/examples/index.jsp</code></p>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-08-17/0x04.jpg" alt="login" /></p>
+
+<p>可以看到已经进入我们想要的页面了。</p>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-08-17/0x05.jpg" alt="Cookie" /></p>
+
+<p>并且Session ID相同。</p>
+
+<h2 id="0x04-总结">0x04 总结</h2>
+
+<p>此篇文章涉及到了Session的特性，以及Cookie与Session ID的关系，另外还有一定的疑问存在，<code class="highlighter-rouge">Examples目录下的Session是不是全局的？</code></p>
+
+<p>此漏洞过于鸡肋，况且也不会有应用部署到这个演示文件夹下，权当安全研究 ~~</p>
+
+<p>再有一个问题就是，我们不知道Session中的Name和Value到底设置成什么才可以伪造其他身份，这些都是开发人员的习惯和标准，又增大了一个利用难度，所以说：鸡肋！鸡肋！鸡肋！</p>
+
+<p>后文继续总结Tomcat的其他安全隐患……</p>
+
+  </div>
+
+</article>
+
+</section>
+<nav class="navbar navbar-default navbar-fixed-bottom">
+  <div class="container footer-content">
+    Copyright @ 2018 by 倾旋<br>
+    Powered By Jekyll
+  </div>
+</nav>
+
+  </body>
+
+</html>

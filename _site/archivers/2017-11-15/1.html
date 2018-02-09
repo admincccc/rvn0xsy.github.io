@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta content="倾旋的博客" property="og:site_name">
+
+  <meta content="小型Web安全加固方案" property="og:title">
+
+
+  <meta content="article" property="og:type">
+
+
+  <meta content="本文介绍一下小型Web应用的加固方案" property="og:description">
+
+
+  <meta content="http://localhost:4000/archivers/2017-11-15/1" property="og:url">
+
+
+  <meta content="2017-11-15T00:00:00+08:00" property="article:published_time">
+  <meta content="http://localhost:4000/about/" property="article:author">
+
+
+  <meta property="og:image" content="">
+
+
+  
+  <meta content="加固方案" property="article:section">
+  
+
+
+  
+
+  <title>小型Web安全加固方案</title>
+  <meta name="description" content="本文介绍一下小型Web应用的加固方案，内容均为原创">
+<script src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+  
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/ptsans.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/firamono.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/lato.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/sourcecodepro.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/gentiumbasic.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/alegreya.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/lora.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/firasans400.css' rel='stylesheet' type='text/css'>
+  <script src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/jquery.min2.2.0.js"></script>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/opensans.css' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-hQpvDQiCJaD2H465dQfA717v7lu5qHWtDbWNPvaTJ0ID5xnPUlVXnKzq7b8YUkbN" crossorigin="anonymous">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="http://localhost:4000/archivers/2017-11-15/1">
+  <link rel="alternate" type="application/rss+xml" title="倾旋的博客" href="http://localhost:4000/feed.xml">
+</head>
+
+
+  <body>
+
+<section>
+<nav class="navbar navbar-default navbar-fixed-top">
+
+  <div class="container">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/">倾旋的博客</a>
+    </div>
+
+
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        
+        
+        <li><a href="/about/">关于我</a></li>
+
+        
+
+        
+        
+        <li><a href="/category/">Category</a></li>
+
+        
+
+        
+        
+        <li><a href="/contact/">Contact</a></li>
+
+        
+
+        
+        
+
+        
+        
+
+        
+        
+
+        
+        
+        <li><a href="/other/">其他信息</a></li>
+
+        
+
+        
+        
+        <li><a href="/tools/socat">socat 使用手册</a></li>
+
+        
+
+        
+
+
+      </ul>
+
+    <!--  <ul class="nav navbar-nav navbar-right">
+        <li><a href="#">Know More!</a></li>
+
+      </ul>-->
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+</section>
+
+<section>
+<article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <div class="jumbotron">
+    <div class="container">
+      <h1 class="post-title-main" itemprop="name headline">小型Web安全加固方案</h1>
+      <p class="post-meta"><time datetime="2017-11-15T00:00:00+08:00" itemprop="datePublished">Nov 15, 2017</time></p>
+      
+    </div>
+
+</div>
+
+
+  <div class="post-content container" itemprop="articleBody">
+    <p>本文介绍一下小型Web应用的加固方案，内容均为原创
+<!--more--></p>
+<h2 id="0x00-配置管理安全">0x00 配置管理安全</h2>
+<p>即使在存在某些高危漏洞的情况下，我们只要做好配置方面的安全加固即可防御许多攻击。</p>
+
+<h3 id="列目录---显示目录索引">列目录 - 显示目录索引</h3>
+
+<h4 id="apache">Apache</h4>
+
+<h5 id="修改站点目录对应的配置文件">修改站点目录对应的配置文件</h5>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-11-15/0x00.png" alt="列出目录索引" /></p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;Directory /&gt;
+    Options +Indexes +FollowSymLinks # 将 "+" 与 Indexes 去掉即可限制列出目录索引
+    AllowOverride All
+    Order allow,deny
+    Allow from all
+    Require all granted
+&lt;/Directory&gt;
+</code></pre></div></div>
+
+<p>修改后：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;Directory /&gt;
+    Options FollowSymLinks
+    AllowOverride All
+    Order allow,deny
+    Allow from all
+    Require all granted
+&lt;/Directory&gt;
+</code></pre></div></div>
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-11-15/0x01.png" alt="不列出目录索引" /></p>
+
+<h5 id="创建directoryindex默认文件">创建DirectoryIndex默认文件</h5>
+
+<p>大家都见过很多框架的每个目录都有一个<code class="highlighter-rouge">index.html</code>文件，这个文件的存在是非常有意义的，很多线上的Web服务器都没有合格配置<code class="highlighter-rouge">列出目录索引</code>。导致网站内部许多文件都被攻击者查看到，泄漏大量信息。</p>
+
+<p>为了防止列出目录索引，我们可以在站点的每个文件夹中创建一个<code class="highlighter-rouge">index.html</code>，这个文件内容是什么都无所谓了。当攻击者想通过列目录的手法访问你站点文件夹的时候，Web服务器将会判断当前目录下有没有<code class="highlighter-rouge">DirectoryIndex</code>默认首页，如果存在就显示<code class="highlighter-rouge">DirectoryIndex</code>对应的文件名的内容，这样攻击者就无法查看该目录下有什么文件了。</p>
+
+<h4 id="tomcat">Tomcat</h4>
+
+<h5 id="修改confwebxml配置文件">修改conf/web.xml配置文件</h5>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-11-15/0x02.png" alt="列出目录索引" /></p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;init-param&gt;
+            &lt;param-name&gt;listings&lt;/param-name&gt; 
+            &lt;param-value&gt;true&lt;/param-value&gt; &lt;!-- 将true改为false --&gt;
+&lt;/init-param&gt;
+</code></pre></div></div>
+
+<p>修改后：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;init-param&gt;
+            &lt;param-name&gt;listings&lt;/param-name&gt; 
+            &lt;param-value&gt;false&lt;/param-value&gt;
+&lt;/init-param&gt;
+</code></pre></div></div>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-11-15/0x03.png" alt="不列出目录索引" /></p>
+
+<h4 id="nginx">Nginx</h4>
+
+<h5 id="修改confnginxconf配置文件">修改conf/nginx.conf配置文件</h5>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-11-15/0x05.png" alt="列出目录索引" /></p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>location / {
+            index  index.html index.htm index.php l.php;
+           autoindex on;  
+}
+</code></pre></div></div>
+
+<p>修改后：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>location / {
+            index  index.html index.htm index.php l.php;
+           autoindex off;  
+}
+</code></pre></div></div>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-11-15/0x04.png" alt="不列出目录索引" /></p>
+
+<h4 id="iis">IIS</h4>
+
+<h4 id="设置目录浏览权限">设置”目录浏览”权限</h4>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-11-15/0x06.png" alt="列出目录索引" /></p>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-11-15/0x08.png" alt="设置目录索引" /></p>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-11-15/0x07.png" alt="不列出目录索引" /></p>
+
+<h3 id="隐藏服务器版本信息">隐藏服务器版本信息</h3>
+
+<h4 id="apache-1">Apache</h4>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-11-15/0x09.png" alt="存在信息" /></p>
+
+<p>将以下配置加入<code class="highlighter-rouge">conf/httpd.conf</code>：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ServerTokens Prod
+ServerSignature Off
+</code></pre></div></div>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-11-15/0x10.png" alt="不存在信息" /></p>
+
+<h4 id="php">PHP</h4>
+
+<p>修改<code class="highlighter-rouge">php.ini</code>，将<code class="highlighter-rouge">expose_php On</code>改为：<code class="highlighter-rouge">expose_php Off</code></p>
+
+<h4 id="iis-1">IIS</h4>
+
+<p>找到<code class="highlighter-rouge">HTTP响应头</code>设置响应报文内容，可以将<code class="highlighter-rouge">ASP.NET</code>随意更改，甚至删除</p>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-11-15/0x11.png" alt="IIS" /></p>
+
+<h4 id="nginx-1">Nginx</h4>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-11-15/0x12.png" alt="存在信息" /></p>
+
+<p>在加入<code class="highlighter-rouge">conf/nginx.conf</code>一行：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>server_tokens off;
+</code></pre></div></div>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-11-15/0x13.png" alt="不存在信息" /></p>
+
+<h4 id="tomcat-1">Tomcat</h4>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-11-15/0x15.png" alt="存在信息" /></p>
+
+<p>到apache-tomcat安装目录下的lib子文件夹，找到catalina.jar这包，并进行解解压</p>
+
+<p>修改:<code class="highlighter-rouge">lib\catalina.zip\org\apache\catalina\util\ServerInfo.properties</code></p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>server.info=X
+server.number=5.5
+server.built=Dec 1 2015 22:30:46 UTC
+</code></pre></div></div>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-11-15/0x14.png" alt="更改文件" /></p>
+
+<h3 id="目录安全">目录安全</h3>
+
+<p>攻击者上传恶意脚本（Webshell）到服务器端后，该脚本会被当做可信任的代码执行，这并不是我们想看到的。</p>
+
+<h4 id="apache-2">Apache</h4>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-11-15/0x16.png" alt="脚本被执行" /></p>
+
+<p>更改配置文件：</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;Directory "C:/phpstudy2/WWW/uploads"&gt;
+    &lt;FilesMatch "\.(?i:php|php3|php4|php5)$"&gt; 
+    Order allow,deny
+    Deny from all
+    &lt;/FilesMatch&gt;
+&lt;/Directory&gt;
+</code></pre></div></div>
+
+<p><code class="highlighter-rouge">C:/phpstudy2/WWW/uploads</code> 为要禁止执行的目录，<code class="highlighter-rouge">\.(?i:php|php3|php4|php5)$</code>中可以添加多个文件扩展名，例如：<code class="highlighter-rouge">.htaccess</code></p>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-11-15/0x17.png" alt="脚本不执行" /></p>
+
+<p>上面的方法已经杜绝了Webshell的执行，但是如果 - 在根目录创建 <code class="highlighter-rouge">.htaccess</code>分布式部署文件，也能够执行脚本。</p>
+
+<p>服务器端配置必须满足以下三个条件：</p>
+
+<ul>
+  <li>能够在目录中写入任意文件</li>
+  <li>AllowOverride 为 All</li>
+  <li>开启modules/mod_rewrite.so</li>
+</ul>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-11-15/0x18.png" alt="脚本被执行" /></p>
+
+<p>我们现在先来做一个加固：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;Files ~ "^.(htaccess|htpasswd)$"&gt;
+deny from all
+&lt;/Files&gt;
+</code></pre></div></div>
+
+<p>禁止所有人访问<code class="highlighter-rouge">.htaccess</code>和<code class="highlighter-rouge">.htpasswd</code>文件。</p>
+
+<p>接下来要做的就是设置<code class="highlighter-rouge">AllowOverride</code>为<code class="highlighter-rouge">None</code></p>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-11-15/0x19.png" alt="脚本不执行" /></p>
+
+<h4 id="nginx-2">Nginx</h4>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-11-15/0x20.png" alt="脚本被执行" /></p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>location ~* ^/uploads/.*.(php|php5)$ {
+      deny all;
+}
+</code></pre></div></div>
+
+<p>注意事项：</p>
+<ul>
+  <li>$ 与 { 之间有空格</li>
+  <li>以上的配置文件代码需要放到 <code class="highlighter-rouge">location ~ .php {...}</code>上面，如果放到下面是无效的</li>
+  <li>uploads需要写相对路径，不能写绝对路径</li>
+  <li>修改后重启Nginx</li>
+</ul>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-11-15/0x21.png" alt="脚本不执行" /></p>
+
+<h4 id="iis-2">IIS</h4>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-11-15/0x22.png" alt="脚本被执行" /></p>
+
+<p>设置<code class="highlighter-rouge">处理程序映射</code>即可：</p>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-11-15/0x23.png" alt="设置脚本不执行" /></p>
+
+<p>设置后：</p>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-11-15/0x24.png" alt="脚本不执行" /></p>
+
+<h4 id="tomcat-2">Tomcat</h4>
+
+<p>可以采用Apache配置，后续再更新关于Tomcat的配置</p>
+
+  </div>
+
+</article>
+
+</section>
+<nav class="navbar navbar-default navbar-fixed-bottom">
+  <div class="container footer-content">
+    Copyright @ 2018 by 倾旋<br>
+    Powered By Jekyll
+  </div>
+</nav>
+
+  </body>
+
+</html>

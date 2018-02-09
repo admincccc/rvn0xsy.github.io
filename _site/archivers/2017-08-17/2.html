@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta content="倾旋的博客" property="og:site_name">
+
+  <meta content="渗透中tomcat部署war包Getshell" property="og:title">
+
+
+  <meta content="article" property="og:type">
+
+
+  <meta content="tomcat后台getshell" property="og:description">
+
+
+  <meta content="http://localhost:4000/archivers/2017-08-17/2" property="og:url">
+
+
+  <meta content="2017-08-17T00:00:00+08:00" property="article:published_time">
+  <meta content="http://localhost:4000/about/" property="article:author">
+
+
+  <meta property="og:image" content="">
+
+
+  
+  <meta content="tomcat" property="article:section">
+  
+
+
+  
+
+  <title>渗透中tomcat部署war包Getshell</title>
+  <meta name="description" content="本文演示一下tomcat后台getshell">
+<script src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+  
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/ptsans.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/firamono.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/lato.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/sourcecodepro.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/gentiumbasic.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/alegreya.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/lora.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/firasans400.css' rel='stylesheet' type='text/css'>
+  <script src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/jquery.min2.2.0.js"></script>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/opensans.css' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-hQpvDQiCJaD2H465dQfA717v7lu5qHWtDbWNPvaTJ0ID5xnPUlVXnKzq7b8YUkbN" crossorigin="anonymous">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="http://localhost:4000/archivers/2017-08-17/2">
+  <link rel="alternate" type="application/rss+xml" title="倾旋的博客" href="http://localhost:4000/feed.xml">
+</head>
+
+
+  <body>
+
+<section>
+<nav class="navbar navbar-default navbar-fixed-top">
+
+  <div class="container">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/">倾旋的博客</a>
+    </div>
+
+
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        
+        
+        <li><a href="/about/">关于我</a></li>
+
+        
+
+        
+        
+        <li><a href="/category/">Category</a></li>
+
+        
+
+        
+        
+        <li><a href="/contact/">Contact</a></li>
+
+        
+
+        
+        
+
+        
+        
+
+        
+        
+
+        
+        
+        <li><a href="/other/">其他信息</a></li>
+
+        
+
+        
+        
+        <li><a href="/tools/socat">socat 使用手册</a></li>
+
+        
+
+        
+
+
+      </ul>
+
+    <!--  <ul class="nav navbar-nav navbar-right">
+        <li><a href="#">Know More!</a></li>
+
+      </ul>-->
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+</section>
+
+<section>
+<article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <div class="jumbotron">
+    <div class="container">
+      <h1 class="post-title-main" itemprop="name headline">渗透中tomcat部署war包Getshell</h1>
+      <p class="post-meta"><time datetime="2017-08-17T00:00:00+08:00" itemprop="datePublished">Aug 17, 2017</time> • <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span itemprop="name">科拉实验室-倾旋</span></span></p>
+      
+    </div>
+
+</div>
+
+
+  <div class="post-content container" itemprop="articleBody">
+    <p>本文演示一下tomcat后台getshell
+<!--more--></p>
+<h2 id="tomcat-爆破">Tomcat 爆破</h2>
+
+<p>在渗透测试中，我们经常遇到tomcat后台被默认部署在外部的情况，类似于<code class="highlighter-rouge">http://192.168.3.204:8080/host-manager/html</code></p>
+
+<p>在这种情况下，我们都会选择去爆破来进入后台部署shell。</p>
+
+<p>先抓取一下我们的登录包：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>GET /host-manager/html HTTP/1.1
+Host: 192.168.3.204:8080
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:54.0) Gecko/20100101 Firefox/54.0 FirePHP/0.7.4
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3
+Accept-Encoding: gzip, deflate
+DNT: 1
+x-insight: activate
+Connection: keep-alive
+Upgrade-Insecure-Requests: 1
+Authorization: Basic YWRtaW46MTIzNDU2
+</code></pre></div></div>
+<p>在Tomcat后台登录的数据包中我们发现它会将输入的账号和密码都编码成Base64密文。</p>
+
+<p>格式：<code class="highlighter-rouge">用户名:密码</code> =&gt; <code class="highlighter-rouge">admin:123456</code> =&gt; <code class="highlighter-rouge">YWRtaW46MTIzNDU2</code></p>
+
+<p>这里我们可以采用Metasploit中的tomcat爆破辅助模块，当然也可以用BurpSuite来爆破：</p>
+
+<p>将数据包发送到Intruder模块，添加一个变量：</p>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-08-17/0x06.jpg" alt="Intruder" /></p>
+
+<p>在设置Payload的时候要使用自定义迭代器：</p>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-08-17/0x07.jpg" alt="Intruder" /></p>
+
+<p>由于登录令牌都是<code class="highlighter-rouge">base64</code>加密的，我们需要 <code class="highlighter-rouge">[用户名]:[密码]</code>这样的格式进行<code class="highlighter-rouge">base64encde</code>才可以发送出去，我们设置三个迭代payload分别代表：用户名、:、密码、。</p>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-08-17/0x08.jpg" alt="Intruder" /></p>
+
+<p>第一位设置用户名这类的字典，可以多个。</p>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-08-17/0x09.jpg" alt="payloads" /></p>
+
+<p>第二位设置<code class="highlighter-rouge">:</code>，只需要一个即可。</p>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-08-17/0x10.jpg" alt="payloads" /></p>
+
+<p>第三位设置密码，可以多个。</p>
+
+<p>然后设置一个编码器，选择<code class="highlighter-rouge">base64</code>这个函数：</p>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-08-17/0x11.jpg" alt="encoder" /></p>
+
+<p>接下来再将url编码去掉，因为在base64密文里<code class="highlighter-rouge">=</code>会被编码成<code class="highlighter-rouge">%3d</code>。</p>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-08-17/0x12.jpg" alt="urldecode" /></p>
+
+<p>设置完毕后，我们可以爆破了：</p>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-08-17/0x13.jpg" alt="payloads" /></p>
+
+<h2 id="tomcat-部署war-getshell">Tomcat 部署war getshell</h2>
+
+<p>在获取到令牌后，我们可以进入Tomcat后台了：</p>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-08-17/0x14.jpg" alt="login" /></p>
+
+<p>在这个后台，我们可以操作每个应用的状态……以及读取每个应用下的Session。</p>
+
+<p>但是这都不是最大的安全隐患 :)</p>
+
+<p>下面来讲一下如何制作war包。</p>
+
+<blockquote>
+  <p>war包：Java web工程，都是打成war包，进行发布，如果我们的服务器选择TOMCAT等轻量级服务器，一般就打出WAR包进行发布</p>
+</blockquote>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-08-17/0x15.jpg" alt="tomcat" /></p>
+
+<p>先准备了一个JSP的一句话木马，安装好JDK环境，我的目录是在<code class="highlighter-rouge">C:\Program Files (x86)\Java\jdk1.8.0_131\bin</code>,这个目录下又个文件叫<code class="highlighter-rouge">jar.exe</code>。</p>
+
+<p>执行:<code class="highlighter-rouge">jar -cvf [war包名称].war 打包目录</code></p>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-08-17/0x16.jpg" alt="maked" /></p>
+
+<p>我们现在已经打包好了一个WAR包。</p>
+
+<p>找到Tomcat管理页面中的<code class="highlighter-rouge">WAR file to deploy</code>进行上传就可以部署了。</p>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-08-17/0x17.jpg" alt="war" /></p>
+
+<p>应用列表已经出现了我们的目录：</p>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-08-17/0x18.jpg" alt="application" /></p>
+
+<p>访问文件名即可：</p>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-08-17/0x19.jpg" alt="shell" /></p>
+
+<h2 id="总结">总结</h2>
+
+<p>在爆破的时候发现频率过高会有爆破不成功的现象，最好是调整一下短时间内请求的次数。</p>
+
+  </div>
+
+</article>
+
+</section>
+<nav class="navbar navbar-default navbar-fixed-bottom">
+  <div class="container footer-content">
+    Copyright @ 2018 by 倾旋<br>
+    Powered By Jekyll
+  </div>
+</nav>
+
+  </body>
+
+</html>

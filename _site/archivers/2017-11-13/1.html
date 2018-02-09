@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta content="倾旋的博客" property="og:site_name">
+
+  <meta content="高效-搭建一个Github静态博客" property="og:title">
+
+
+  <meta content="article" property="og:type">
+
+
+  <meta content="本文介绍一下如何在Github搭建一个静态博客" property="og:description">
+
+
+  <meta content="http://localhost:4000/archivers/2017-11-13/1" property="og:url">
+
+
+  <meta content="2017-11-13T00:00:00+08:00" property="article:published_time">
+  <meta content="http://localhost:4000/about/" property="article:author">
+
+
+  <meta property="og:image" content="">
+
+
+  
+  <meta content="高效" property="article:section">
+  
+
+
+  
+
+  <title>高效-搭建一个Github静态博客</title>
+  <meta name="description" content="本文介绍一下如何在Github搭建一个静态博客">
+<script src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+  
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/ptsans.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/firamono.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/lato.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/sourcecodepro.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/gentiumbasic.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/alegreya.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/lora.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/firasans400.css' rel='stylesheet' type='text/css'>
+  <script src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/jquery.min2.2.0.js"></script>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/opensans.css' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-hQpvDQiCJaD2H465dQfA717v7lu5qHWtDbWNPvaTJ0ID5xnPUlVXnKzq7b8YUkbN" crossorigin="anonymous">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="http://localhost:4000/archivers/2017-11-13/1">
+  <link rel="alternate" type="application/rss+xml" title="倾旋的博客" href="http://localhost:4000/feed.xml">
+</head>
+
+
+  <body>
+
+<section>
+<nav class="navbar navbar-default navbar-fixed-top">
+
+  <div class="container">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/">倾旋的博客</a>
+    </div>
+
+
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        
+        
+        <li><a href="/about/">关于我</a></li>
+
+        
+
+        
+        
+        <li><a href="/category/">Category</a></li>
+
+        
+
+        
+        
+        <li><a href="/contact/">Contact</a></li>
+
+        
+
+        
+        
+
+        
+        
+
+        
+        
+
+        
+        
+        <li><a href="/other/">其他信息</a></li>
+
+        
+
+        
+        
+        <li><a href="/tools/socat">socat 使用手册</a></li>
+
+        
+
+        
+
+
+      </ul>
+
+    <!--  <ul class="nav navbar-nav navbar-right">
+        <li><a href="#">Know More!</a></li>
+
+      </ul>-->
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+</section>
+
+<section>
+<article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <div class="jumbotron">
+    <div class="container">
+      <h1 class="post-title-main" itemprop="name headline">高效-搭建一个Github静态博客</h1>
+      <p class="post-meta"><time datetime="2017-11-13T00:00:00+08:00" itemprop="datePublished">Nov 13, 2017</time></p>
+      
+    </div>
+
+</div>
+
+
+  <div class="post-content container" itemprop="articleBody">
+    <p>本文介绍一下如何在Github搭建一个静态博客
+<!--more--></p>
+<h2 id="0x00-环境准备">0x00 环境准备</h2>
+
+<ul>
+  <li>系统环境  Windows/Linux</li>
+  <li>版本控制软件 Git</li>
+  <li>一个Github账号</li>
+  <li>支持markdown语法的编辑器 - Sublime</li>
+</ul>
+
+<p>关于版本控制软件的安装：</p>
+
+<p><code class="highlighter-rouge">https://git-scm.com/downloads</code> 可以在这里看到对应的系统版本去下载安装包</p>
+
+<p>注册一个github账号：<code class="highlighter-rouge">https://github.com/</code>  右侧就有注册表单，按规则填写注册即可</p>
+
+<p>Sublime下载地址：<code class="highlighter-rouge">http://www.sublimetext.com/3</code></p>
+
+<h2 id="0x01-选择一个适合你的主题">0x01 选择一个适合你的主题</h2>
+
+<p>访问Jeklly主题官网：http://jekyllthemes.org/</p>
+
+<p>这里我选择了一个<code class="highlighter-rouge">http://jekyllthemes.org/themes/fresh/</code></p>
+
+<p>页面中有<code class="highlighter-rouge">Download</code>按钮，可以直接下载主题，但是这样不利于我们后续的<code class="highlighter-rouge">push</code></p>
+
+<p>点击<code class="highlighter-rouge">HomePage</code> 进入作者的github仓库，我们在自己的电脑中选择一个适合写作的目录，执行<code class="highlighter-rouge">git clone https://github.com/artemsheludko/fresh</code></p>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-11-13/1.png" alt="clone" /></p>
+
+<h2 id="0x02-更改配置文件">0x02 更改配置文件</h2>
+
+<p>我们找到目录中的<code class="highlighter-rouge">_config.yml</code></p>
+
+<p>我根据自己的需求，稍微改改，另外如果不知道如何修改，可以参考jekyll手册：</p>
+
+<p>目录结构介绍：http://jekyll.com.cn/docs/structure/</p>
+
+<p>配置参数介绍：http://jekyll.com.cn/docs/configuration/</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code># Profile information
+name: godkiller
+title: godkiller
+description: &gt; # this means to ignore newlines until "baseurl:"
+  记录生活、总结学习经验
+permalink: ':title/'
+baseurl: "/" # the subpath of your site, e.g. /blog
+url: "" # the base hostname &amp; protocol for your site, e.g. http://example.com
+
+# Social
+facebook: #Add your Facebook
+twitter: #Add your Twitter
+google-plus: #Add your Google+
+github: #Add your Github
+
+# Contact form
+email: godkiller@aliyun.com
+
+# Comments
+discus-identifier: # Add your Disqus identifier
+
+# Paginate
+paginate: 5
+paginate_path: /page:num/
+
+# Build settings
+markdown: kramdown
+gems:
+  - jekyll-feed
+  - jekyll-paginate
+exclude:
+  - Gemfile
+  - Gemfile.lock
+include: [_pages]
+</code></pre></div></div>
+
+<h2 id="创建一个仓库">创建一个仓库</h2>
+
+<p>登录github后，可以访问<code class="highlighter-rouge">https://github.com/new</code>来创建一个仓库，用来存放博客内容。</p>
+
+<p>注意：<code class="highlighter-rouge">Repository name</code>必须是以 <code class="highlighter-rouge">[github用户名].github.io</code> 来命名</p>
+
+<p>我的是<code class="highlighter-rouge">GuestKiller</code>，但是必须小写</p>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-11-13/2.png" alt="Resp" /></p>
+
+<p>创建成功后，就可以存入博客内容了</p>
+
+<h2 id="push你的博客---扬帆起航">push你的博客 - 扬帆起航</h2>
+
+<p>在开始push之前，我们需要添加一个ssh公钥，以便于以后长期写作使用</p>
+
+<p>访问：https://github.com/settings/keys</p>
+
+<p>我们点击<code class="highlighter-rouge">NEW SSH Key</code>，进入添加页面后，在本地生成一个公钥。</p>
+
+<p>打开(Linux)终端或者(Windows)Git执行<code class="highlighter-rouge">ssh-keygen -t rsa</code>，有可能会询问你是否覆盖，输入<code class="highlighter-rouge">y</code>即可</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Generating public/private rsa key pair.
+Enter file in which to save the key (/root/.ssh/id_rsa): 
+Enter passphrase (empty for no passphrase): 
+Enter same passphrase again: 
+Your identification has been saved in /root/.ssh/id_rsa.
+Your public key has been saved in /root/.ssh/id_rsa.pub.
+The key fingerprint is:
+SHA256:zZK0SQEXA6lX8aCQpp1rRrpDwcNwZV0qQaFeQojIqYY root@Kali
+The key's randomart image is:
++---[RSA 2048]----+
+|+.ooB+o=Oo       |
+|=+.oooo+.=       |
+|o=o+ooo.o .      |
+|Eo*o=..o *       |
+|. .= o  S o      |
+|  o +    .       |
+| . +             |
+|  o              |
+|   .             |
++----[SHA256]-----+
+</code></pre></div></div>
+
+<p>出现上面的情况就代表生成成功了。</p>
+
+<p>Linux下直接按照下面的命令去查看：</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@Kali:~# cat ~/.ssh/id_rsa.pub 
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDhwvIIs9Nr9XDkX26C2XnU+8S7mE9clp9YkPMhAHvx5h0UHwMyW8elzqky7qnRvvS2TjUWX0Zmfk4Ezqni33x82WUoshs9a+yqhSByiVR1zQGMb3VO89hWcZrt8vwznDEBufpEB51o1EWGiSIwNa6BlNN3j++1bpYgoGsLG9UGRh5ymvHpmP0/rTlss5Xjc0E4UB3ZS2Oyv**********pVbnvTgJP6IRklcknZcJLXgK5UqTDrQBf7ctd9IVgvqQ0N43WINoWA10/62uxp6mgqxwOHveG70gOBIPTT8CHPYxiGjt4rm7/rtWzWWezt root@Kali
+</code></pre></div></div>
+
+<p>Windows则打开当前用户的目录，然后找到<code class="highlighter-rouge">.ssh</code>目录中的<code class="highlighter-rouge">id_rsa.pub</code>，将文件内容复制出来即可。</p>
+
+<p>将这些字符串复制到key输入框内，Title自己定义</p>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-11-13/3.png" alt="ssh_key" /></p>
+
+<p>添加好后就要学习Git的基本操作了</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>删除当前旧的远程仓库
+rm -rf .git
+
+clone新的仓库
+git clone git@github.com:GuestKiller/guestkiller.github.io.git
+
+将当前目录所有的博客文件放入guestkiller.github.io目录中
+
+
+root@Kali:~/guestkiller.github.io# ls
+assets       Gemfile       _includes   _layouts  _pages  README.md
+_config.yml  Gemfile.lock  index.html  LICENSE   _posts
+root@Kali:~/guestkiller.github.io# git status
+位于分支 master
+初始提交
+未跟踪的文件:
+  （使用 "git add &lt;文件&gt;..." 以包含要提交的内容）
+	Gemfile
+	Gemfile.lock
+	LICENSE
+	README.md
+	_config.yml
+	_includes/
+	_layouts/
+	_pages/
+	_posts/
+	assets/
+	index.html
+提交为空，但是存在尚未跟踪的文件（使用 "git add" 建立跟踪）
+root@Kali:~/guestkiller.github.io# git add .
+root@Kali:~/guestkiller.github.io# git commit -m '1'
+[master（根提交） f66f896] 1
+ Committer: root &lt;root@localhost.localdomain&gt;
+您的姓名和邮件地址基于登录名和主机名进行了自动设置。请检查它们正确
+与否。您可以对其进行设置以免再出现本提示信息。运行如下命令在编辑器
+中编辑您的配置文件：
+    git config --global --edit
+设置完毕后，您可以用下面的命令来修正本次提交所使用的用户身份：
+    git commit --amend --reset-author
+ 43 files changed, 5658 insertions(+)
+ create mode 100644 Gemfile
+ create mode 100644 Gemfile.lock
+ create mode 100644 LICENSE
+ create mode 100644 README.md
+ create mode 100644 _config.yml
+ create mode 100644 _includes/analytics.html
+ create mode 100644 _includes/disqus.html
+ create mode 100644 _includes/head.html
+ **********
+ create mode 100644 assets/img/zagreb_city.jpg
+ create mode 100644 index.html
+root@Kali:~/guestkiller.github.io# git push
+Warning: Permanently added the RSA host key for IP address '192.30.255.112' to the list of known hosts.
+对象计数中: 58, 完成.
+Delta compression using up to 2 threads.
+压缩对象中: 100% (56/56), 完成.
+写入对象中: 100% (58/58), 20.30 MiB | 1.32 MiB/s, 完成.
+Total 58 (delta 2), reused 0 (delta 0)
+remote: Resolving deltas: 100% (2/2), done.
+To github.com:GuestKiller/guestkiller.github.io.git
+ * [new branch]      master -&gt; master
+
+</code></pre></div></div>
+
+<p>然后访问guestkiller.github.io即可~</p>
+
+<h2 id="总结">总结</h2>
+
+<p>文章写的粗糙，有问题可以联系我的微信：Guest_Killer_0nlis</p>
+
+<p>详情：<a href="/about/">关于我</a></p>
+
+  </div>
+
+</article>
+
+</section>
+<nav class="navbar navbar-default navbar-fixed-bottom">
+  <div class="container footer-content">
+    Copyright @ 2018 by 倾旋<br>
+    Powered By Jekyll
+  </div>
+</nav>
+
+  </body>
+
+</html>

@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta content="倾旋的博客" property="og:site_name">
+
+  <meta content="CTF - 美眉的手机号" property="og:title">
+
+
+  <meta content="article" property="og:type">
+
+
+  <meta content="本文介绍一个在CTF中遇到的经典二次注入" property="og:description">
+
+
+  <meta content="http://localhost:4000/archivers/2017-11-14/1" property="og:url">
+
+
+  <meta content="2017-11-14T00:00:00+08:00" property="article:published_time">
+  <meta content="http://localhost:4000/about/" property="article:author">
+
+
+  <meta property="og:image" content="">
+
+
+  
+  <meta content="CTF" property="article:section">
+  
+
+
+  
+
+  <title>CTF - 美眉的手机号</title>
+  <meta name="description" content="本文介绍一个在CTF中遇到的经典二次注入">
+<script src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+  
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/ptsans.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/firamono.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/lato.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/sourcecodepro.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/gentiumbasic.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/alegreya.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/lora.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/firasans400.css' rel='stylesheet' type='text/css'>
+  <script src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/jquery.min2.2.0.js"></script>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/opensans.css' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-hQpvDQiCJaD2H465dQfA717v7lu5qHWtDbWNPvaTJ0ID5xnPUlVXnKzq7b8YUkbN" crossorigin="anonymous">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="http://localhost:4000/archivers/2017-11-14/1">
+  <link rel="alternate" type="application/rss+xml" title="倾旋的博客" href="http://localhost:4000/feed.xml">
+</head>
+
+
+  <body>
+
+<section>
+<nav class="navbar navbar-default navbar-fixed-top">
+
+  <div class="container">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/">倾旋的博客</a>
+    </div>
+
+
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        
+        
+        <li><a href="/about/">关于我</a></li>
+
+        
+
+        
+        
+        <li><a href="/category/">Category</a></li>
+
+        
+
+        
+        
+        <li><a href="/contact/">Contact</a></li>
+
+        
+
+        
+        
+
+        
+        
+
+        
+        
+
+        
+        
+        <li><a href="/other/">其他信息</a></li>
+
+        
+
+        
+        
+        <li><a href="/tools/socat">socat 使用手册</a></li>
+
+        
+
+        
+
+
+      </ul>
+
+    <!--  <ul class="nav navbar-nav navbar-right">
+        <li><a href="#">Know More!</a></li>
+
+      </ul>-->
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+</section>
+
+<section>
+<article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <div class="jumbotron">
+    <div class="container">
+      <h1 class="post-title-main" itemprop="name headline">CTF - 美眉的手机号</h1>
+      <p class="post-meta"><time datetime="2017-11-14T00:00:00+08:00" itemprop="datePublished">Nov 14, 2017</time></p>
+      
+    </div>
+
+</div>
+
+
+  <div class="post-content container" itemprop="articleBody">
+    <p>本文介绍一个在CTF中遇到的经典二次注入
+<!--more--></p>
+<h2 id="0x00-前言">0x00 前言</h2>
+
+<p>十一月十一号，在北科大参加了一场CTF，也是第一次投身真正的比赛</p>
+
+<p>个人感觉，CTF并不是一种学习方式，但是绝对可以考验你的技术深度，这次去北京，确实感受到了那种极客精神，不管题目难或易，都有可圈可点之处，我将他们看作一道道关卡，将自己掌握的知识不断融合，去开辟新的思路，我很享受这个过程，其中，主要做了两道比较深刻的题目，在这里拿出来与大家分享，由于当时场地不允许连接外网，不能查阅资料，更获取不到服务器上的题目源代码，我只能回忆题目中的逻辑，通过PHP将它实现，略有改动。</p>
+
+<p>我自己还原的源代码可以在这里看到：<code class="highlighter-rouge">https://github.com/Rvn0xsy/ctf_get_phone</code></p>
+
+<h2 id="0x01-题目">0x01 题目</h2>
+
+<p>大概意思是拿到管理员的手机号码，这个手机号码是flag。</p>
+
+<blockquote>
+  <p>你能获得女神的手机号吗？ 就在这里，存在一个高危漏洞，并且使用工具是无法达到目的的，追女神还是要用真心呀！！</p>
+</blockquote>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-11-13/0x01.png" alt="login.php" /></p>
+
+<h2 id="0x02-细节分析">0x02 细节分析</h2>
+
+<p>我首先使用自己手中的字典进行了一轮爆破，爆破的同时去注册了两个账号。</p>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-11-13/0x03.png" alt="register.php" /></p>
+
+<p>注册需要提供：</p>
+
+<table>
+  <tbody>
+    <tr>
+      <td>username</td>
+      <td>password</td>
+      <td>phone</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>这时，爆破未果，既然是一个高危漏洞，概率不会依附在“弱口令”上 （安慰一下自己）。</p>
+
+<p>注册的两个账号，第一个是用于正常查看，第二个放入一些让SQL语句报错的关键字，例如：“ ‘ 、* 、) ”</p>
+
+<p>但是第一个注册成功了，第二个提示phone必须是数字，这个提示信息是由客户端脚本提示的</p>
+
+<p>于是我猜想会不会服务器端没有验证呢？</p>
+
+<p>使用Burp提交后还是失败 :(</p>
+
+<p>先不管这个，第一步就要把所有的信息搜集完毕再说。</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="nx">$</span><span class="p">(</span><span class="s2">"#register"</span><span class="p">).</span><span class="nx">bind</span><span class="p">(</span><span class="s1">'click'</span><span class="p">,</span><span class="kd">function</span><span class="p">(){</span>
+        <span class="kd">var</span> <span class="nx">usernameObj</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="s2">"#username"</span><span class="p">);</span>
+        <span class="kd">var</span> <span class="nx">passwordObj</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="s2">"#password"</span><span class="p">);</span>
+        <span class="kd">var</span> <span class="nx">phoneObj</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="s2">"#phone"</span><span class="p">);</span>
+        <span class="kd">var</span> <span class="nx">usernameVal</span> <span class="o">=</span> <span class="nx">usernameObj</span><span class="p">.</span><span class="nx">val</span><span class="p">();</span>
+        <span class="kd">var</span> <span class="nx">passwordVal</span> <span class="o">=</span> <span class="nx">passwordObj</span><span class="p">.</span><span class="nx">val</span><span class="p">();</span>
+        <span class="kd">var</span> <span class="nx">phoneVal</span> <span class="o">=</span> <span class="nx">phoneObj</span><span class="p">.</span><span class="nx">val</span><span class="p">();</span>
+        <span class="k">if</span><span class="p">(</span><span class="nx">usernameVal</span> <span class="o">==</span> <span class="s2">""</span> <span class="o">&amp;&amp;</span> <span class="nx">usernameVal</span><span class="p">.</span><span class="nx">length</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">){</span>
+            <span class="nx">alert</span><span class="p">(</span><span class="s2">"Username is empty or short!"</span><span class="p">);</span>
+            <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">if</span><span class="p">(</span><span class="nx">passwordVal</span> <span class="o">==</span> <span class="s2">""</span> <span class="o">&amp;&amp;</span> <span class="nx">passwordVal</span><span class="p">.</span><span class="nx">length</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">){</span>
+            <span class="nx">alert</span><span class="p">(</span><span class="s2">"Password is empty or short!"</span><span class="p">);</span>
+            <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">if</span><span class="p">(</span><span class="nx">phoneVal</span> <span class="o">==</span> <span class="s2">""</span> <span class="o">&amp;&amp;</span> <span class="nx">phoneVal</span><span class="p">.</span><span class="nx">length</span> <span class="o">&lt;</span> <span class="mi">11</span><span class="p">){</span>
+            <span class="nx">alert</span><span class="p">(</span><span class="s2">"Phone is empty or short!"</span><span class="p">);</span>
+            <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="nx">$</span><span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="s2">"/ctf/api.php?method=register"</span><span class="p">,{</span>
+            <span class="s2">"username"</span><span class="p">:</span><span class="nx">usernameVal</span><span class="p">,</span><span class="s2">"password"</span><span class="p">:</span><span class="nx">passwordVal</span><span class="p">,</span><span class="s2">"phone"</span><span class="p">:</span><span class="nx">phoneVal</span>
+        <span class="p">},</span><span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">,</span><span class="nx">status</span><span class="p">){</span>
+            <span class="kd">var</span> <span class="nx">obj</span> <span class="o">=</span> <span class="nx">jQuery</span><span class="p">.</span><span class="nx">parseJSON</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">obj</span><span class="p">.</span><span class="nx">status</span><span class="p">);</span>
+            <span class="k">if</span><span class="p">(</span><span class="nx">obj</span><span class="p">.</span><span class="nx">status</span><span class="p">){</span>
+                <span class="nx">alert</span><span class="p">(</span><span class="nx">obj</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+                <span class="nb">window</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">href</span><span class="o">=</span><span class="s1">'/ctf/index.php'</span><span class="p">;</span>
+                <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+            <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+                <span class="nx">alert</span><span class="p">(</span><span class="s2">"Error :"</span> <span class="o">+</span> <span class="nx">obj</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+                <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">})</span>
+    <span class="p">});</span>
+</code></pre></div></div>
+
+<p>上面是绑定的点击事件，提交到<code class="highlighter-rouge">/ctf/api.php?method=register</code></p>
+
+<p>登录页面也有类似的<code class="highlighter-rouge">AJAX</code>请求事件：</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&lt;</span><span class="nx">script</span><span class="o">&gt;</span>
+    <span class="nx">$</span><span class="p">(</span><span class="s2">"#login"</span><span class="p">).</span><span class="nx">bind</span><span class="p">(</span><span class="s1">'click'</span><span class="p">,</span><span class="kd">function</span><span class="p">(){</span>
+        <span class="kd">var</span> <span class="nx">usernameObj</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="s2">"#username"</span><span class="p">);</span>
+        <span class="kd">var</span> <span class="nx">passwordObj</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="s2">"#password"</span><span class="p">);</span>
+        <span class="kd">var</span> <span class="nx">usernameVal</span> <span class="o">=</span> <span class="nx">usernameObj</span><span class="p">.</span><span class="nx">val</span><span class="p">();</span>
+        <span class="kd">var</span> <span class="nx">passwordVal</span> <span class="o">=</span> <span class="nx">passwordObj</span><span class="p">.</span><span class="nx">val</span><span class="p">();</span>
+        <span class="k">if</span><span class="p">(</span><span class="nx">usernameVal</span> <span class="o">==</span> <span class="s2">""</span> <span class="o">&amp;&amp;</span> <span class="nx">usernameVal</span><span class="p">.</span><span class="nx">length</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">){</span>
+            <span class="nx">alert</span><span class="p">(</span><span class="s2">"Username is empty or short!"</span><span class="p">);</span>
+            <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">if</span><span class="p">(</span><span class="nx">passwordVal</span> <span class="o">==</span> <span class="s2">""</span> <span class="o">&amp;&amp;</span> <span class="nx">passwordVal</span><span class="p">.</span><span class="nx">length</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">){</span>
+            <span class="nx">alert</span><span class="p">(</span><span class="s2">"Password is empty or short!"</span><span class="p">);</span>
+            <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="nx">$</span><span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="s2">"/ctf/api.php?method=login"</span><span class="p">,{</span>
+            <span class="s2">"username"</span><span class="p">:</span><span class="nx">usernameVal</span><span class="p">,</span><span class="s2">"password"</span><span class="p">:</span><span class="nx">passwordVal</span>
+        <span class="p">},</span><span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">,</span><span class="nx">status</span><span class="p">){</span>
+            <span class="kd">var</span> <span class="nx">obj</span> <span class="o">=</span> <span class="nx">jQuery</span><span class="p">.</span><span class="nx">parseJSON</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">obj</span><span class="p">.</span><span class="nx">status</span><span class="p">);</span>
+            <span class="k">if</span><span class="p">(</span><span class="nx">obj</span><span class="p">.</span><span class="nx">status</span><span class="p">){</span>
+                <span class="nx">alert</span><span class="p">(</span><span class="nx">obj</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+                <span class="nb">window</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">href</span><span class="o">=</span><span class="s1">'/ctf/index.php'</span><span class="p">;</span>
+                <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+            <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+                <span class="nx">alert</span><span class="p">(</span><span class="s2">"Error :"</span> <span class="o">+</span> <span class="nx">obj</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+                <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">})</span>
+    <span class="p">});</span>
+
+</code></pre></div></div>
+
+<p>登录后的主页：</p>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-11-13/0x04.png" alt="index.php" /></p>
+
+<p>然后我想到了越权，换个浏览器直接访问<code class="highlighter-rouge">index.php</code>，可还是跳转(服务端重定向)到<code class="highlighter-rouge">login.php</code>。</p>
+
+<p>页面上有一个Check按钮，其点击后会跳转到<code class="highlighter-rouge">check.php</code>：</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="nx">$</span><span class="p">(</span><span class="s2">"#logout"</span><span class="p">).</span><span class="nx">bind</span><span class="p">(</span><span class="s1">'click'</span><span class="p">,</span><span class="kd">function</span><span class="p">(){</span>
+        <span class="nb">window</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">href</span><span class="o">=</span><span class="s2">"/ctf/logout.php"</span><span class="p">;</span>
+    <span class="p">});</span>
+    <span class="nx">$</span><span class="p">(</span><span class="s2">"#check"</span><span class="p">).</span><span class="nx">bind</span><span class="p">(</span><span class="s1">'click'</span><span class="p">,</span><span class="kd">function</span><span class="p">(){</span>
+        <span class="nb">window</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">href</span><span class="o">=</span><span class="s2">"/ctf/check.php"</span><span class="p">;</span>
+    <span class="p">});</span>
+</code></pre></div></div>
+
+<p>访问<code class="highlighter-rouge">check.php</code>后：
+<img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-11-13/0x05.png" alt="check.php" /></p>
+
+<p>这个页面的意思是统计数据库中有几个人和我使用的手机号是一样的。</p>
+
+<p>根据场景还原一下SQL语句：<code class="highlighter-rouge">SELECT COUNT(*) FROM user WHERE phone = '123456'</code></p>
+
+<p>其他地方就再也没有翻到什么有价值的信息，获取不到<code class="highlighter-rouge">admin</code>用户的密码，当然也看不到<code class="highlighter-rouge">phone</code></p>
+
+<p>这时我只能思考这个<code class="highlighter-rouge">check.php</code>中，到底有什么漏洞，隐约感觉这里存在一个SQL注入，于是想办法验证，可是注册的时候后端完全判断了<code class="highlighter-rouge">phone</code>到底是不是数字。</p>
+
+<p>忽然想起，它没有限制数字多长，大概40多位长都可以，那么存储<code class="highlighter-rouge">phone</code>这个字段的数据类型一定不是<code class="highlighter-rouge">int</code>或者<code class="highlighter-rouge">char</code>，而是<code class="highlighter-rouge">varchar</code>。</p>
+
+<p>我尝试了十六进制提交，结果还真的可以注册，它肯定使用的是<a href="http://php.net/manual/zh/function.is-numeric.php">is_numberic()</a>函数。</p>
+
+<table>
+  <tbody>
+    <tr>
+      <td>username</td>
+      <td>test12345678</td>
+    </tr>
+    <tr>
+      <td>password</td>
+      <td>test12345678</td>
+    </tr>
+    <tr>
+      <td>phone</td>
+      <td>0x3132333435362720616e64202773273d2773</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><code class="highlighter-rouge">0x3132333435362720616e64202773273d2773</code> 对应 <code class="highlighter-rouge">123456' and 's'='s</code></p>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-11-13/0x06.png" alt="check.php" /></p>
+
+<p>提交后，进入check页面:</p>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-11-13/0x07.png" alt="check.php" /></p>
+
+<p>返回 0 。</p>
+
+<p>我们继续注册，使用一个报错<code class="highlighter-rouge">payload</code>，看页面是否支持报错注入：</p>
+
+<p><code class="highlighter-rouge">123456' " *SELECT-x</code> =&gt; <code class="highlighter-rouge">0x313233343536272022202a53454c4543542d78</code></p>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-11-13/0x08.png" alt="check.php" /></p>
+
+<p>可以看到报错信息了，但是不是我们期望的mysql-&gt;error。</p>
+
+<p>但是不要灰心，已经找到突破点了，通过十六进制转换，我们可以把<code class="highlighter-rouge">phone</code>带入SQL语句。</p>
+
+<p>写一个<code class="highlighter-rouge">UNION</code>试试吧~</p>
+
+<p><code class="highlighter-rouge">123456' UNION SELECT version() FROM dual where 's'='s</code>  =&gt; <code class="highlighter-rouge">0x3132333435362720554e494f4e2053454c4543542076657273696f6e28292046524f4d206475616c207768657265202773273d2773</code></p>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-11-13/0x09.png" alt="check.php" /></p>
+
+<p>OK，数据版本出来了，继续注入表以及数据库名。 但是当时我没有去选择这个办法，而是通过搜集的表单信息来当做字段名，这样节省时间，碰运气。</p>
+
+<p><code class="highlighter-rouge">123456' UNION SELECT phone FROM user where 'admin'='admin</code> =&gt; <code class="highlighter-rouge">0x3132333435362720554e494f4e2053454c4543542070686f6e652046524f4d2075736572207768657265202761646d696e273d2761646d696e</code></p>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-11-13/0x10.png" alt="check.php" /></p>
+
+<h2 id="0x03-过程分析">0x03 过程分析</h2>
+
+<p>这种逻辑型的二次SQL注入，的确是扫描器、工具难以发现，如果再加个验证码，难度会更高一些。</p>
+
+<p>寻找突破点还是要积累更多的经验</p>
+
+<h2 id="0x04-过程演示">0x04 过程演示</h2>
+
+<p>
+<video src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-11-13/CTF.mp4" controls="controls" width="500px">
+哎呀~ 换个浏览器试试吧！
+</video>
+</p>
+
+
+  </div>
+
+</article>
+
+</section>
+<nav class="navbar navbar-default navbar-fixed-bottom">
+  <div class="container footer-content">
+    Copyright @ 2018 by 倾旋<br>
+    Powered By Jekyll
+  </div>
+</nav>
+
+  </body>
+
+</html>

@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta content="倾旋的博客" property="og:site_name">
+
+  <meta content="C++调用CURL进行信息搜集" property="og:title">
+
+
+  <meta content="article" property="og:type">
+
+
+  <meta content="本文简述一下使用C++的libcurl库开发Web信息搜集工具的开发过程。" property="og:description">
+
+
+  <meta content="http://localhost:4000/archivers/2017-10-24/1" property="og:url">
+
+
+  <meta content="2017-10-24T00:00:00+08:00" property="article:published_time">
+  <meta content="http://localhost:4000/about/" property="article:author">
+
+
+  <meta property="og:image" content="">
+
+
+  
+  <meta content="C++/C" property="article:section">
+  
+
+
+  
+
+  <title>C++调用CURL进行信息搜集</title>
+  <meta name="description" content="本文简述一下使用C++的libcurl库开发Web信息搜集工具的开发过程。 - 1024 快乐！！">
+<script src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+  
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/ptsans.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/firamono.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/lato.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/sourcecodepro.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/gentiumbasic.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/alegreya.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/lora.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/firasans400.css' rel='stylesheet' type='text/css'>
+  <script src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/jquery.min2.2.0.js"></script>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/opensans.css' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-hQpvDQiCJaD2H465dQfA717v7lu5qHWtDbWNPvaTJ0ID5xnPUlVXnKzq7b8YUkbN" crossorigin="anonymous">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="http://localhost:4000/archivers/2017-10-24/1">
+  <link rel="alternate" type="application/rss+xml" title="倾旋的博客" href="http://localhost:4000/feed.xml">
+</head>
+
+
+  <body>
+
+<section>
+<nav class="navbar navbar-default navbar-fixed-top">
+
+  <div class="container">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/">倾旋的博客</a>
+    </div>
+
+
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        
+        
+        <li><a href="/about/">关于我</a></li>
+
+        
+
+        
+        
+        <li><a href="/category/">Category</a></li>
+
+        
+
+        
+        
+        <li><a href="/contact/">Contact</a></li>
+
+        
+
+        
+        
+
+        
+        
+
+        
+        
+
+        
+        
+        <li><a href="/other/">其他信息</a></li>
+
+        
+
+        
+        
+        <li><a href="/tools/socat">socat 使用手册</a></li>
+
+        
+
+        
+
+
+      </ul>
+
+    <!--  <ul class="nav navbar-nav navbar-right">
+        <li><a href="#">Know More!</a></li>
+
+      </ul>-->
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+</section>
+
+<section>
+<article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <div class="jumbotron">
+    <div class="container">
+      <h1 class="post-title-main" itemprop="name headline">C++调用CURL进行信息搜集</h1>
+      <p class="post-meta"><time datetime="2017-10-24T00:00:00+08:00" itemprop="datePublished">Oct 24, 2017</time></p>
+      
+    </div>
+
+</div>
+
+
+  <div class="post-content container" itemprop="articleBody">
+    <p>本文简述一下使用C++的libcurl库开发Web信息搜集工具的开发过程。 - 1024 快乐！！
+<!--more--></p>
+<h2 id="0x00-libcurl的安装">0x00 libcurl的安装</h2>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>sudo apt-get install libcurl # debian
+sudo brew install libcurl # mac
+</code></pre></div></div>
+
+<p>一般安装了curl这个工具的话都应该自带了。</p>
+
+<h2 id="0x01-编译命令">0x01 编译命令</h2>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>g++ main.cpp curl_controller.cpp  -o curl -lcurl -O3
+</code></pre></div></div>
+
+<h2 id="0x02-源代码---暂未支持多线程明天做">0x02 源代码 - 暂未支持多线程，明天做</h2>
+
+<p>目录结构：</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>liyingzhes-MacBook-Pro:c_http liyingzhe<span class="nv">$ </span>tree <span class="nt">-L</span> 1
+<span class="nb">.</span>
+├── CMakeLists.txt
+├── cmake-build-debug
+├── curl
+├── curl_controller.cpp
+├── curl_controller.h
+└── main.cpp
+</code></pre></div></div>
+
+<p>编译的时候只需要 curl_controller.cpp 、 curl_controller.h 、main.cpp</p>
+
+<blockquote>
+  <p>main.cpp</p>
+</blockquote>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include &lt;iostream&gt;
+#include &lt;curl/curl.h&gt;
+#include &lt;string&gt;
+#include &lt;regex&gt;
+#include "curl_controller.h"
+#include &lt;vector&gt;
+#define NUM 5 // 请求次数
+</span><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">struct</span> <span class="n">REGEX</span> <span class="n">REG</span><span class="p">;</span> <span class="c1">// 正则结构体</span>
+    <span class="cm">/**
+     * 单次请求可以直接赋值
+     */</span>
+    <span class="n">HTTP_REQUEST_OPTIONS</span> <span class="n">global_options</span><span class="p">;</span>
+    <span class="n">global_options</span><span class="p">.</span><span class="n">URL</span> <span class="o">=</span> <span class="s">"http://127.0.0.1"</span><span class="p">;</span>
+    <span class="n">global_options</span><span class="p">.</span><span class="n">USER_AGENT</span> <span class="o">=</span> <span class="s">"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36"</span><span class="p">;</span>
+    <span class="n">global_options</span><span class="p">.</span><span class="n">TIME_OUT</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>
+
+    <span class="n">std</span><span class="o">::</span><span class="n">vector</span> <span class="o">&lt;</span><span class="n">CURL</span> <span class="o">*&gt;</span><span class="n">curlist</span><span class="p">;</span> <span class="c1">// 发送请求队列</span>
+    <span class="n">CURL_CONTROLLER</span> <span class="o">*</span> <span class="n">Controller</span> <span class="o">=</span> <span class="k">new</span> <span class="n">CURL_CONTROLLER</span><span class="p">;</span>
+    <span class="cm">/**
+     * 设置正则
+     */</span>
+    <span class="n">REG</span><span class="p">.</span><span class="n">Title</span> <span class="o">=</span> <span class="s">"&lt;title&gt;([^&lt;]+)&lt;/title&gt;"</span><span class="p">;</span>
+    <span class="n">REG</span><span class="p">.</span><span class="n">Server</span> <span class="o">=</span> <span class="s">"Server:</span><span class="se">\\\\</span><span class="s">s(.*?)</span><span class="se">\\\\</span><span class="s">r"</span><span class="p">;</span>
+    <span class="cm">/**
+     * 动态分配内存
+     * 用于存储响应信息
+     */</span>
+    <span class="k">struct</span> <span class="n">ResponseInfo</span> <span class="o">*</span> <span class="n">Response</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ResponseInfo</span><span class="p">[</span><span class="n">NUM</span><span class="p">];</span>
+    <span class="cm">/**
+     * 动态分配内存
+     * 给每个请求都设置参数
+     */</span>
+    <span class="k">struct</span> <span class="n">HTTP_REQUEST_OPTIONS</span> <span class="o">*</span> <span class="n">OPTIONS</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HTTP_REQUEST_OPTIONS</span><span class="p">[</span><span class="n">NUM</span><span class="p">];</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span> <span class="o">=</span><span class="mi">0</span> <span class="p">;</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="mi">5</span> <span class="p">;</span><span class="n">x</span><span class="o">++</span><span class="p">){</span>
+        <span class="n">OPTIONS</span><span class="p">[</span><span class="n">x</span><span class="p">].</span><span class="n">URL</span> <span class="o">=</span> <span class="n">global_options</span><span class="p">.</span><span class="n">URL</span><span class="p">;</span>
+        <span class="n">OPTIONS</span><span class="p">[</span><span class="n">x</span><span class="p">].</span><span class="n">USER_AGENT</span> <span class="o">=</span> <span class="n">global_options</span><span class="p">.</span><span class="n">USER_AGENT</span><span class="p">;</span>
+        <span class="n">OPTIONS</span><span class="p">[</span><span class="n">x</span><span class="p">].</span><span class="n">TIME_OUT</span> <span class="o">=</span> <span class="n">global_options</span><span class="p">.</span><span class="n">TIME_OUT</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="cm">/**
+     * 将指针放入数组，以便于多线程
+     */</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span> <span class="o">=</span><span class="mi">0</span> <span class="p">;</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="n">NUM</span> <span class="p">;</span><span class="n">x</span><span class="o">++</span><span class="p">){</span>
+        <span class="n">curlist</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">Controller</span><span class="o">-&gt;</span><span class="n">setOpt</span><span class="p">(</span><span class="o">&amp;</span><span class="n">OPTIONS</span><span class="p">[</span><span class="n">x</span><span class="p">],</span><span class="o">&amp;</span><span class="n">Response</span><span class="p">[</span><span class="n">x</span><span class="p">]));</span>
+    <span class="p">}</span>
+    <span class="cm">/**
+     * 普通for请求
+     */</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="n">NUM</span><span class="p">;</span> <span class="n">x</span><span class="o">++</span> <span class="p">){</span>
+        <span class="n">Controller</span><span class="o">-&gt;</span><span class="n">RunCurl</span><span class="p">(</span><span class="n">curlist</span><span class="p">[</span><span class="n">x</span><span class="p">],</span><span class="o">&amp;</span><span class="n">Response</span><span class="p">[</span><span class="n">x</span><span class="p">]);</span>
+    <span class="p">}</span>
+    <span class="cm">/**
+     * 取得响应信息
+     */</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span> <span class="o">=</span><span class="mi">0</span> <span class="p">;</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="n">NUM</span> <span class="p">;</span><span class="n">x</span><span class="o">++</span><span class="p">){</span>
+        <span class="n">Controller</span><span class="o">-&gt;</span><span class="n">getResponse</span><span class="p">(</span><span class="o">&amp;</span><span class="n">Response</span><span class="p">[</span><span class="n">x</span><span class="p">],</span><span class="o">&amp;</span><span class="n">REG</span><span class="p">);</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"Code  :"</span> <span class="o">&lt;&lt;</span> <span class="n">Response</span><span class="p">[</span><span class="n">x</span><span class="p">].</span><span class="n">ResponseCode</span>  <span class="o">&lt;&lt;</span> <span class="s">"</span><span class="se">\t</span><span class="s">Title :"</span> <span class="o">&lt;&lt;</span> <span class="n">Response</span><span class="p">[</span><span class="n">x</span><span class="p">].</span><span class="n">ResponseTitle</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"Header :"</span> <span class="o">&lt;&lt;</span> <span class="n">Response</span><span class="p">[</span><span class="n">x</span><span class="p">].</span><span class="n">ResponseHeader</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="cm">/**
+     * 释放内存
+     */</span>
+    <span class="k">delete</span> <span class="p">[]</span> <span class="n">Response</span><span class="p">;</span>
+    <span class="k">delete</span> <span class="p">[]</span> <span class="n">OPTIONS</span><span class="p">;</span>
+    <span class="k">delete</span> <span class="n">Controller</span><span class="p">;</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+</code></pre></div></div>
+
+<blockquote>
+  <p>curl_controller.h</p>
+</blockquote>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">//</span>
+<span class="c1">// Created by liyingzhe on 24/10/17.</span>
+<span class="c1">//</span>
+
+<span class="cp">#ifndef C_HTTP_CURL_CONTROLLER_H
+#define C_HTTP_CURL_CONTROLLER_H
+#include &lt;iostream&gt;
+#include &lt;regex&gt;
+#include &lt;curl/curl.h&gt;
+</span>
+<span class="cm">/**
+ * 正则表达式
+ */</span>
+<span class="k">struct</span> <span class="n">REGEX</span><span class="p">{</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">Title</span><span class="p">;</span> <span class="c1">// 匹配标题的正则</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">Server</span><span class="p">;</span> <span class="c1">// 匹配Server的正则</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">Powered</span><span class="p">;</span> <span class="c1">// 匹配Powered的正则</span>
+<span class="p">};</span>
+<span class="cm">/**
+ * 设置必备参数
+ */</span>
+<span class="k">struct</span> <span class="n">HTTP_REQUEST_OPTIONS</span><span class="p">{</span>
+    <span class="kt">short</span> <span class="n">TIME_OUT</span><span class="p">;</span> <span class="c1">// 连接超时时间</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">URL</span><span class="p">;</span> <span class="c1">// 请求 URL</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">USER_AGENT</span><span class="p">;</span> <span class="c1">// 浏览器标识</span>
+    <span class="c1">// 还可以扩展更多……</span>
+<span class="p">};</span>
+<span class="cm">/**
+ * 响应内容结构体
+ */</span>
+<span class="k">struct</span> <span class="n">ResponseInfo</span><span class="p">{</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">ResponseHeader</span><span class="p">;</span> <span class="c1">//响应头</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">ResponseBody</span><span class="p">;</span> <span class="c1">// 响应主体</span>
+    <span class="kt">short</span> <span class="kt">int</span>   <span class="n">ResponseCode</span><span class="p">;</span> <span class="c1">// 响应码</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">ResponseTitle</span><span class="p">;</span> <span class="c1">// 响应标题</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">ResponseServerInfo</span><span class="p">;</span> <span class="c1">// 响应Server内容</span>
+<span class="p">};</span>
+<span class="k">class</span> <span class="nc">CURL_CONTROLLER</span><span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="cm">/**
+     * 初始化 CURL
+     */</span>
+    <span class="n">CURL_CONTROLLER</span><span class="p">();</span>
+    <span class="cm">/**
+     * 设置请求参数
+     * @param options
+     * @param Response
+     * @return
+     */</span>
+    <span class="n">CURL</span> <span class="o">*</span> <span class="n">setOpt</span><span class="p">(</span><span class="k">struct</span> <span class="n">HTTP_REQUEST_OPTIONS</span> <span class="o">*</span> <span class="n">options</span><span class="p">,</span><span class="n">ResponseInfo</span> <span class="o">*</span> <span class="n">Response</span><span class="p">);</span>
+    <span class="cm">/**
+     * 获取响应内容
+     * @param Response
+     * @param REG
+     * @return
+     */</span>
+    <span class="n">ResponseInfo</span> <span class="o">*</span> <span class="n">getResponse</span><span class="p">(</span><span class="n">ResponseInfo</span> <span class="o">*</span> <span class="n">Response</span><span class="p">,</span><span class="n">REGEX</span> <span class="o">*</span> <span class="n">REG</span><span class="p">);</span>
+    <span class="cm">/**
+     * 执行请求
+     * @param curl
+     * @param Response
+     */</span>
+    <span class="kt">void</span> <span class="n">RunCurl</span><span class="p">(</span><span class="n">CURL</span> <span class="o">*</span> <span class="n">curl</span><span class="p">,</span><span class="n">ResponseInfo</span> <span class="o">*</span> <span class="n">Response</span><span class="p">);</span>
+    <span class="cm">/**
+     * 释放资源
+     */</span>
+    <span class="o">~</span><span class="n">CURL_CONTROLLER</span><span class="p">();</span>
+    <span class="cm">/**
+     * CURL指针
+     */</span>
+    <span class="n">CURL</span> <span class="o">*</span> <span class="n">curl</span><span class="p">;</span>
+<span class="k">private</span><span class="o">:</span>
+    <span class="cm">/**
+     * 回调函数
+     * @param ptr
+     * @param n
+     * @param m
+     * @param data
+     * @return
+     */</span>
+    <span class="k">static</span> <span class="kt">size_t</span> <span class="n">callBackWrite</span><span class="p">(</span><span class="kt">char</span> <span class="o">*</span> <span class="n">ptr</span><span class="p">,</span><span class="kt">size_t</span> <span class="n">n</span><span class="p">,</span><span class="kt">size_t</span> <span class="n">m</span><span class="p">,</span><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">*</span> <span class="n">data</span><span class="p">);</span>
+<span class="p">};</span>
+<span class="cp">#endif //C_HTTP_CURL_CONTROLLER_H
+</span></code></pre></div></div>
+
+<blockquote>
+  <p>curl_controller.cpp</p>
+</blockquote>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">//</span>
+<span class="c1">// Created by liyingzhe on 24/10/17.</span>
+<span class="c1">//</span>
+
+<span class="cp">#include "curl_controller.h"
+</span><span class="cm">/**
+ * 回调函数
+ * @param ptr
+ * @param n
+ * @param m
+ * @param data
+ * @return
+ */</span>
+<span class="kt">size_t</span> <span class="n">CURL_CONTROLLER</span><span class="o">::</span><span class="n">callBackWrite</span><span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="n">ptr</span><span class="p">,</span> <span class="kt">size_t</span> <span class="n">n</span><span class="p">,</span> <span class="kt">size_t</span> <span class="n">m</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">*</span><span class="n">data</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">data</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span> <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="n">data</span><span class="o">-&gt;</span><span class="n">append</span><span class="p">(</span><span class="n">ptr</span><span class="p">,</span><span class="n">n</span><span class="o">*</span><span class="n">m</span><span class="p">);</span>
+    <span class="k">return</span> <span class="n">n</span><span class="o">*</span><span class="n">m</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="cm">/**
+ * 初始化 CURL
+ */</span>
+<span class="n">CURL_CONTROLLER</span><span class="o">::</span><span class="n">CURL_CONTROLLER</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">try</span><span class="p">{</span>
+        <span class="n">curl</span> <span class="o">=</span> <span class="n">curl_easy_init</span><span class="p">();</span>
+    <span class="p">}</span><span class="k">catch</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">exception</span> <span class="o">&amp;</span><span class="n">e</span><span class="p">){</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"CURL_CONTROLLER::CURL_CONTROLLER "</span> <span class="o">&lt;&lt;</span><span class="n">e</span><span class="p">.</span><span class="n">what</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+        <span class="n">exit</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="cm">/**
+ * 设置请求参数
+ * @param options
+ * @param Response
+ * @return
+ */</span>
+<span class="n">CURL</span> <span class="o">*</span> <span class="n">CURL_CONTROLLER</span><span class="o">::</span><span class="n">setOpt</span><span class="p">(</span><span class="k">struct</span> <span class="n">HTTP_REQUEST_OPTIONS</span> <span class="o">*</span> <span class="n">options</span><span class="p">,</span><span class="n">ResponseInfo</span> <span class="o">*</span> <span class="n">Response</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">try</span><span class="p">{</span>
+        <span class="n">curl_easy_setopt</span><span class="p">(</span><span class="n">curl</span><span class="p">,</span><span class="n">CURLOPT_URL</span><span class="p">,</span><span class="n">options</span><span class="o">-&gt;</span><span class="n">URL</span><span class="p">.</span><span class="n">c_str</span><span class="p">());</span>
+        <span class="n">curl_easy_setopt</span><span class="p">(</span><span class="n">curl</span><span class="p">,</span><span class="n">CURLOPT_HEADER</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+        <span class="n">curl_easy_setopt</span><span class="p">(</span><span class="n">curl</span><span class="p">,</span><span class="n">CURLOPT_TIMEOUT</span><span class="p">,</span><span class="n">options</span><span class="o">-&gt;</span><span class="n">TIME_OUT</span><span class="p">);</span>
+        <span class="n">curl_easy_setopt</span><span class="p">(</span><span class="n">curl</span><span class="p">,</span><span class="n">CURLOPT_USERAGENT</span><span class="p">,</span><span class="n">options</span><span class="o">-&gt;</span><span class="n">USER_AGENT</span><span class="p">.</span><span class="n">c_str</span><span class="p">());</span>
+        <span class="n">curl_easy_setopt</span><span class="p">(</span><span class="n">curl</span><span class="p">,</span><span class="n">CURLOPT_WRITEFUNCTION</span><span class="p">,</span><span class="n">callBackWrite</span><span class="p">);</span>
+        <span class="n">curl_easy_setopt</span><span class="p">(</span><span class="n">curl</span><span class="p">,</span><span class="n">CURLOPT_WRITEDATA</span><span class="p">,</span><span class="o">&amp;</span><span class="n">Response</span><span class="o">-&gt;</span><span class="n">ResponseBody</span><span class="p">);</span>
+        <span class="n">curl_easy_setopt</span><span class="p">(</span><span class="n">curl</span><span class="p">,</span><span class="n">CURLOPT_WRITEHEADER</span><span class="p">,</span><span class="o">&amp;</span><span class="n">Response</span><span class="o">-&gt;</span><span class="n">ResponseHeader</span><span class="p">);</span> <span class="c1">//header 头</span>
+        <span class="n">curl_easy_setopt</span><span class="p">(</span><span class="n">curl</span><span class="p">,</span><span class="n">CURLOPT_SSL_VERIFYPEER</span><span class="p">,</span><span class="nb">false</span><span class="p">);</span>
+        <span class="n">curl_easy_setopt</span><span class="p">(</span><span class="n">curl</span><span class="p">,</span><span class="n">CURLOPT_SSL_VERIFYHOST</span><span class="p">,</span><span class="nb">false</span><span class="p">);</span>
+        <span class="n">RunCurl</span><span class="p">(</span><span class="n">curl</span><span class="p">,</span><span class="n">Response</span><span class="p">);</span>
+    <span class="p">}</span><span class="k">catch</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">exception</span> <span class="o">&amp;</span><span class="n">e</span><span class="p">){</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span>  <span class="s">"CURL_CONTROLLER::setOpt "</span><span class="o">&lt;&lt;</span><span class="n">e</span><span class="p">.</span><span class="n">what</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">curl</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="cm">/**
+ * 执行请求
+ * @param curl
+ * @param Response
+ */</span>
+<span class="kt">void</span> <span class="n">CURL_CONTROLLER</span><span class="o">::</span><span class="n">RunCurl</span><span class="p">(</span><span class="n">CURL</span> <span class="o">*</span><span class="n">curl</span><span class="p">,</span> <span class="n">ResponseInfo</span> <span class="o">*</span><span class="n">Response</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">try</span><span class="p">{</span>
+        <span class="n">curl_easy_perform</span><span class="p">(</span><span class="n">curl</span><span class="p">);</span>
+        <span class="n">curl_easy_getinfo</span><span class="p">(</span><span class="n">curl</span><span class="p">,</span><span class="n">CURLINFO_RESPONSE_CODE</span><span class="p">,</span><span class="o">&amp;</span><span class="n">Response</span><span class="o">-&gt;</span><span class="n">ResponseCode</span><span class="p">);</span>
+    <span class="p">}</span><span class="k">catch</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">exception</span> <span class="o">&amp;</span><span class="n">e</span><span class="p">){</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"CURL_CONTROLLER::RunCurl "</span> <span class="o">&lt;&lt;</span><span class="n">e</span><span class="p">.</span><span class="n">what</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="cm">/**
+ * 获取响应内容
+ * @param Response
+ * @param REG
+ * @return
+ */</span>
+<span class="n">ResponseInfo</span> <span class="o">*</span> <span class="n">CURL_CONTROLLER</span><span class="o">::</span><span class="n">getResponse</span><span class="p">(</span><span class="n">ResponseInfo</span> <span class="o">*</span> <span class="n">Response</span><span class="p">,</span><span class="n">REGEX</span> <span class="o">*</span> <span class="n">REG</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">smatch</span> <span class="n">match_title</span><span class="p">;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">regex</span> <span class="n">title</span><span class="p">(</span><span class="n">REG</span><span class="o">-&gt;</span><span class="n">Title</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">regex_search</span><span class="p">(</span><span class="n">Response</span><span class="o">-&gt;</span><span class="n">ResponseBody</span><span class="p">,</span> <span class="n">match_title</span><span class="p">,</span> <span class="n">title</span><span class="p">))</span> <span class="p">{</span>
+        <span class="n">Response</span><span class="o">-&gt;</span><span class="n">ResponseTitle</span><span class="o">=</span><span class="n">match_title</span><span class="p">[</span><span class="mi">1</span><span class="p">].</span><span class="n">str</span><span class="p">();</span>
+    <span class="p">}</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">smatch</span> <span class="n">match_server</span><span class="p">;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">regex</span> <span class="n">server</span><span class="p">(</span><span class="n">REG</span><span class="o">-&gt;</span><span class="n">Server</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">regex_search</span><span class="p">(</span><span class="n">Response</span><span class="o">-&gt;</span><span class="n">ResponseHeader</span><span class="p">,</span> <span class="n">match_server</span><span class="p">,</span> <span class="n">server</span><span class="p">))</span> <span class="p">{</span>
+        <span class="n">Response</span><span class="o">-&gt;</span><span class="n">ResponseServerInfo</span><span class="o">=</span><span class="n">match_title</span><span class="p">[</span><span class="mi">1</span><span class="p">].</span><span class="n">str</span><span class="p">();</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">Response</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="cm">/**
+ * 释放资源
+ */</span>
+<span class="n">CURL_CONTROLLER</span><span class="o">::~</span><span class="n">CURL_CONTROLLER</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">curl_easy_cleanup</span><span class="p">(</span><span class="n">curl</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<blockquote>
+  <p>明天继续写吧~ 先去下厨了！</p>
+</blockquote>
+
+  </div>
+
+</article>
+
+</section>
+<nav class="navbar navbar-default navbar-fixed-bottom">
+  <div class="container footer-content">
+    Copyright @ 2018 by 倾旋<br>
+    Powered By Jekyll
+  </div>
+</nav>
+
+  </body>
+
+</html>

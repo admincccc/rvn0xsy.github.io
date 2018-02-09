@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta content="倾旋的博客" property="og:site_name">
+
+  <meta content="DNS信息搜集工具小结" property="og:title">
+
+
+  <meta content="article" property="og:type">
+
+
+  <meta content="本文介绍几个DNS信息搜集工具的使用方法" property="og:description">
+
+
+  <meta content="http://localhost:4000/archivers/2017-11-09/1" property="og:url">
+
+
+  <meta content="2017-11-09T00:00:00+08:00" property="article:published_time">
+  <meta content="http://localhost:4000/about/" property="article:author">
+
+
+  <meta property="og:image" content="">
+
+
+  
+  <meta content="渗透测试" property="article:section">
+  
+
+
+  
+
+  <title>DNS信息搜集工具小结</title>
+  <meta name="description" content="本文介绍几个DNS信息搜集工具的使用方法">
+<script src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+  
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/ptsans.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/firamono.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/lato.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/sourcecodepro.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/gentiumbasic.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/alegreya.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/lora.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/firasans400.css' rel='stylesheet' type='text/css'>
+  <script src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/jquery.min2.2.0.js"></script>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/opensans.css' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-hQpvDQiCJaD2H465dQfA717v7lu5qHWtDbWNPvaTJ0ID5xnPUlVXnKzq7b8YUkbN" crossorigin="anonymous">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="http://localhost:4000/archivers/2017-11-09/1">
+  <link rel="alternate" type="application/rss+xml" title="倾旋的博客" href="http://localhost:4000/feed.xml">
+</head>
+
+
+  <body>
+
+<section>
+<nav class="navbar navbar-default navbar-fixed-top">
+
+  <div class="container">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/">倾旋的博客</a>
+    </div>
+
+
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        
+        
+        <li><a href="/about/">关于我</a></li>
+
+        
+
+        
+        
+        <li><a href="/category/">Category</a></li>
+
+        
+
+        
+        
+        <li><a href="/contact/">Contact</a></li>
+
+        
+
+        
+        
+
+        
+        
+
+        
+        
+
+        
+        
+        <li><a href="/other/">其他信息</a></li>
+
+        
+
+        
+        
+        <li><a href="/tools/socat">socat 使用手册</a></li>
+
+        
+
+        
+
+
+      </ul>
+
+    <!--  <ul class="nav navbar-nav navbar-right">
+        <li><a href="#">Know More!</a></li>
+
+      </ul>-->
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+</section>
+
+<section>
+<article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <div class="jumbotron">
+    <div class="container">
+      <h1 class="post-title-main" itemprop="name headline">DNS信息搜集工具小结</h1>
+      <p class="post-meta"><time datetime="2017-11-09T00:00:00+08:00" itemprop="datePublished">Nov 9, 2017</time></p>
+      
+    </div>
+
+</div>
+
+
+  <div class="post-content container" itemprop="articleBody">
+    <p>本文介绍几个DNS信息搜集工具的使用方法
+<!--more--></p>
+<h2 id="0x00-dnsrecon">0x00 dnsrecon</h2>
+
+<p>获取目标域名的 SOA, NS, A, MX , MX , SPF等信息</p>
+
+<p>由该工具的搜集结果我们大致可能知道目标采用了什么邮件服务器、被哪家服务商托管的、A记录对应的服务器地址是多少……</p>
+
+<h3 id="命令">命令</h3>
+<p><code class="highlighter-rouge">dnsrecon -t std -d zhenrongbao.com</code></p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>-d, --domain      &lt;domain&gt;   Target domain.
+-t, --type        &lt;types&gt;    Type of enumeration to perform:
+                                std       SOA, NS, A, AAAA, MX and SRV if AXRF on the NS servers fail.// 基本的查询
+                                rvl       Reverse lookup of a given CIDR or IP range.
+                                brt       Brute force domains and hosts using a given dictionary. // 暴力枚举
+                                srv       SRV records.
+                                axfr      Test all NS servers for a zone transfer. // 域传送漏洞
+                                goo       Perform Google search for subdomains and hosts.
+                                snoop     Perform cache snooping against all NS servers for a given domain, testing
+                                          all with file containing the domains, file given with -D option.
+                                tld       Remove the TLD of given domain and test against all TLDs registered in IANA.
+                                zonewalk  Perform a DNSSEC zone walk using NSEC records.
+
+</code></pre></div></div>
+
+<h3 id="例子">例子</h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@Kali:~/dict/dns# dnsrecon <span class="nt">-t</span> std <span class="nt">-d</span> zhenrongbao.com
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> Performing General Enumeration of Domain:
+<span class="o">[</span>-] DNSSEC is not configured <span class="k">for </span>zhenrongbao.com
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> 	 SOA vip1.alidns.com 47.88.44.151
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> 	 SOA vip1.alidns.com 140.205.29.113
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> 	 SOA vip1.alidns.com 140.205.228.51
+         <span class="k">*******</span> &lt;省略&gt; <span class="k">*******</span>
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> 	 A zhenrongbao.com 180.97.161.183
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> 	 TXT zhenrongbao.com <span class="nv">v</span><span class="o">=</span>spf1 include:spf.mail.qq.com ~all
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> Enumerating SRV Records
+<span class="o">[</span>-] No SRV Records Found <span class="k">for </span>zhenrongbao.com
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> 0 Records Found
+</code></pre></div></div>
+
+<p>由以上情况我们可以知道目标是被阿里云托管、使用了腾讯邮箱、同时还包括一个A记录，解析到了 180.97.164.183</p>
+
+<h3 id="验证域传送漏洞">验证域传送漏洞</h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@Kali:~/dict/dns# dnsrecon <span class="nt">-t</span> std <span class="nt">-d</span> zhenrongbao.com <span class="nt">-a</span>
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> Performing General Enumeration of Domain:
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> Checking <span class="k">for </span>Zone Transfer <span class="k">for </span>zhenrongbao.com name servers
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> Resolving SOA Record
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> 	 SOA vip1.alidns.com 116.211.173.151
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> 	 SOA vip1.alidns.com 14.1.112.13
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> 	 SOA vip1.alidns.com 14.1.112.11
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> Resolving NS Records
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> NS Servers found:
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> 	NS vip2.alidns.com 14.1.112.14
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> 	NS vip2.alidns.com 140.205.228.52
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> 	NS vip2.alidns.com 140.205.228.54
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> 	NS vip2.alidns.com 140.205.29.114
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> 	NS vip2.alidns.com 47.88.44.152
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> 	NS vip2.alidns.com 106.11.30.114
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> 	NS vip2.alidns.com 106.11.41.152
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> 	NS vip2.alidns.com 116.211.173.152
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> 	NS vip2.alidns.com 116.211.173.154
+       <span class="k">*****</span> &lt;省略&gt; <span class="k">*****</span>
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> Trying NS server 116.211.173.154
+<span class="o">[</span>-] Zone Transfer Failed <span class="k">for </span>116.211.173.154!
+<span class="o">[</span>-] Port 53 TCP is being filtered
+<span class="o">[</span><span class="k">*</span><span class="o">]</span>  
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> Trying NS server 140.205.228.53
+<span class="o">[</span>-] Zone Transfer Failed <span class="k">for </span>140.205.228.53!
+<span class="o">[</span>-] Port 53 TCP is being filtered
+<span class="o">[</span><span class="k">*</span><span class="o">]</span>  
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> Trying NS server 140.205.228.54
+<span class="o">[</span>-] Zone Transfer Failed <span class="k">for </span>140.205.228.54!
+<span class="o">[</span>-] Port 53 TCP is being filtered
+<span class="o">[</span><span class="k">*</span><span class="o">]</span>  
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> Trying NS server 106.11.41.151
+<span class="o">[</span>-] Zone Transfer Failed <span class="k">for </span>106.11.41.151!
+<span class="o">[</span>-] Port 53 TCP is being filtered
+<span class="o">[</span><span class="k">*</span><span class="o">]</span>  
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> Trying NS server 106.11.41.152
+<span class="o">[</span>-] Zone Transfer Failed <span class="k">for </span>106.11.41.152!
+<span class="o">[</span>-] Port 53 TCP is being filtered
+<span class="o">[</span><span class="k">*</span><span class="o">]</span>  
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> Trying NS server 47.88.44.152
+<span class="o">[</span>-] Zone Transfer Failed <span class="k">for </span>47.88.44.152!
+<span class="o">[</span>-] Port 53 TCP is being filtered
+</code></pre></div></div>
+
+<p><code class="highlighter-rouge">dnsrecon -t std -d zhenrongbao.com -t axfr</code> 也可以</p>
+
+<h3 id="dns枚举">DNS枚举</h3>
+
+<p><code class="highlighter-rouge">dnsrecon -d &lt;目标域名&gt; - D &lt;字典绝对路径&gt; -t brt</code></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@Kali:~/dict/dns# dnsrecon <span class="nt">-d</span> zhenrongbao.com <span class="nt">-D</span> /root/dict/dns/subnames.txt <span class="nt">-t</span> brt
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> Performing host and subdomain brute force against zhenrongbao.com
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> 	 A www.zhenrongbao.com 180.97.161.183
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> 	 A cs.zhenrongbao.com 182.92.223.203
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> 	 A a.zhenrongbao.com 101.201.175.160
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> 	 A bbs.zhenrongbao.com 182.92.27.109
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> 	 A static.zhenrongbao.com 101.200.31.82
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> 	 CNAME s7.zhenrongbao.com s7.zhenrongbao.com.mschcdn.com
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> 	 CNAME s7.zhenrongbao.com.mschcdn.com s7.zhenrongbao.com.xgslb.net
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> 	 CNAME s7.zhenrongbao.com.xgslb.net https.xgslb.net
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> 	 A https.xgslb.net 122.228.85.53
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> 	 A https.xgslb.net 122.228.115.15
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> 	 CNAME s6.zhenrongbao.com s6.zhenrongbao.com.w.kunlunpi.com
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> 	 A s6.zhenrongbao.com.w.kunlunpi.com 122.227.164.191
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> 	 A s6.zhenrongbao.com.w.kunlunpi.com 122.225.34.236
+          <span class="k">******</span> &lt;省略&gt; <span class="k">******</span>
+</code></pre></div></div>
+
+<h3 id="结果整理">结果整理</h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>   <span class="nt">--db</span>              &lt;file&gt;     将结果保存到SQLite 3文件
+   <span class="nt">--xml</span>             &lt;file&gt;     将结果保存到XML文件
+   <span class="nt">-c</span>, <span class="nt">--csv</span>         &lt;file&gt;     将结果保存到csv文件
+   <span class="nt">-j</span>, <span class="nt">--json</span>        &lt;file&gt;     将结果保存到JSON文件
+</code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@Kali:~/dict/dns# dnsrecon -d zhenrongbao.com -D /root/dict/dns/subnames.txt -t brt --xml result.xml
+[*] Performing host and subdomain brute force against zhenrongbao.com
+[*] 	 A www.zhenrongbao.com 180.97.161.183
+[*] 	 A cs.zhenrongbao.com 182.92.223.203
+        **** &lt;省略&gt; ****
+[*] 	 A opencdn.jomodns.com 183.136.200.35
+[*] 63 Records Found
+[*] Saving records to XML file: result.xml
+root@Kali:~/dict/dns# 
+</code></pre></div></div>
+
+<p>保存结果：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@Kali:~# tail -n 10 /usr/share/dnsrecon/result.xml 
+    &lt;record address="101.201.169.129" name="activity.zhenrongbao.com" type="A"/&gt;
+    &lt;record name="s8.zhenrongbao.com" target="s8.zhenrongbao.com.bsgslb.cn" type="CNAME"/&gt;
+    &lt;record name="s8.zhenrongbao.com.bsgslb.cn" target="zhenrongbaostatic.oss-cn-beijing.aliyuncs.com" type="CNAME"/&gt;
+    &lt;record address="59.110.190.174" name="zhenrongbaostatic.oss-cn-beijing.aliyuncs.com" type="A"/&gt;
+    &lt;record name="s10.zhenrongbao.com" target="s10.zhenrongbao.com.a.bdydns.com" type="CNAME"/&gt;
+    &lt;record name="s10.zhenrongbao.com.a.bdydns.com" target="opencdn.jomodns.com" type="CNAME"/&gt;
+    &lt;record address="183.136.200.35" name="opencdn.jomodns.com" type="A"/&gt;
+    &lt;scaninfo arguments="./dnsrecon.py -d zhenrongbao.com -D /root/dict/dns/subnames.txt -t brt --xml result.xml" time="2017-11-09 15:05:15.485088"/&gt;
+    &lt;domain domain_name="zhenrongbao.com"/&gt;
+&lt;/records&gt;
+</code></pre></div></div>
+
+<p>其实还可以保存为sqlite文件，这样数据处理会快一些</p>
+
+<h2 id="0x01-dnswalk">0x01 dnswalk</h2>
+
+<p>使用区域传送来获取DNS解析，现在已经不常用</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@Kali:~/dict/dns# dnswalk hao123.com.
+Checking hao123.com.
+Getting zone transfer of hao123.com. from dns.baidu.com...failed
+FAIL: Zone transfer of hao123.com. from dns.baidu.com failed: REFUSED
+Getting zone transfer of hao123.com. from ns3.baidu.com...failed
+FAIL: Zone transfer of hao123.com. from ns3.baidu.com failed: REFUSED
+Getting zone transfer of hao123.com. from ns1.baidu.com...failed
+FAIL: Zone transfer of hao123.com. from ns1.baidu.com failed: REFUSED
+</code></pre></div></div>
+
+<h2 id="0x02-dnsenum">0x02 dnsenum</h2>
+
+<h3 id="暴力枚举子域">暴力枚举子域</h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+root@Kali:~/dict/dns# dnsenum <span class="nt">-f</span> subnames.txt aliyun.com
+dnsenum.pl VERSION:1.2.3
+
+<span class="nt">-----</span>   aliyun.com   <span class="nt">-----</span>
+
+
+Host<span class="s1">'s addresses:
+__________________
+
+aliyun.com.                              46       IN    A        140.205.172.20
+aliyun.com.                              46       IN    A        140.205.32.13
+aliyun.com.                              46       IN    A        140.205.34.12
+aliyun.com.                              46       IN    A        140.205.172.21
+aliyun.com.                              46       IN    A        140.205.32.8
+aliyun.com.                              46       IN    A        140.205.230.3
+
+
+Name Servers:
+______________
+
+ns3.aliyun.com.                          10799    IN    A        106.11.35.29
+ns3.aliyun.com.                          10799    IN    A        106.11.35.30
+ns4.aliyun.com.                          431981   IN    A        42.156.241.248
+ns4.aliyun.com.                          431981   IN    A        140.205.71.248
+ns5.aliyun.com.                          431999   IN    A        140.205.2.187
+ns5.aliyun.com.                          431999   IN    A        198.11.138.248
+
+
+Mail (MX) Servers:
+___________________
+
+mx2.mail.aliyun.com.                     429      IN    A        140.205.94.14
+
+
+Trying Zone Transfers and getting Bind Versions:  # 自动测试域传送漏洞
+_________________________________________________
+
+
+Trying Zone Transfer for aliyun.com on ns3.aliyun.com ... 
+AXFR record query failed: no socket TCP[106.11.35.29] Connection timed out
+
+Trying Zone Transfer for aliyun.com on ns4.aliyun.com ... 
+AXFR record query failed: REFUSED
+
+Brute forcing with subnames.txt:  # 开始枚举
+_________________________________
+
+www.aliyun.com.                          12       IN    CNAME    www-jp-de-intl-adns.aliyun.com.
+www-jp-de-intl-adns.aliyun.com.          12       IN    CNAME             (
+www-jp-de-intl-adns.aliyun.com.gds.alibabadns.com. 83       IN    CNAME             (
+wagbridge.aliyun.com.                    270      IN    CNAME    sh.wagbridge.aliyun.com.
+sh.wagbridge.aliyun.com.                 293      IN    CNAME             (
+sh.wagbridge.aliyun.com.gds.alibabadns.com. 293      IN    A        140.205.32.13
+blog.aliyun.com.                         1800     IN    A        120.55.251.28
+cs.aliyun.com.                           300      IN    CNAME    sh.wagbridge.aliyun.com.
+sh.wagbridge.aliyun.com.                 293      IN    CNAME             (
+sh.wagbridge.aliyun.com.gds.alibabadns.com. 293      IN    A        140.205.32.13
+my.aliyun.com.                           600      IN    CNAME    cname.yunos.com.
+cname.yunos.com.                         571      IN    CNAME    cname.gds.yunos.com.
+cname.gds.yunos.com.                     196      IN    A        140.205.172.1
+search.aliyun.com.                       300      IN    A        100.67.76.19
+cn.aliyun.com.                           58       IN    CNAME    wagbridge.aliyun.com.
+wagbridge.aliyun.com.                    299      IN    CNAME    sh.wagbridge.aliyun.com.
+sh.wagbridge.aliyun.com.                 299      IN    CNAME             (
+sh.wagbridge.aliyun.com.gds.alibabadns.com. 299      IN    A        140.205.172.20
+i.aliyun.com.                            147      IN    CNAME    sh.wagbridge.aliyun.com.
+sh.wagbridge.aliyun.com.                 300      IN    CNAME             (
+sh.wagbridge.aliyun.com.gds.alibabadns.com. 300      IN    A        140.205.172.20
+club.aliyun.com.                         2        IN    CNAME    sh.wagbridge.aliyun.aliyun.com.
+sh.wagbridge.aliyun.aliyun.com.          207      IN    CNAME    aliyun-adns.aliyun.com.
+aliyun-adns.aliyun.com.                  207      IN    CNAME             (
+aliyun-adns.aliyun.com.gds.alibabadns.com. 207      IN    A        140.205.135.3
+app.aliyun.com.                          295      IN    CNAME    app.aliyun.com.danuoyi.alicdn.com.
+app.aliyun.com.danuoyi.alicdn.com.       60       IN    A        122.228.250.235
+app.aliyun.com.danuoyi.alicdn.com.       60       IN    A        122.228.250.95
+app.aliyun.com.danuoyi.alicdn.com.       60       IN    A        122.228.250.92
+app.aliyun.com.danuoyi.alicdn.com.       60       IN    A        122.228.250.234
+app.aliyun.com.danuoyi.alicdn.com.       60       IN    A        122.228.95.81
+
+**** &lt;省略&gt; ****
+</span></code></pre></div></div>
+
+<h3 id="常用参数">常用参数</h3>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  --subfile &lt;file&gt;	将所有有效子域名写入文件
+  -t, --timeout &lt;value&gt;	等待超时时间单位：秒
+  --threads &lt;value&gt;	设置线程
+  -f, --file &lt;file&gt;	读取域名字典
+  -r, --recursion	发现NS记录则递归子域
+  -o --output &lt;file&gt; 输出一个XML文件
+</code></pre></div></div>
+
+<h2 id="0x03-dnstracer">0x03 dnstracer</h2>
+
+<p>向指定域名服务器发送非递归域名请求。</p>
+
+<p>非递归请求的意思是，如果域名服务器知道，那么它会返回请求数据。</p>
+
+<p>如果域名服务器不知道，它会返回授权域的域名服务器或返回根域名服务器的地址。</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>	-c: 不允许使用本地缓存,默认允许 
+	-C: 启用否定缓存，默认禁用
+	-o: 启用收到响应的概述，默认禁用
+	-q &lt;querytype&gt;: 设置请求的DNS查询记录类型, 默认为A记录
+	-r &lt;retries&gt;: 请求重试次数, 默认为 3 次
+	-s &lt;server&gt;: 设置一个DNS服务器，默认为本地
+	-t &lt;maximum timeout&gt;: 超时时间
+	-v: 查看详细信息
+	-S &lt;ip address&gt;: 伪造一个源地址.
+	-4: 使用IPV4
+</code></pre></div></div>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@Kali:~/dict/dns# dnstracer zhenrongbao.com
+Tracing to zhenrongbao.com[a] via 192.168.3.1, maximum of 3 retries
+192.168.3.1 <span class="o">(</span>192.168.3.1<span class="o">)</span> 
+ |<span class="se">\_</span>__ k.gtld-servers.net <span class="o">[</span>com] <span class="o">(</span>192.52.178.30<span class="o">)</span> 
+ |     |<span class="se">\_</span>__ vip2.alidns.com <span class="o">[</span>zhenrongbao.com] <span class="o">(</span>47.88.44.152<span class="o">)</span> Got authoritative answer 
+ |     |<span class="se">\_</span>__ vip2.alidns.com <span class="o">[</span>zhenrongbao.com] <span class="o">(</span>140.205.29.114<span class="o">)</span> Got authoritative answer 
+ |     |<span class="se">\_</span>__ vip2.alidns.com <span class="o">[</span>zhenrongbao.com] <span class="o">(</span>140.205.228.54<span class="o">)</span> Got authoritative answer 
+ |     |<span class="se">\_</span>__ vip2.alidns.com <span class="o">[</span>zhenrongbao.com] <span class="o">(</span>140.205.228.52<span class="o">)</span> Got authoritative answer 
+ |     |<span class="se">\_</span>__ vip2.alidns.com <span class="o">[</span>zhenrongbao.com] <span class="o">(</span>14.1.112.14<span class="o">)</span> Got authoritative answer 
+ |     |<span class="se">\_</span>__ vip2.alidns.com <span class="o">[</span>zhenrongbao.com] <span class="o">(</span>14.1.112.12<span class="o">)</span> Got authoritative answer 
+ |     |<span class="se">\_</span>__ vip2.alidns.com <span class="o">[</span>zhenrongbao.com] <span class="o">(</span>121.29.51.154<span class="o">)</span> Got authoritative answer 
+ |     |<span class="se">\_</span>__ vip2.alidns.com <span class="o">[</span>zhenrongbao.com] <span class="o">(</span>121.29.51.152<span class="o">)</span> Got authoritative answer 
+ |     |<span class="se">\_</span>__ vip2.alidns.com <span class="o">[</span>zhenrongbao.com] <span class="o">(</span>116.211.173.154<span class="o">)</span> Got authoritative answer 
+ |     |<span class="se">\_</span>__ vip2.alidns.com <span class="o">[</span>zhenrongbao.com] <span class="o">(</span>116.211.173.152<span class="o">)</span> Got authoritative answer 
+ |     |<span class="se">\_</span>__ vip2.alidns.com <span class="o">[</span>zhenrongbao.com] <span class="o">(</span>106.11.41.152<span class="o">)</span> Got authoritative answer 
+ <span class="k">****</span> &lt;省略&gt; <span class="k">****</span>
+</code></pre></div></div>
+
+<h2 id="0x04-dnsmap">0x04 dnsmap</h2>
+
+<h3 id="参数详解">参数详解</h3>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>-w &lt;wordlist-file&gt; 字典
+-r &lt;regular-results-file&gt; 保存为纯文本
+-c &lt;csv-results-file&gt; 保存为csv文件
+-d &lt;delay-millisecs&gt;  每次请求间隔多少毫秒
+-i &lt;ips-to-ignore&gt; 排除误报，绕过IPS
+</code></pre></div></div>
+
+<h3 id="例子-1">例子</h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@Kali:~/dict/dns# dnsmap zhenrongbao.com <span class="nt">-w</span> subnames.txt <span class="nt">-r</span> ./zhengrongbaoDNSresult.data
+dnsmap 0.30 - DNS Network Mapper by pagvac <span class="o">(</span>gnucitizen.org<span class="o">)</span>
+
+<span class="o">[</span>+] searching <span class="o">(</span>sub<span class="o">)</span>domains <span class="k">for </span>zhenrongbao.com using subnames.txt
+<span class="o">[</span>+] using maximum random delay of 10 millisecond<span class="o">(</span>s<span class="o">)</span> between requests
+
+www.zhenrongbao.com
+IP address <span class="c">#1: 180.97.161.183</span>
+
+cs.zhenrongbao.com
+IP address <span class="c">#1: 182.92.223.203</span>
+
+a.zhenrongbao.com
+IP address <span class="c">#1: 101.201.175.160</span>
+
+bbs.zhenrongbao.com
+IP address <span class="c">#1: 182.92.27.109</span>
+
+static.zhenrongbao.com
+IP address <span class="c">#1: 101.200.31.82</span>
+<span class="k">****</span> &lt;省略&gt; <span class="k">****</span>
+</code></pre></div></div>
+
+<h2 id="0x04-一些小技巧">0x04 一些小技巧</h2>
+
+<p>后续总结 …</p>
+
+  </div>
+
+</article>
+
+</section>
+<nav class="navbar navbar-default navbar-fixed-bottom">
+  <div class="container footer-content">
+    Copyright @ 2018 by 倾旋<br>
+    Powered By Jekyll
+  </div>
+</nav>
+
+  </body>
+
+</html>

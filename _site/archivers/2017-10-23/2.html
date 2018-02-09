@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta content="倾旋的博客" property="og:site_name">
+
+  <meta content="C语言读取文件" property="og:title">
+
+
+  <meta content="article" property="og:type">
+
+
+  <meta content="C语言读取文件" property="og:description">
+
+
+  <meta content="http://localhost:4000/archivers/2017-10-23/2" property="og:url">
+
+
+  <meta content="2017-10-23T00:00:00+08:00" property="article:published_time">
+  <meta content="http://localhost:4000/about/" property="article:author">
+
+
+  <meta property="og:image" content="">
+
+
+  
+  <meta content="C++/C" property="article:section">
+  
+
+
+  
+
+  <title>C语言读取文件</title>
+  <meta name="description" content="如何实现在C++中的getline函数">
+<script src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+  
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/ptsans.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/firamono.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/lato.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/sourcecodepro.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/gentiumbasic.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/alegreya.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/lora.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/firasans400.css' rel='stylesheet' type='text/css'>
+  <script src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/jquery.min2.2.0.js"></script>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/opensans.css' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-hQpvDQiCJaD2H465dQfA717v7lu5qHWtDbWNPvaTJ0ID5xnPUlVXnKzq7b8YUkbN" crossorigin="anonymous">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="http://localhost:4000/archivers/2017-10-23/2">
+  <link rel="alternate" type="application/rss+xml" title="倾旋的博客" href="http://localhost:4000/feed.xml">
+</head>
+
+
+  <body>
+
+<section>
+<nav class="navbar navbar-default navbar-fixed-top">
+
+  <div class="container">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/">倾旋的博客</a>
+    </div>
+
+
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        
+        
+        <li><a href="/about/">关于我</a></li>
+
+        
+
+        
+        
+        <li><a href="/category/">Category</a></li>
+
+        
+
+        
+        
+        <li><a href="/contact/">Contact</a></li>
+
+        
+
+        
+        
+
+        
+        
+
+        
+        
+
+        
+        
+        <li><a href="/other/">其他信息</a></li>
+
+        
+
+        
+        
+        <li><a href="/tools/socat">socat 使用手册</a></li>
+
+        
+
+        
+
+
+      </ul>
+
+    <!--  <ul class="nav navbar-nav navbar-right">
+        <li><a href="#">Know More!</a></li>
+
+      </ul>-->
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+</section>
+
+<section>
+<article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <div class="jumbotron">
+    <div class="container">
+      <h1 class="post-title-main" itemprop="name headline">C语言读取文件</h1>
+      <p class="post-meta"><time datetime="2017-10-23T00:00:00+08:00" itemprop="datePublished">Oct 23, 2017</time></p>
+      
+    </div>
+
+</div>
+
+
+  <div class="post-content container" itemprop="articleBody">
+    <p>如何实现在C++中的getline函数
+<!--more--></p>
+<h2 id="0x00-问题">0x00 问题</h2>
+
+<p>如何实现在C++中的getline函数</p>
+
+<h2 id="0x01-自行封装">0x01 自行封装</h2>
+
+<p>今天下班前被小Lin童鞋叫住了，他要开发一个Python的项目，需要读取文件，我就想我们一块写，看谁写得快！</p>
+
+<p>我信誓旦旦的选择了C语言 :(   -  Python的确不想碰了。</p>
+
+<p>实现之前想了很多，根据自己对C++中读取文件时使用getline的理解，自己写了下面这些代码，但是有一个内存分配无法释放的问题，想留在明天解决</p>
+
+<p>还要看刀剑神域呢 ~</p>
+
+<h2 id="0x02-源代码">0x02 源代码</h2>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;mm_malloc.h&gt;
+</span><span class="kt">void</span> <span class="n">error_handle</span><span class="p">(</span><span class="kt">char</span> <span class="o">*</span> <span class="n">msg</span><span class="p">);</span>
+<span class="kt">char</span> <span class="o">*</span> <span class="n">get_str_line</span><span class="p">(</span><span class="kt">FILE</span> <span class="o">*</span> <span class="n">fp</span><span class="p">,</span><span class="kt">char</span> <span class="o">*</span> <span class="n">lines</span><span class="p">);</span>
+<span class="kt">int</span> <span class="n">get_file_lines</span><span class="p">(</span><span class="kt">FILE</span> <span class="o">*</span> <span class="n">fp</span><span class="p">);</span>
+<span class="kt">int</span> <span class="n">get_str_num</span><span class="p">(</span><span class="kt">FILE</span> <span class="o">*</span> <span class="n">fp</span><span class="p">);</span>
+<span class="cm">/**
+ * 获取文件所有行数
+ * @param fp
+ * @return
+ */</span>
+<span class="kt">int</span> <span class="n">get_file_lines</span><span class="p">(</span><span class="kt">FILE</span> <span class="o">*</span> <span class="n">fp</span><span class="p">){</span>
+    <span class="kt">int</span> <span class="n">l</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">while</span><span class="p">(</span><span class="o">!</span><span class="n">feof</span><span class="p">(</span><span class="n">fp</span><span class="p">)){</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">fgetc</span><span class="p">(</span><span class="n">fp</span><span class="p">)</span> <span class="o">==</span> <span class="sc">'\n'</span><span class="p">){</span>
+            <span class="n">l</span> <span class="o">++</span> <span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="n">fseek</span><span class="p">(</span><span class="n">fp</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">SEEK_SET</span><span class="p">);</span>
+    <span class="k">return</span> <span class="n">l</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="cm">/**
+ * 输出错误处理
+ * @param msg
+ */</span>
+<span class="kt">void</span> <span class="n">error_handle</span><span class="p">(</span><span class="kt">char</span> <span class="o">*</span> <span class="n">msg</span><span class="p">){</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">"Error Message : %s"</span><span class="p">,</span><span class="n">msg</span><span class="p">);</span>
+    <span class="n">exit</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="cm">/**
+ * 获取当前行字符数
+ * @param fp
+ * @return
+ */</span>
+<span class="kt">int</span> <span class="n">get_str_num</span><span class="p">(</span><span class="kt">FILE</span> <span class="o">*</span> <span class="n">fp</span><span class="p">){</span>
+    <span class="kt">int</span>  <span class="n">c_line</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="c1">//</span>
+    <span class="k">while</span><span class="p">(</span><span class="o">!</span><span class="n">feof</span><span class="p">(</span><span class="n">fp</span><span class="p">)){</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">fgetc</span><span class="p">(</span><span class="n">fp</span><span class="p">)</span> <span class="o">==</span> <span class="sc">'\n'</span><span class="p">){</span>
+            <span class="k">break</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="n">c_line</span><span class="o">++</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">c_line</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="cm">/**
+ * 获取文件当前行字符串
+ * @param fp
+ * @return
+ */</span>
+<span class="kt">char</span> <span class="o">*</span> <span class="n">get_str_line</span><span class="p">(</span><span class="kt">FILE</span> <span class="o">*</span> <span class="n">fp</span><span class="p">,</span><span class="kt">char</span> <span class="o">*</span> <span class="n">lines</span><span class="p">){</span>
+    <span class="kt">long</span> <span class="n">current_fp</span> <span class="o">=</span> <span class="n">ftell</span><span class="p">(</span><span class="n">fp</span><span class="p">);</span> <span class="c1">// 获得当前指针位置</span>
+    <span class="kt">int</span>  <span class="n">c_line</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="c1">//</span>
+    <span class="n">fseek</span><span class="p">(</span><span class="n">fp</span><span class="p">,</span><span class="n">current_fp</span><span class="p">,</span><span class="n">SEEK_SET</span><span class="p">);</span> <span class="c1">// 将文件指针恢复</span>
+
+    <span class="c1">//char * lines = (char *)malloc(c_line * sizeof(char)); // 分配动态内存 、 这个变量如何free ？</span>
+    <span class="kt">char</span> <span class="n">tmp</span><span class="p">[</span><span class="mi">100</span><span class="p">];</span>
+    <span class="n">tmp</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="sc">'a'</span><span class="p">;</span>
+    <span class="n">c_line</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="c1">// 变量复用</span>
+    <span class="kt">char</span> <span class="n">ch</span><span class="p">;</span>    <span class="c1">// 临时变量 用于存储字符</span>
+    <span class="k">while</span><span class="p">(</span><span class="o">!</span><span class="n">feof</span><span class="p">(</span><span class="n">fp</span><span class="p">)){</span>   <span class="c1">// 如果文件还未结束</span>
+        <span class="n">ch</span>  <span class="o">=</span> <span class="n">fgetc</span><span class="p">(</span><span class="n">fp</span><span class="p">);</span> <span class="c1">// 读取字符</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">ch</span><span class="o">==</span><span class="n">EOF</span><span class="p">){</span>    <span class="c1">// 如果文件到达尾部</span>
+            <span class="k">break</span><span class="p">;</span>          <span class="c1">// 退出循环</span>
+        <span class="p">}</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">ch</span> <span class="o">==</span> <span class="sc">'\n'</span><span class="p">){</span>  <span class="c1">// 如果遇到换行 退出循环</span>
+            <span class="k">break</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="n">lines</span><span class="p">[</span><span class="n">c_line</span><span class="p">]</span> <span class="o">=</span> <span class="n">ch</span><span class="p">;</span> <span class="c1">// 将取得的字符赋值给当前行变量</span>
+        <span class="n">c_line</span> <span class="o">++</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">lines</span><span class="p">;</span> <span class="c1">// 返回一行字符</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+
+    <span class="c1">// 打开文件</span>
+    <span class="kt">FILE</span> <span class="o">*</span> <span class="n">fp</span> <span class="o">=</span> <span class="n">fopen</span><span class="p">(</span><span class="s">"100.txt"</span><span class="p">,</span><span class="s">"r"</span><span class="p">);</span>
+
+    <span class="c1">// 将文件指针重置为起始位置</span>
+    <span class="n">fseek</span><span class="p">(</span><span class="n">fp</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">SEEK_SET</span><span class="p">);</span>
+
+    <span class="c1">// 获取文件行数</span>
+    <span class="kt">int</span> <span class="n">FILE_LINE</span> <span class="o">=</span> <span class="n">get_file_lines</span><span class="p">(</span><span class="n">fp</span><span class="p">);</span>
+
+    <span class="c1">// 分配一个一位数组 元素个数为 FILE_LINE + 1</span>
+    <span class="kt">char</span> <span class="o">*</span> <span class="n">dic_lines</span><span class="p">[</span><span class="n">FILE_LINE</span><span class="o">+</span><span class="mi">1</span><span class="p">];</span>
+
+    <span class="c1">// 动态分配内存 用于存储每一行内容</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">x</span> <span class="o">&lt;=</span> <span class="n">FILE_LINE</span><span class="p">;</span><span class="n">x</span><span class="o">++</span><span class="p">){</span>
+        <span class="n">dic_lines</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="p">)</span><span class="n">malloc</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="kt">char</span><span class="p">)</span><span class="o">*</span><span class="mi">100</span><span class="p">);</span> <span class="c1">// 分配一个一维数组，每个元素100个字节</span>
+    <span class="p">}</span>
+    <span class="c1">//char lines[100];</span>
+    <span class="c1">// 将每行放入一维数组</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span><span class="n">a</span> <span class="o">&lt;=</span> <span class="n">FILE_LINE</span><span class="p">;</span><span class="n">a</span><span class="o">++</span><span class="p">){</span>
+        <span class="kt">char</span> <span class="o">*</span> <span class="n">lines</span> <span class="o">=</span> <span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="p">)</span><span class="n">malloc</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="kt">char</span><span class="p">)</span><span class="o">*</span><span class="mi">100</span><span class="p">);</span>
+        <span class="n">dic_lines</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_str_line</span><span class="p">(</span><span class="n">fp</span><span class="p">,</span><span class="n">lines</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="c1">// 放入内存后，怎么操作都随你了 ~</span>
+
+    <span class="c1">// 释放内存</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">x</span> <span class="o">&lt;=</span> <span class="n">FILE_LINE</span><span class="p">;</span><span class="n">x</span><span class="o">++</span><span class="p">){</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">"line : %d,string is %s </span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="n">dic_lines</span><span class="p">[</span><span class="n">x</span><span class="p">]);</span> <span class="c1">// 萌萌哒的在释放之前输出 ~ </span>
+        <span class="n">free</span><span class="p">(</span><span class="n">dic_lines</span><span class="p">[</span><span class="n">x</span><span class="p">]);</span>
+    <span class="p">}</span>
+
+    <span class="c1">// 关闭文件</span>
+    <span class="n">fclose</span><span class="p">(</span><span class="n">fp</span><span class="p">);</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>下面在总结一下C语言对文件的操作函数，明天写</p>
+
+<h2 id="0x03-c语言文件操作函数">0x03 C语言文件操作函数</h2>
+
+
+  </div>
+
+</article>
+
+</section>
+<nav class="navbar navbar-default navbar-fixed-bottom">
+  <div class="container footer-content">
+    Copyright @ 2018 by 倾旋<br>
+    Powered By Jekyll
+  </div>
+</nav>
+
+  </body>
+
+</html>

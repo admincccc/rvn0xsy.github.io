@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta content="倾旋的博客" property="og:site_name">
+
+  <meta content="C++ libghttp库" property="og:title">
+
+
+  <meta content="article" property="og:type">
+
+
+  <meta content="本文介绍一下C++下一个libghttp库的使用" property="og:description">
+
+
+  <meta content="http://localhost:4000/archivers/2017-11-19/1" property="og:url">
+
+
+  <meta content="2017-11-19T00:00:00+08:00" property="article:published_time">
+  <meta content="http://localhost:4000/about/" property="article:author">
+
+
+  <meta property="og:image" content="">
+
+
+  
+  <meta content="C++/C" property="article:section">
+  
+
+
+  
+
+  <title>C++ libghttp库</title>
+  <meta name="description" content="本文介绍一下C++下一个libghttp库的使用">
+<script src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+  
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/ptsans.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/firamono.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/lato.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/sourcecodepro.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/gentiumbasic.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/alegreya.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/lora.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/firasans400.css' rel='stylesheet' type='text/css'>
+  <script src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/jquery.min2.2.0.js"></script>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/opensans.css' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-hQpvDQiCJaD2H465dQfA717v7lu5qHWtDbWNPvaTJ0ID5xnPUlVXnKzq7b8YUkbN" crossorigin="anonymous">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="http://localhost:4000/archivers/2017-11-19/1">
+  <link rel="alternate" type="application/rss+xml" title="倾旋的博客" href="http://localhost:4000/feed.xml">
+</head>
+
+
+  <body>
+
+<section>
+<nav class="navbar navbar-default navbar-fixed-top">
+
+  <div class="container">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/">倾旋的博客</a>
+    </div>
+
+
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        
+        
+        <li><a href="/about/">关于我</a></li>
+
+        
+
+        
+        
+        <li><a href="/category/">Category</a></li>
+
+        
+
+        
+        
+        <li><a href="/contact/">Contact</a></li>
+
+        
+
+        
+        
+
+        
+        
+
+        
+        
+
+        
+        
+        <li><a href="/other/">其他信息</a></li>
+
+        
+
+        
+        
+        <li><a href="/tools/socat">socat 使用手册</a></li>
+
+        
+
+        
+
+
+      </ul>
+
+    <!--  <ul class="nav navbar-nav navbar-right">
+        <li><a href="#">Know More!</a></li>
+
+      </ul>-->
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+</section>
+
+<section>
+<article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <div class="jumbotron">
+    <div class="container">
+      <h1 class="post-title-main" itemprop="name headline">C++ libghttp库</h1>
+      <p class="post-meta"><time datetime="2017-11-19T00:00:00+08:00" itemprop="datePublished">Nov 19, 2017</time></p>
+      
+    </div>
+
+</div>
+
+
+  <div class="post-content container" itemprop="articleBody">
+    <p>本文介绍一下C++下一个libghttp库的使用
+<!--more--></p>
+<h2 id="0x00-安装">0x00 安装</h2>
+
+<p>下载地址：<code class="highlighter-rouge">https://github.com/Rvn0xsy/libghttp.git</code></p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git clone https://github.com/Rvn0xsy/libghttp.git
+cd libghttp
+./configure
+make
+make install
+</code></pre></div></div>
+
+<h2 id="0x01-问题解决">0x01 问题解决</h2>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>checking host system type... Invalid configuration `x86_64-unknown-linux-gnu': machine `x86_64-unknown' not recognized
+
+
+checking build system type... Invalid configuration `x86_64-unknown-linux-gnu': machine `x86_64-unknown' not recognized
+
+
+checking for ranlib... ranlib
+checking for ld used by GCC... /usr/bin/ld
+checking if the linker (/usr/bin/ld) is GNU ld... yes
+checking for BSD-compatible nm... /usr/bin/nm -B
+checking whether ln -s works... yes
+updating cache ./config.cache
+ltconfig: you must specify a host type if you use `--no-verify'
+Try `ltconfig --help' for more information.
+configure: error: libtool configure failed
+</code></pre></div></div>
+
+<p>即configure无法识别系统的类型, 所以提示you must specify a host type.</p>
+
+<p>用 <code class="highlighter-rouge">/usr/share/libtool/config/config.guess</code> 覆盖源码包中的 <code class="highlighter-rouge">config.guess</code></p>
+
+<p><code class="highlighter-rouge">cp /usr/share/libtool/config/config.guess ./config.guess</code></p>
+
+<p>用 <code class="highlighter-rouge">/usr/share/libtool/config/config.sub</code> 覆盖源码包中的 <code class="highlighter-rouge">config.sub</code></p>
+
+<p><code class="highlighter-rouge">cp /usr/share/libtool/config/config.sub ./config.sub</code></p>
+
+<p>这样configure就可以猜出系统的类型了</p>
+
+<p>如果<code class="highlighter-rouge">/usr/share/libtool/config/config.guess</code> 不存在则安装libtool，<code class="highlighter-rouge">sudo apt-get install libtool</code></p>
+
+<p>开始安装：</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>./configure --prefix=/usr/local
+make 
+sudo make install
+</code></pre></div></div>
+
+<h2 id="0x02-异步请求">0x02 异步请求</h2>
+
+<p><code class="highlighter-rouge">int ghttp_set_sync(ghttp_request *a_request,ghttp_sync_mode a_mode);</code></p>
+
+<p>比普通模式要快</p>
+
+<h2 id="0x03-封装代码">0x03 封装代码</h2>
+
+<p>CMakeLists.txt :</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cmake_minimum_required(VERSION 3.8)
+project(untitled1)
+
+set(CMAKE_CXX_STANDARD 11)
+
+set(SOURCE_FILES main.cpp http.h http.cpp)
+INCLUDE_DIRECTORIES(
+        /usr/local/include
+)
+SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/usr/local/lib")
+INCLUDE_DIRECTORIES(/usr/local/include)
+SET(CMAKE_EXE_LINKER_FLAGS
+        "${CMAKE_EXE_LINKER_FLAGS} -Wl,-rpath -Wl,/usr/local/lib")
+add_executable(untitled1 ${SOURCE_FILES})
+TARGET_LINK_LIBRARIES(untitled1 libghttp.a)
+</code></pre></div></div>
+
+<p>main.cpp :</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include &lt;iostream&gt;
+#include &lt;getopt.h&gt;
+#include &lt;vector&gt;
+#include &lt;string&gt;
+#include "http.h"
+#include &lt;sys/time.h&gt;
+</span><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">struct</span> <span class="n">timeval</span> <span class="n">times</span><span class="p">;</span>
+    <span class="n">gettimeofday</span><span class="p">(</span><span class="o">&amp;</span><span class="n">times</span><span class="p">,</span><span class="nb">NULL</span><span class="p">);</span>
+    <span class="kt">long</span> <span class="kt">int</span> <span class="n">current_time</span> <span class="o">=</span> <span class="n">times</span><span class="p">.</span><span class="n">tv_sec</span><span class="p">;</span>
+    <span class="n">http</span>  <span class="n">Req</span><span class="p">(</span><span class="s">"/home/payloads/CLionProjects/untitled1/cmake-build-debug/url"</span><span class="p">);</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">Req</span><span class="p">.</span><span class="n">checkDic</span><span class="p">()</span><span class="o">==-</span><span class="mi">1</span><span class="p">){</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"Error .. "</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">Req</span><span class="p">.</span><span class="n">getUrlList</span><span class="p">();</span>
+    <span class="n">Req</span><span class="p">.</span><span class="n">Print</span><span class="p">();</span>
+    <span class="n">gettimeofday</span><span class="p">(</span><span class="o">&amp;</span><span class="n">times</span><span class="p">,</span><span class="nb">NULL</span><span class="p">);</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"end "</span> <span class="o">&lt;&lt;</span> <span class="n">times</span><span class="p">.</span><span class="n">tv_sec</span> <span class="o">-</span> <span class="n">current_time</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>http.h :</p>
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">//</span>
+<span class="c1">// Created by payloads on 11/19/17.</span>
+<span class="c1">//</span>
+<span class="cp">#ifndef UNTITLED1_HTTP_H
+#define UNTITLED1_HTTP_H
+#include &lt;ghttp.h&gt;
+#include &lt;string&gt;
+#include &lt;vector&gt;
+</span><span class="k">struct</span> <span class="n">requestResult</span><span class="p">{</span>
+    <span class="kt">int</span> <span class="n">status_code</span><span class="p">;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">url</span><span class="p">;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">server</span><span class="p">;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">power</span><span class="p">;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">title</span><span class="p">;</span>
+<span class="p">};</span>
+<span class="k">class</span> <span class="nc">http</span><span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="n">http</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">urlists</span><span class="p">);</span>
+    <span class="o">~</span><span class="n">http</span><span class="p">();</span>
+    <span class="kt">void</span> <span class="n">getUrlList</span><span class="p">();</span>
+    <span class="kt">int</span> <span class="n">checkDic</span><span class="p">();</span>
+    <span class="kt">void</span> <span class="n">Print</span><span class="p">();</span>
+<span class="k">private</span><span class="o">:</span>
+    <span class="n">ghttp_request</span> <span class="o">*</span> <span class="n">req</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">request</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">url</span><span class="p">);</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">targets</span><span class="p">;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">urlists</span><span class="p">;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">currentUrl</span><span class="p">;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="k">struct</span> <span class="n">requestResult</span><span class="o">&gt;</span> <span class="n">httpresult</span><span class="p">;</span>
+
+    <span class="c1">// void debug();</span>
+<span class="p">};</span>
+<span class="cp">#endif //UNTITLED1_HTTP_H
+</span></code></pre></div></div>
+
+<p>http.cpp :</p>
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">//</span>
+<span class="c1">// Created by payloads on 11/19/17.</span>
+<span class="c1">//</span>
+<span class="cp">#include "http.h"
+#include &lt;string&gt;
+#include &lt;fstream&gt;
+#include &lt;iostream&gt;
+#include &lt;cstring&gt;
+#include &lt;regex&gt;
+</span><span class="n">http</span><span class="o">::</span><span class="n">http</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">urlists</span><span class="p">){</span>
+    <span class="k">this</span><span class="o">-&gt;</span><span class="n">urlists</span> <span class="o">=</span> <span class="n">urlists</span><span class="p">;</span>
+    <span class="n">req</span> <span class="o">=</span> <span class="n">ghttp_request_new</span><span class="p">();</span>
+    <span class="n">ghttp_set_type</span><span class="p">(</span><span class="n">req</span><span class="p">,</span><span class="n">ghttp_type_get</span><span class="p">);</span>
+    <span class="n">ghttp_set_sync</span><span class="p">(</span><span class="n">req</span><span class="p">,</span><span class="n">ghttp_sync</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="kt">int</span> <span class="n">http</span><span class="o">::</span><span class="n">checkDic</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">fstream</span> <span class="n">URLio</span><span class="p">(</span><span class="n">urlists</span><span class="p">,</span><span class="n">std</span><span class="o">::</span><span class="n">ios</span><span class="o">::</span><span class="n">in</span><span class="p">);</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">buff</span><span class="p">;</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">URLio</span><span class="p">.</span><span class="n">is_open</span><span class="p">()){</span>
+        <span class="k">while</span><span class="p">(</span><span class="o">!</span><span class="n">URLio</span><span class="p">.</span><span class="n">eof</span><span class="p">()){</span>
+            <span class="n">getline</span><span class="p">(</span><span class="n">URLio</span><span class="p">,</span><span class="n">buff</span><span class="p">);</span>
+            <span class="n">targets</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">buff</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="kt">void</span> <span class="n">http</span><span class="o">::</span><span class="n">getUrlList</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">for</span><span class="p">(</span><span class="k">auto</span> <span class="n">it</span><span class="o">=</span><span class="n">targets</span><span class="p">.</span><span class="n">begin</span><span class="p">();</span><span class="n">it</span> <span class="o">!=</span> <span class="n">targets</span><span class="p">.</span><span class="n">end</span><span class="p">();</span> <span class="n">it</span> <span class="o">++</span><span class="p">){</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="o">*</span><span class="n">it</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+        <span class="n">currentUrl</span> <span class="o">=</span> <span class="o">*</span><span class="n">it</span><span class="p">;</span>
+        <span class="n">request</span><span class="p">(</span><span class="o">*</span><span class="n">it</span><span class="p">);</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">regex</span> <span class="n">title</span><span class="p">(</span><span class="s">"&lt;title&gt;([^&lt;]+)&lt;/title&gt;"</span><span class="p">);</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">smatch</span> <span class="n">match_title</span><span class="p">;</span>
+        <span class="k">struct</span> <span class="n">requestResult</span> <span class="o">*</span> <span class="n">res</span> <span class="o">=</span> <span class="k">new</span> <span class="n">requestResult</span><span class="p">;</span>
+        <span class="n">res</span><span class="o">-&gt;</span><span class="n">status_code</span> <span class="o">=</span> <span class="n">ghttp_status_code</span><span class="p">(</span><span class="n">req</span><span class="p">);</span>
+        <span class="n">res</span><span class="o">-&gt;</span><span class="n">server</span> <span class="o">=</span> <span class="n">ghttp_get_header</span><span class="p">(</span><span class="n">req</span><span class="p">,</span><span class="s">"Server"</span><span class="p">)</span><span class="o">==</span><span class="nb">NULL</span><span class="o">?</span><span class="s">""</span><span class="o">:</span><span class="n">ghttp_get_header</span><span class="p">(</span><span class="n">req</span><span class="p">,</span><span class="s">"Server"</span><span class="p">);</span>
+        <span class="n">res</span><span class="o">-&gt;</span><span class="n">power</span> <span class="o">=</span> <span class="n">ghttp_get_header</span><span class="p">(</span><span class="n">req</span><span class="p">,</span><span class="s">"X-Powered-By"</span><span class="p">)</span> <span class="o">==</span> <span class="nb">NULL</span><span class="o">?</span><span class="s">""</span><span class="o">:</span><span class="n">ghttp_get_header</span><span class="p">(</span><span class="n">req</span><span class="p">,</span><span class="s">"X-Powered-By"</span><span class="p">);</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">body</span> <span class="o">=</span> <span class="n">ghttp_get_body</span><span class="p">(</span><span class="n">req</span><span class="p">)</span><span class="o">==</span><span class="nb">NULL</span><span class="o">?</span><span class="s">""</span><span class="o">:</span><span class="n">ghttp_get_body</span><span class="p">(</span><span class="n">req</span><span class="p">);</span>
+        <span class="n">res</span><span class="o">-&gt;</span><span class="n">title</span> <span class="o">=</span> <span class="n">regex_search</span><span class="p">(</span><span class="n">body</span><span class="p">,</span> <span class="n">match_title</span><span class="p">,</span> <span class="n">title</span><span class="p">)</span><span class="o">?</span><span class="n">match_title</span><span class="p">[</span><span class="mi">1</span><span class="p">].</span><span class="n">str</span><span class="p">()</span><span class="o">:</span><span class="s">""</span><span class="p">;</span>
+        <span class="n">res</span><span class="o">-&gt;</span><span class="n">url</span> <span class="o">=</span> <span class="n">currentUrl</span><span class="p">;</span>
+        <span class="n">httpresult</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="o">*</span><span class="n">res</span><span class="p">);</span>
+        <span class="k">delete</span> <span class="n">res</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="kt">int</span> <span class="n">http</span><span class="o">::</span><span class="n">request</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">url</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">ghttp_set_uri</span><span class="p">(</span><span class="n">req</span><span class="p">,(</span><span class="kt">char</span> <span class="o">*</span><span class="p">)</span><span class="n">url</span><span class="p">.</span><span class="n">data</span><span class="p">());</span>
+    <span class="n">ghttp_prepare</span><span class="p">(</span><span class="n">req</span><span class="p">);</span>
+    <span class="n">ghttp_process</span><span class="p">(</span><span class="n">req</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="n">http</span><span class="o">::~</span><span class="n">http</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">ghttp_flush_response_buffer</span><span class="p">(</span><span class="n">req</span><span class="p">);</span>
+    <span class="n">ghttp_request_destroy</span><span class="p">(</span><span class="n">req</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="kt">void</span> <span class="n">http</span><span class="o">::</span><span class="n">Print</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">for</span><span class="p">(</span><span class="k">auto</span> <span class="n">it</span> <span class="o">=</span> <span class="n">httpresult</span><span class="p">.</span><span class="n">begin</span><span class="p">();</span><span class="n">it</span> <span class="o">!=</span> <span class="n">httpresult</span><span class="p">.</span><span class="n">end</span><span class="p">();</span> <span class="n">it</span><span class="o">++</span><span class="p">){</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span><span class="s">" URL -&gt; "</span>  <span class="o">&lt;&lt;</span> <span class="n">it</span><span class="o">-&gt;</span><span class="n">url</span> <span class="o">&lt;&lt;</span> <span class="s">" Title -&gt; "</span> <span class="o">&lt;&lt;</span> <span class="n">it</span><span class="o">-&gt;</span><span class="n">title</span>
+                  <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span> <span class="o">&lt;&lt;</span> <span class="s">" Server -&gt; "</span> <span class="o">&lt;&lt;</span> <span class="n">it</span><span class="o">-&gt;</span><span class="n">server</span>
+                  <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span> <span class="o">&lt;&lt;</span> <span class="s">" Power -&gt; "</span> <span class="o">&lt;&lt;</span> <span class="n">it</span><span class="o">-&gt;</span><span class="n">power</span>
+                  <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span> <span class="o">&lt;&lt;</span> <span class="s">" Status_Code -&gt; "</span> <span class="o">&lt;&lt;</span> <span class="n">it</span><span class="o">-&gt;</span><span class="n">status_code</span>
+                  <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h2 id="0x04-参考文档">0x04 参考文档</h2>
+
+<p>https://sourcecodebrowser.com/libghttp/1.0.9/dir_506518e21dfd39d0ce0207889f9217e3.html</p>
+
+
+  </div>
+
+</article>
+
+</section>
+<nav class="navbar navbar-default navbar-fixed-bottom">
+  <div class="container footer-content">
+    Copyright @ 2018 by 倾旋<br>
+    Powered By Jekyll
+  </div>
+</nav>
+
+  </body>
+
+</html>

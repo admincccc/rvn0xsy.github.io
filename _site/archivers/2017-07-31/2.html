@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta content="倾旋的博客" property="og:site_name">
+
+  <meta content="在Docker中安装openvas" property="og:title">
+
+
+  <meta content="article" property="og:type">
+
+
+  <meta content="本文简述docker安装openvas" property="og:description">
+
+
+  <meta content="http://localhost:4000/archivers/2017-07-31/2" property="og:url">
+
+
+  <meta content="2017-07-31T00:00:00+08:00" property="article:published_time">
+  <meta content="http://localhost:4000/about/" property="article:author">
+
+
+  <meta property="og:image" content="">
+
+
+  
+  <meta content="openvas" property="article:section">
+  
+
+
+  
+
+  <title>在Docker中安装openvas</title>
+  <meta name="description" content="本文简述docker安装openvas">
+<script src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+  
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/ptsans.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/firamono.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/lato.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/sourcecodepro.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/gentiumbasic.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/alegreya.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/lora.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/firasans400.css' rel='stylesheet' type='text/css'>
+  <script src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/jquery.min2.2.0.js"></script>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/opensans.css' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-hQpvDQiCJaD2H465dQfA717v7lu5qHWtDbWNPvaTJ0ID5xnPUlVXnKzq7b8YUkbN" crossorigin="anonymous">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="http://localhost:4000/archivers/2017-07-31/2">
+  <link rel="alternate" type="application/rss+xml" title="倾旋的博客" href="http://localhost:4000/feed.xml">
+</head>
+
+
+  <body>
+
+<section>
+<nav class="navbar navbar-default navbar-fixed-top">
+
+  <div class="container">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/">倾旋的博客</a>
+    </div>
+
+
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        
+        
+        <li><a href="/about/">关于我</a></li>
+
+        
+
+        
+        
+        <li><a href="/category/">Category</a></li>
+
+        
+
+        
+        
+        <li><a href="/contact/">Contact</a></li>
+
+        
+
+        
+        
+
+        
+        
+
+        
+        
+
+        
+        
+        <li><a href="/other/">其他信息</a></li>
+
+        
+
+        
+        
+        <li><a href="/tools/socat">socat 使用手册</a></li>
+
+        
+
+        
+
+
+      </ul>
+
+    <!--  <ul class="nav navbar-nav navbar-right">
+        <li><a href="#">Know More!</a></li>
+
+      </ul>-->
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+</section>
+
+<section>
+<article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <div class="jumbotron">
+    <div class="container">
+      <h1 class="post-title-main" itemprop="name headline">在Docker中安装openvas</h1>
+      <p class="post-meta"><time datetime="2017-07-31T00:00:00+08:00" itemprop="datePublished">Jul 31, 2017</time></p>
+      
+    </div>
+
+</div>
+
+
+  <div class="post-content container" itemprop="articleBody">
+    <p>本文简述docker安装openvas
+<!--more--></p>
+<h2 id="安装过程">安装过程</h2>
+<p>镜像是从阿里云pull下来的：<code class="highlighter-rouge">docker pull  registry.cn-hangzhou.aliyuncs.com/secends/openvas</code></p>
+
+<p>安装过程：</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>liyingzhe@ThundeRobot:~/下载<span class="nv">$ </span>docker pull  registry.cn-hangzhou.aliyuncs.com/secends/openvas
+Using default tag: latest
+latest: Pulling from secends/openvas
+
+6599cadaf950: Pull <span class="nb">complete 
+</span>23eda618d451: Pull <span class="nb">complete 
+</span>f0be3084efe9: Pull <span class="nb">complete 
+</span>52de432f084b: Pull <span class="nb">complete 
+</span>a3ed95caeb02: Pull <span class="nb">complete 
+</span>7f9ef9bd6c98: Pull <span class="nb">complete 
+</span>323caba9d1cc: Pull <span class="nb">complete 
+</span>73a9f4a66d02: Pull <span class="nb">complete 
+</span>Digest: sha256:adaf2ce11c97e9a924a053a97edf2b159daa0c8cd575ae5c5e2fe7a7cdb2c190
+Status: Downloaded newer image <span class="k">for </span>registry.cn-hangzhou.aliyuncs.com/secends/openvas:latest
+liyingzhe@ThundeRobot:~/下载<span class="nv">$ </span>docker images
+REPOSITORY                                           TAG                 IMAGE ID            CREATED             SIZE
+registry.cn-hangzhou.aliyuncs.com/imxieke/kali       latest              6759704c31d9        4 months ago        1.668 GB
+registry.cn-hangzhou.aliyuncs.com/gengxiaoxin/lnmp   latest              4f9feeb5a907        11 months ago       318.2 MB
+registry.cn-hangzhou.aliyuncs.com/secends/openvas    latest              f254e0f3b11d        14 months ago       3.51 GB
+<span class="c">#把80映射到本机9392</span>
+liyingzhe@ThundeRobot:~/下载<span class="nv">$ </span>docker run <span class="nt">-it</span> <span class="nt">-p</span> 9392:80 f254e0f3b11d
+Starting Redis
+Starting Openvas...
+Starting gsad
+Starting rebuild process...
+This may take a minute or two...
+Checking setup
+openvas-check-setup 2.3.3
+  Test completeness and readiness of OpenVAS-8
+  <span class="o">(</span>add <span class="s1">'--v6'</span> or <span class="s1">'--v7'</span> or <span class="s1">'--v9'</span>
+   <span class="k">if </span>you want to check <span class="k">for </span>another OpenVAS version<span class="o">)</span>
+
+  Please report us any non-detected problems and
+  <span class="nb">help </span>us to improve this check routine:
+  http://lists.wald.intevation.org/mailman/listinfo/openvas-discuss
+
+  Send us the log-file <span class="o">(</span>/tmp/openvas-check-setup.log<span class="o">)</span> to <span class="nb">help </span>analyze the problem.
+
+Step 1: Checking OpenVAS Scanner ... 
+        OK: OpenVAS Scanner is present <span class="k">in </span>version 5.0.5.
+        OK: OpenVAS Scanner CA Certificate is present as /var/lib/openvas/CA/cacert.pem.
+        OK: redis-server is present <span class="k">in </span>version <span class="nv">v</span><span class="o">=</span>2.8.4.
+        OK: scanner <span class="o">(</span>kb_location setting<span class="o">)</span> is configured properly using the redis-server socket: /var/run/redis/redis.sock
+        OK: redis-server is running and listening on socket: /var/run/redis/redis.sock.
+        OK: redis-server configuration is OK and redis-server is running.
+        OK: NVT collection <span class="k">in</span> /var/lib/openvas/plugins contains 47056 NVTs.
+        WARNING: Signature checking of NVTs is not enabled <span class="k">in </span>OpenVAS Scanner.
+        SUGGEST: Enable signature checking <span class="o">(</span>see http://www.openvas.org/trusted-nvts.html<span class="o">)</span><span class="nb">.</span>
+        OK: The NVT cache <span class="k">in</span> /var/cache/openvas contains 47056 files <span class="k">for </span>47056 NVTs.
+Step 2: Checking OpenVAS Manager ... 
+        OK: OpenVAS Manager is present <span class="k">in </span>version 6.0.8.
+        OK: OpenVAS Manager client certificate is present as /var/lib/openvas/CA/clientcert.pem.
+        OK: OpenVAS Manager database found <span class="k">in</span> /var/lib/openvas/mgr/tasks.db.
+        OK: Access rights <span class="k">for </span>the OpenVAS Manager database are correct.
+        OK: sqlite3 found, extended checks of the OpenVAS Manager installation enabled.
+        OK: OpenVAS Manager database is at revision 146.
+        OK: OpenVAS Manager expects database at revision 146.
+        OK: Database schema is up to date.
+        OK: OpenVAS Manager database contains information about 47056 NVTs.
+        OK: At least one user exists.
+        OK: OpenVAS SCAP database found <span class="k">in</span> /var/lib/openvas/scap-data/scap.db.
+        OK: OpenVAS CERT database found <span class="k">in</span> /var/lib/openvas/cert-data/cert.db.
+        OK: xsltproc found.
+Step 3: Checking user configuration ... 
+        WARNING: Your password policy is empty.
+        SUGGEST: Edit the /etc/openvas/pwpolicy.conf file to <span class="nb">set </span>a password policy.
+Step 4: Checking Greenbone Security Assistant <span class="o">(</span>GSA<span class="o">)</span> ... 
+        OK: Greenbone Security Assistant is present <span class="k">in </span>version 6.0.10.
+Step 5: Checking OpenVAS CLI ... 
+        SKIP: Skipping check <span class="k">for </span>OpenVAS CLI.
+Step 6: Checking Greenbone Security Desktop <span class="o">(</span>GSD<span class="o">)</span> ... 
+        SKIP: Skipping check <span class="k">for </span>Greenbone Security Desktop.
+Step 7: Checking <span class="k">if </span>OpenVAS services are up and running ... 
+        OK: netstat found, extended checks of the OpenVAS services enabled.
+        ERROR: OpenVAS Scanner is NOT running!
+        FIX: Start OpenVAS Scanner <span class="o">(</span>openvassd<span class="o">)</span><span class="nb">.</span>
+        OK: OpenVAS Manager is running and listening on all interfaces.
+        OK: OpenVAS Manager is listening on port 9390, which is the default port.
+        OK: Greenbone Security Assistant is listening on port 80, which is the default port.
+
+ ERROR: Your OpenVAS-8 installation is not yet <span class="nb">complete</span><span class="o">!</span>
+
+Please follow the instructions marked with FIX above and run this
+script again.
+
+If you think this result is wrong, please report your observation
+and <span class="nb">help </span>us to improve this check routine:
+http://lists.wald.intevation.org/mailman/listinfo/openvas-discuss
+Please attach the log-file <span class="o">(</span>/tmp/openvas-check-setup.log<span class="o">)</span> to <span class="nb">help </span>us analyze the problem.
+
+Done.
+Starting infinite loop...
+Press <span class="o">[</span>CTRL+C] to stop..
+</code></pre></div></div>
+<h2 id="遇到的问题">遇到的问题</h2>
+
+<p>openvas密码忘记问题：</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>liyingzhe@ThundeRobot:~/下载<span class="nv">$ </span>docker <span class="nb">exec </span>9a57ef793c73 openvasmd <span class="nt">--delete-user</span><span class="o">=</span>admin  <span class="c">#删除用户admin</span>
+User deleted.
+liyingzhe@ThundeRobot:~/下载<span class="nv">$ </span>docker <span class="nb">exec </span>9a57ef793c73 openvasmd <span class="nt">--create-user</span><span class="o">=</span>admin  <span class="c">#创建用户，并且生产密码</span>
+User created with password <span class="s1">'4fb3b80b-c1e8-413d-985f-9574c6aca9b5'</span><span class="nb">.</span>
+</code></pre></div></div>
+
+<p>此时就可以愉快的使用了！</p>
+
+  </div>
+
+</article>
+
+</section>
+<nav class="navbar navbar-default navbar-fixed-bottom">
+  <div class="container footer-content">
+    Copyright @ 2018 by 倾旋<br>
+    Powered By Jekyll
+  </div>
+</nav>
+
+  </body>
+
+</html>

