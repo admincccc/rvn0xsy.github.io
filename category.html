@@ -1,14 +1,14 @@
 ---
-layout: default
-title: Category
+layout: page
+title: 文章分类
 permalink: /category/
 public: true
 ---
 
-<div class="home">
-  <h1 class="page-heading">Category</h1>
 
-  <ul class="post-list">
+ 
+
+<ul class="post-list">
 
 {% capture categories %}{% for category in site.categories %}{{ category | first }}{% unless forloop.last %},{% endunless %}{% endfor %}{% endcapture %}
 {% assign category = categories | split:',' | sort %}
@@ -21,7 +21,8 @@ public: true
 {% endif %}{% endfor %}
 </ul>
 {% endunless %}{% endfor %}
-
   </ul>
+
   
-</div>
+  
+
