@@ -239,9 +239,20 @@ Authorization: Basic YWRtaW46MTIzNDU2
 <p>在爆破的时候发现频率过高会有爆破不成功的现象，最好是调整一下短时间内请求的次数。</p>
 
 
-
+<div class="pull-right">
+  <script type="text/javascript">
+    function smoothscroll(){
+    var currentScroll = document.documentElement.scrollTop || document.body.scrollTop;
+    if (currentScroll > 0) {
+         window.requestAnimationFrame(smoothscroll);
+         window.scrollTo (0,currentScroll - (currentScroll/5));
+    }
+};
+  </script>
+<button class="btn btn-primary" onclick="smoothscroll()">回到顶部</button>
+</div>
 <br>
-<hr>
+
 
     <h3>本文许可协议</h3>
 

@@ -360,9 +360,20 @@ deny from all
 <p>可以采用Apache配置，后续再更新关于Tomcat的配置</p>
 
 
-
+<div class="pull-right">
+  <script type="text/javascript">
+    function smoothscroll(){
+    var currentScroll = document.documentElement.scrollTop || document.body.scrollTop;
+    if (currentScroll > 0) {
+         window.requestAnimationFrame(smoothscroll);
+         window.scrollTo (0,currentScroll - (currentScroll/5));
+    }
+};
+  </script>
+<button class="btn btn-primary" onclick="smoothscroll()">回到顶部</button>
+</div>
 <br>
-<hr>
+
 
     <h3>本文许可协议</h3>
 

@@ -181,9 +181,20 @@
 <p>　　尘世一缘，相遇相逢，你在我的眼里，我在你的眸上，光阴的酒豪迈了来者的醉意，盘腿一坐，便嗅出了年轮的禅味……</p>
 
 
-
+<div class="pull-right">
+  <script type="text/javascript">
+    function smoothscroll(){
+    var currentScroll = document.documentElement.scrollTop || document.body.scrollTop;
+    if (currentScroll > 0) {
+         window.requestAnimationFrame(smoothscroll);
+         window.scrollTo (0,currentScroll - (currentScroll/5));
+    }
+};
+  </script>
+<button class="btn btn-primary" onclick="smoothscroll()">回到顶部</button>
+</div>
 <br>
-<hr>
+
 
     <h3>本文许可协议</h3>
 

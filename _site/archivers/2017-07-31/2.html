@@ -247,9 +247,20 @@ User created with password <span class="s1">'4fb3b80b-c1e8-413d-985f-9574c6aca9b
 <p>此时就可以愉快的使用了！</p>
 
 
-
+<div class="pull-right">
+  <script type="text/javascript">
+    function smoothscroll(){
+    var currentScroll = document.documentElement.scrollTop || document.body.scrollTop;
+    if (currentScroll > 0) {
+         window.requestAnimationFrame(smoothscroll);
+         window.scrollTo (0,currentScroll - (currentScroll/5));
+    }
+};
+  </script>
+<button class="btn btn-primary" onclick="smoothscroll()">回到顶部</button>
+</div>
 <br>
-<hr>
+
 
     <h3>本文许可协议</h3>
 

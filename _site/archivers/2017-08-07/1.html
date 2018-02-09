@@ -509,9 +509,20 @@ This is a Lua script that performs the MySQL statement.
 Email:payloads@aliyun.com</p>
 
 
-
+<div class="pull-right">
+  <script type="text/javascript">
+    function smoothscroll(){
+    var currentScroll = document.documentElement.scrollTop || document.body.scrollTop;
+    if (currentScroll > 0) {
+         window.requestAnimationFrame(smoothscroll);
+         window.scrollTo (0,currentScroll - (currentScroll/5));
+    }
+};
+  </script>
+<button class="btn btn-primary" onclick="smoothscroll()">回到顶部</button>
+</div>
 <br>
-<hr>
+
 
     <h3>本文许可协议</h3>
 
