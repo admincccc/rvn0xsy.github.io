@@ -23,7 +23,7 @@ permalink: /other/
     <p>
       Hello there! :)
       <br />
-      <br /> 当我想写点什么的时候，却不知该从何写起..
+      <br /> 当我想写点什么的时候，却不知该从何写起...
       <br />
       <br />
       &nbsp; &nbsp; &nbsp;<a href="http://github.com/rvn0xsy"><i class="fa fa-github"></i></a>

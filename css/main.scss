@@ -4,21 +4,23 @@
 @charset "utf-8";
 
 .navbar-default{
-  background: #093750 !important;
+  background: #151515 !important;
   border: none !important;
 
 }
 
 h2{
   color:white;
+  padding-top:10px;
+  padding-bottom:10px;
 }
 h3{
-  color:#ddd;
+  color:  #FFFAFA;
 
 }
 
 .navbar-default .navbar-nav > li > a{
-    color:#abc0ca !important;
+    color:white !important;
 }
 .navbar-default .navbar-nav > li > a:hover{
     color:#03a4fb !important;
@@ -28,16 +30,16 @@ h3{
     color:#03a4fb !important;
 }
 .navbar-default .navbar-brand{
-  color:#abc0ca !important;
+  color:white !important;
 }
 .footer-content{
   text-align: center;
   padding: 0.5em;
 }
 body{
-  background-color: #022335 !important;
+  background-color: #151515 !important;
   font-family: "Fira Mono" !important;
-  color: #abc0ca !important;
+  color: #b5e853 !important;
 }
 .page-stuff{
   a {
@@ -60,7 +62,7 @@ body{
   padding-bottom: 5em;
 }
 .jumbotron {
-  background: #093750 !important;
+  background: #151515 !important;
 }
 a {
     color: #03a4fb;
@@ -84,8 +86,8 @@ padding-bottom: 2em;
 }
 
 .post-title{
-  font-size: 20px !important;
-color:  #abc0ca !important;
+  font-size: 30px !important;
+color:  white !important;
 }
 
 .post-excerpt{
@@ -111,7 +113,7 @@ padding: 1.5em !important;
 color:white !important;
 }
 .post-meta{
-  color: skyblue !important;
+  color: white !important;
 }
 
 code{
@@ -171,7 +173,7 @@ $base-line-height: 1.5;
 $spacing-unit:     30px;
 
 $text-color:       #111;
-$background-color: #fdfdfd;
+$background-color: #151515;
 $brand-color:      #2a7ae2;
 
 $grey-color:       #828282;

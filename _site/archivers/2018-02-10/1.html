@@ -27,7 +27,7 @@
 
 
   
-  <meta content="nmap" property="article:section">
+  <meta content="C++/C" property="article:section">
   
 
 
@@ -163,7 +163,8 @@
 <p>简单介绍一些基础：</p>
 
 <h3 id="报文格式">报文格式</h3>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    +---------------------+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+    +---------------------+
     |        Header       | 报文头
     +---------------------+
     |       Question      | 查询的问题
@@ -188,7 +189,8 @@
 
 <p>报文头包含如下字段：</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+    +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
     |                      ID                       |
     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
     |QR|   Opcode |AA|TC|RD|RA|   Z    |   RCODE    |
@@ -213,7 +215,8 @@
   <li><code class="highlighter-rouge">OPCODE</code> 4个比特位用来设置查询的种类，应答的时候会带相同值，可用的值如下：</li>
 </ul>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>0               标准查询 (QUERY)
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+0               标准查询 (QUERY)
 1               反向查询 (IQUERY)
 2               服务器状态查询 (STATUS)
 3-15            保留值，暂时未使用
@@ -228,7 +231,8 @@
   <li><code class="highlighter-rouge">RCODE</code>   应答码(Response code) - 这4个比特位在应答报文中设置，代表的含义如下：</li>
 </ul>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>0               没有错误。
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+0               没有错误。
 1               报文格式错误(Format error) - 服务器不能理解请求的报文。
 2               服务器失败(Server failure) - 因为服务器的原因导致没办法处理这个请求。
 3               名字错误(Name Error) - 只有对授权域名解析服务器有意义，指出解析的域名不存在。
@@ -250,7 +254,8 @@
 
 <p>每个问题为下面的格式：</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
 |                                               |
 |                     QNAME                     |
 |                                               |
@@ -319,7 +324,8 @@
 
 <p>不断的对这个<code class="highlighter-rouge">buff</code>进行分割，最后通过简单的UDP套接字传输过去：</p>
 
-<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">int</span> <span class="n">dnsSock</span> <span class="o">=</span> <span class="n">socket</span><span class="p">(</span><span class="n">AF_INET</span><span class="p">,</span><span class="n">SOCK_DGRAM</span><span class="p">,</span><span class="mi">0</span><span class="p">);</span>
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="kt">int</span> <span class="n">dnsSock</span> <span class="o">=</span> <span class="n">socket</span><span class="p">(</span><span class="n">AF_INET</span><span class="p">,</span><span class="n">SOCK_DGRAM</span><span class="p">,</span><span class="mi">0</span><span class="p">);</span>
     <span class="k">struct</span> <span class="n">sockaddr_in</span> <span class="n">dnsADDR</span><span class="p">;</span>
     <span class="n">dnsADDR</span><span class="p">.</span><span class="n">sin_family</span> <span class="o">=</span> <span class="n">AF_INET</span><span class="p">;</span>
     <span class="n">dnsADDR</span><span class="p">.</span><span class="n">sin_addr</span><span class="p">.</span><span class="n">s_addr</span> <span class="o">=</span> <span class="n">inet_addr</span><span class="p">(</span><span class="s">"202.101.172.35"</span><span class="p">);</span>
@@ -340,7 +346,8 @@
   <li>该数据包的标志ID为：<code class="highlighter-rouge">0x17c7</code></li>
 </ul>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>0000   00 1c 42 00 00 18 00 1c 42 af 22 19 08 00 45 00  ..B.....B."...E.
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+0000   00 1c 42 00 00 18 00 1c 42 af 22 19 08 00 45 00  ..B.....B."...E.
 0010   00 4b 7b 22 40 00 40 11 07 16 0a d3 37 0e ca 65  .K{"@.@.....7..e
 0020   ac 23 b6 51 00 35 00 37 c9 33 17 c7 01 00 00 01  .#.Q.5.7.3......
 0030   00 00 00 00 00 00 63 6f 6e 6e 65 63 74 69 76 69  ......connectivi
@@ -354,7 +361,8 @@
   <li>该数据包的标志ID为：<code class="highlighter-rouge">0xb05c</code></li>
 </ul>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>0000   00 1c 42 00 00 18 00 1c 42 af 22 19 86 dd 60 07  ..B.....B."...`.
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+0000   00 1c 42 00 00 18 00 1c 42 af 22 19 86 dd 60 07  ..B.....B."...`.
 0010   46 ce 00 42 11 40 fe 80 00 00 00 00 00 00 2b 48  F..B.@........+H
 0020   8e 47 77 1b 19 96 fe 80 00 00 00 00 00 00 02 1c  .Gw.............
 0030   42 ff fe 00 00 18 ce 95 00 35 00 42 4a f4 b0 5c  B........5.BJ..\
@@ -370,13 +378,15 @@
 
 <p>那么我们从失败的和成功的标志位开始读取：</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>17 c7 01 00 00 01
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+17 c7 01 00 00 01
 00 00 00 00 00 00 63 6f 6e 6e 65 63 74 69 76 69
 74 79 2d 63 68 65 63 6b 06 75 62 75 6e 74 75 03
 63 6f 6d 00 01 00 01 00 00
 </code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>b0 5c
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+b0 5c
 01 00 00 01 00 00 00 00 00 01 12 63 6f 6e 6e 65
 63 74 69 76 69 74 79 2d 63 68 65 63 6b 06 75 62
 75 6e 74 75 03 63 6f 6d 00 00 01 00 01 00 00 29
@@ -387,12 +397,14 @@
 
 <p>去除以后，关键就在标志位：</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>17 c7 
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+17 c7 
 01 00 00 01
 00 00 00 00 00 00 01 00 01 00 00
 </code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>b0 5c
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+b0 5c
 01 00 00 01 00 00 00 00 00 01 12 00 01 00 01 00 00 29
 02 00 00 00 00 00 00 00
 </code></pre></div></div>
@@ -406,7 +418,8 @@
 
 <p>注意：<code class="highlighter-rouge">OPCODE</code>是四个比特位。</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>0... .... .... =&gt; QR
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+0... .... .... =&gt; QR
 .000 0... .... =&gt; OPCODE
 .... ..0. .... =&gt; TC
 .... ...1 .... =&gt; RD
@@ -418,7 +431,7 @@
 
 <p>后来在<code class="highlighter-rouge">Wireshark</code>中发现了两个数据报文的不同：</p>
 
-<p>![标志位][0x01]</p>
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2018-02-10/0x01.png" alt="标志位" /></p>
 
 <p>标志位完全错乱了。</p>
 
@@ -426,7 +439,9 @@
 
 <p>在理解好前面的知识以后，我们来动手写一个高大上的DNS请求程序：</p>
 
-<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include &lt;iostream&gt;
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+
+<span class="cp">#include &lt;iostream&gt;
 #include &lt;arpa/inet.h&gt;
 #include &lt;sys/socket.h&gt;
 </span>
@@ -454,7 +469,9 @@
 
 <p>标志ID：<code class="highlighter-rouge">0x65a5</code></p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>0000   00 1c 42 00 00 18 00 1c 42 af 22 19 08 00 45 00  ..B.....B."...E.
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+
+0000   00 1c 42 00 00 18 00 1c 42 af 22 19 08 00 45 00  ..B.....B."...E.
 0010   00 56 23 b3 40 00 40 11 5e 7a 0a d3 37 0e ca 65  .V#.@.@.^z..7..e
 0020   ac 23 c9 30 00 35 00 42 52 1d 65 a5 01 00 00 01  .#.0.5.BR.e.....
 0030   00 00 00 00 00 01 12 63 6f 6e 6e 65 63 74 69 76  .......connectiv
@@ -465,7 +482,8 @@
 
 <p>从<code class="highlighter-rouge">0x65a5</code>进行剥离，我们得到如下数据包：</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>65 a5 01 00 00 01
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+65 a5 01 00 00 01
 00 00 00 00 00 01 12 63 6f 6e 6e 65 63 74 69 76
 69 74 79 2d 63 68 65 63 6b 06 75 62 75 6e 74 75
 03 63 6f 6d 00 00 1c 00 01 00 00 29 02 00 00 00
@@ -474,7 +492,8 @@
 
 <p>取出域名<code class="highlighter-rouge">Name</code>范围：</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>65 a5 
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+65 a5 
 01 00 00 01
 00 00 00 00 00 01 12 00 1c 00 01 00 00 29 02 00 
 00 00
@@ -510,6 +529,7 @@
 <h3 id="结束">结束</h3>
 
 <p>以后有其他相关的东西再更新吧…… 先写到这里。</p>
+
 
 
 <div class="pull-right">
