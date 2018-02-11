@@ -13,6 +13,24 @@ description: "记录一下写的这个程序"
 
 Jekyll没有自己像hexo一样自动创建文章的程序，我就无聊造个轮子，当然还存在许多隐藏的BUG。
 
+文档格式：
+
+```
+
+---
+layout: post
+title: "标题"
+date: 2018-02-11
+categories: 高效
+permalink: /archivers/2018-02-11/1
+description: "描述"
+---
+记录一下写的这个程序
+<!--more-->
+```
+
+
+
 ## 0x02 代码
 
 ```c
