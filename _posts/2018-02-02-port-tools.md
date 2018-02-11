@@ -134,7 +134,7 @@ Rinetd是为在一个Unix和Linux操作系统中为重定向传输控制协议(T
 
 ### 安装
 
-```bash
+```shell
 tar zxvf rinetd.tar.gz
 cd rinetd
 make
@@ -300,7 +300,8 @@ OPTIONS:
 
 > 网络状况：A已经控制了B主机，但是无法与C主机进行通信
 
-```
+```shell
+
 msf exploit(handler) > use auxiliary/server/socks4a 
 msf auxiliary(socks4a) > show options 
 Module options (auxiliary/server/socks4a):
