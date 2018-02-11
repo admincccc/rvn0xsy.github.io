@@ -282,41 +282,39 @@
 
 <p>网上大部分是先根据报文格式定义<code class="highlighter-rouge">Header</code>结构体：</p>
 
-<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
-<span class="k">struct</span> <span class="n">DNS_HEADER</span>
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">struct</span> <span class="no">DNS_HEADER</span>
 <span class="p">{</span>
- <span class="kt">unsigned</span> <span class="kt">short</span> <span class="n">id</span><span class="p">;</span> <span class="c1">// identification number</span>
+ <span class="n">unsigned</span> <span class="n">short</span> <span class="nb">id</span><span class="p">;</span> <span class="sr">//</span> <span class="n">identification</span> <span class="n">number</span>
 
- <span class="kt">unsigned</span> <span class="kt">char</span> <span class="n">rd</span> <span class="o">:</span><span class="mi">1</span><span class="p">;</span> <span class="c1">// recursion desired</span>
- <span class="kt">unsigned</span> <span class="kt">char</span> <span class="n">tc</span> <span class="o">:</span><span class="mi">1</span><span class="p">;</span> <span class="c1">// truncated message</span>
- <span class="kt">unsigned</span> <span class="kt">char</span> <span class="n">aa</span> <span class="o">:</span><span class="mi">1</span><span class="p">;</span> <span class="c1">// authoritive answer</span>
- <span class="kt">unsigned</span> <span class="kt">char</span> <span class="n">opcode</span> <span class="o">:</span><span class="mi">4</span><span class="p">;</span> <span class="c1">// purpose of message</span>
- <span class="kt">unsigned</span> <span class="kt">char</span> <span class="n">qr</span> <span class="o">:</span><span class="mi">1</span><span class="p">;</span> <span class="c1">// query/response flag</span>
+ <span class="n">unsigned</span> <span class="n">char</span> <span class="n">rd</span> <span class="p">:</span><span class="mi">1</span><span class="p">;</span> <span class="sr">//</span> <span class="n">recursion</span> <span class="n">desired</span>
+ <span class="n">unsigned</span> <span class="n">char</span> <span class="n">tc</span> <span class="p">:</span><span class="mi">1</span><span class="p">;</span> <span class="sr">//</span> <span class="n">truncated</span> <span class="n">message</span>
+ <span class="n">unsigned</span> <span class="n">char</span> <span class="n">aa</span> <span class="p">:</span><span class="mi">1</span><span class="p">;</span> <span class="sr">//</span> <span class="n">authoritive</span> <span class="n">answer</span>
+ <span class="n">unsigned</span> <span class="n">char</span> <span class="n">opcode</span> <span class="p">:</span><span class="mi">4</span><span class="p">;</span> <span class="sr">//</span> <span class="n">purpose</span> <span class="n">of</span> <span class="n">message</span>
+ <span class="n">unsigned</span> <span class="n">char</span> <span class="n">qr</span> <span class="p">:</span><span class="mi">1</span><span class="p">;</span> <span class="sr">//</span> <span class="n">query</span><span class="o">/</span><span class="n">response</span> <span class="n">flag</span>
 
- <span class="kt">unsigned</span> <span class="kt">char</span> <span class="n">rcode</span> <span class="o">:</span><span class="mi">4</span><span class="p">;</span> <span class="c1">// response code</span>
- <span class="kt">unsigned</span> <span class="kt">char</span> <span class="n">cd</span> <span class="o">:</span><span class="mi">1</span><span class="p">;</span> <span class="c1">// checking disabled</span>
- <span class="kt">unsigned</span> <span class="kt">char</span> <span class="n">ad</span> <span class="o">:</span><span class="mi">1</span><span class="p">;</span> <span class="c1">// authenticated data</span>
- <span class="kt">unsigned</span> <span class="kt">char</span> <span class="n">z</span> <span class="o">:</span><span class="mi">1</span><span class="p">;</span> <span class="c1">// its z! reserved</span>
- <span class="kt">unsigned</span> <span class="kt">char</span> <span class="n">ra</span> <span class="o">:</span><span class="mi">1</span><span class="p">;</span> <span class="c1">// recursion available</span>
+ <span class="n">unsigned</span> <span class="n">char</span> <span class="n">rcode</span> <span class="p">:</span><span class="mi">4</span><span class="p">;</span> <span class="sr">//</span> <span class="n">response</span> <span class="n">code</span>
+ <span class="n">unsigned</span> <span class="n">char</span> <span class="n">cd</span> <span class="p">:</span><span class="mi">1</span><span class="p">;</span> <span class="sr">//</span> <span class="n">checking</span> <span class="n">disabled</span>
+ <span class="n">unsigned</span> <span class="n">char</span> <span class="n">ad</span> <span class="p">:</span><span class="mi">1</span><span class="p">;</span> <span class="sr">//</span> <span class="n">authenticated</span> <span class="n">data</span>
+ <span class="n">unsigned</span> <span class="n">char</span> <span class="n">z</span> <span class="p">:</span><span class="mi">1</span><span class="p">;</span> <span class="sr">//</span> <span class="n">its</span> <span class="n">z!</span> <span class="n">reserved</span>
+ <span class="n">unsigned</span> <span class="n">char</span> <span class="n">ra</span> <span class="p">:</span><span class="mi">1</span><span class="p">;</span> <span class="sr">//</span> <span class="n">recursion</span> <span class="n">available</span>
 
- <span class="kt">unsigned</span> <span class="kt">short</span> <span class="n">q_count</span><span class="p">;</span> <span class="c1">// number of question entries</span>
- <span class="kt">unsigned</span> <span class="kt">short</span> <span class="n">ans_count</span><span class="p">;</span> <span class="c1">// number of answer entries</span>
- <span class="kt">unsigned</span> <span class="kt">short</span> <span class="n">auth_count</span><span class="p">;</span> <span class="c1">// number of authority entries</span>
- <span class="kt">unsigned</span> <span class="kt">short</span> <span class="n">add_count</span><span class="p">;</span> <span class="c1">// number of resource entries</span>
+ <span class="n">unsigned</span> <span class="n">short</span> <span class="n">q_count</span><span class="p">;</span> <span class="sr">//</span> <span class="n">number</span> <span class="n">of</span> <span class="n">question</span> <span class="n">entries</span>
+ <span class="n">unsigned</span> <span class="n">short</span> <span class="n">ans_count</span><span class="p">;</span> <span class="sr">//</span> <span class="n">number</span> <span class="n">of</span> <span class="n">answer</span> <span class="n">entries</span>
+ <span class="n">unsigned</span> <span class="n">short</span> <span class="n">auth_count</span><span class="p">;</span> <span class="sr">//</span> <span class="n">number</span> <span class="n">of</span> <span class="n">authority</span> <span class="n">entries</span>
+ <span class="n">unsigned</span> <span class="n">short</span> <span class="n">add_count</span><span class="p">;</span> <span class="sr">//</span> <span class="n">number</span> <span class="n">of</span> <span class="n">resource</span> <span class="n">entries</span>
 <span class="p">};</span>
 
-<span class="k">struct</span> <span class="n">QUESTION</span>
+<span class="n">struct</span> <span class="no">QUESTION</span>
 <span class="p">{</span>
- <span class="kt">unsigned</span> <span class="kt">short</span> <span class="n">qtype</span><span class="p">;</span>
- <span class="kt">unsigned</span> <span class="kt">short</span> <span class="n">qclass</span><span class="p">;</span>
+ <span class="n">unsigned</span> <span class="n">short</span> <span class="n">qtype</span><span class="p">;</span>
+ <span class="n">unsigned</span> <span class="n">short</span> <span class="n">qclass</span><span class="p">;</span>
 <span class="p">};</span>
 
-<span class="k">typedef</span> <span class="k">struct</span>
+<span class="n">typedef</span> <span class="n">struct</span>
 <span class="p">{</span>
- <span class="kt">unsigned</span> <span class="kt">char</span> <span class="o">*</span><span class="n">name</span><span class="p">;</span>
- <span class="k">struct</span> <span class="n">QUESTION</span> <span class="o">*</span><span class="n">ques</span><span class="p">;</span>
-<span class="p">}</span> <span class="n">QUERY</span>
-</code></pre></div></div>
+ <span class="n">unsigned</span> <span class="n">char</span> <span class="o">*</span><span class="nb">name</span><span class="p">;</span>
+ <span class="n">struct</span> <span class="no">QUESTION</span> <span class="o">*</span><span class="n">ques</span><span class="p">;</span>
+<span class="p">}</span> <span class="no">QUERY</span></code></pre></figure>
 
 <p>然后通过指针进行指向每一段数据报文格式的起始位置：</p>
 
@@ -556,12 +554,13 @@ b0 5c
 </article>
 
 </section>
+<!-- 
 <nav class="navbar navbar-default navbar-fixed-bottom">
   <div class="container footer-content">
     Jekyll Theme by Hemang Kumar/Powered By Jekyll/Site owner is 倾旋
   </div>
 </nav>
-
+-->
   </body>
 
 </html>
