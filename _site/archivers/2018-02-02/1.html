@@ -323,7 +323,7 @@
 
 <h3 id="安装">安装</h3>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">tar </span>zxvf rinetd.tar.gz
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">tar </span>zxvf rinetd.tar.gz
 <span class="nb">cd </span>rinetd
 make
 make <span class="nb">install</span>
@@ -514,21 +514,22 @@ OPTIONS:
   <p>网络状况：A已经控制了B主机，但是无法与C主机进行通信</p>
 </blockquote>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>msf exploit(handler) &gt; use auxiliary/server/socks4a 
-msf auxiliary(socks4a) &gt; show options 
-Module options (auxiliary/server/socks4a):
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+msf exploit<span class="o">(</span>handler<span class="o">)</span> <span class="o">&gt;</span> use auxiliary/server/socks4a 
+msf auxiliary<span class="o">(</span>socks4a<span class="o">)</span> <span class="o">&gt;</span> show options 
+Module options <span class="o">(</span>auxiliary/server/socks4a<span class="o">)</span>:
    Name     Current Setting  Required  Description
-   ----     ---------------  --------  -----------
-   SRVHOST  0.0.0.0          yes       The address to listen on
-   SRVPORT  1080             yes       The port to listen on.
+   <span class="nt">----</span>     <span class="nt">---------------</span>  <span class="nt">--------</span>  <span class="nt">-----------</span>
+   SRVHOST  0.0.0.0          <span class="nb">yes       </span>The address to listen on
+   SRVPORT  1080             <span class="nb">yes       </span>The port to listen on.
 Auxiliary action:
    Name   Description
-   ----   -----------
+   <span class="nt">----</span>   <span class="nt">-----------</span>
    Proxy  
-msf auxiliary(socks4a) &gt; exploit -y
-[*] Auxiliary module execution completed
-msf auxiliary(socks4a) &gt; 
-[*] Starting the socks4a proxy server
+msf auxiliary<span class="o">(</span>socks4a<span class="o">)</span> <span class="o">&gt;</span> exploit <span class="nt">-y</span>
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> Auxiliary module execution completed
+msf auxiliary<span class="o">(</span>socks4a<span class="o">)</span> <span class="o">&gt;</span> 
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> Starting the socks4a proxy server
 </code></pre></div></div>
 
 <ul>
