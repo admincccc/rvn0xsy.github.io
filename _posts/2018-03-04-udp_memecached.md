@@ -245,7 +245,7 @@ int main(int argc, const char *argv[])
 }
 ```
 
-如果要利用Memecached漏洞：
+如果要利用Memcached漏洞：
 
 ```cpp
 
