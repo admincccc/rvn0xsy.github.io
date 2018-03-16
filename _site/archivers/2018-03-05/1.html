@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta content="倾旋的博客" property="og:site_name">
 
-  <meta content="C/C++ 子域名A记录枚举" property="og:title">
+  <meta content="C/C++ 子域名A记录枚举(多线程)" property="og:title">
 
 
   <meta content="article" property="og:type">
@@ -33,7 +33,7 @@
 
   
 
-  <title>C/C++ 子域名A记录枚举</title>
+  <title>C/C++ 子域名A记录枚举(多线程)</title>
   <meta name="description" content="分享一个C/C++ 子域名A记录枚举的一个工具，可以根据自己的需求再改进">
 <script src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/jquery.min.js"></script>
 <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
@@ -121,7 +121,7 @@
 <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
   <div class="jumbotron">
     <div class="container">
-      <h1 class="post-title-main" itemprop="name headline">C/C++ 子域名A记录枚举</h1>
+      <h1 class="post-title-main" itemprop="name headline">C/C++ 子域名A记录枚举(多线程)</h1>
       <p class="post-meta"><time datetime="2018-03-05T00:00:00+08:00" itemprop="datePublished">Mar 5, 2018</time> • <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span itemprop="name">倾旋</span></span>
       
       <div class="bdsharebuttonbox" style="background-color: white;width: 27%;border-radius: 10px;padding-left: 10px; "><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_twi" data-cmd="twi" title="分享到Twitter"></a><a href="#" class="bds_fbook" data-cmd="fbook" title="分享到Facebook"></a><a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a><a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a><a href="#" class="bds_evernotecn" data-cmd="evernotecn" title="分享到印象笔记"></a><a href="#" class="bds_youdao" data-cmd="youdao" title="分享到有道云笔记"></a><a href="#" class="bds_sqq" data-cmd="sqq" title="分享到QQ好友"></a><a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a><a href="#" class="bds_tieba" data-cmd="tieba" title="分享到百度贴吧"></a><a href="#" class="bds_copy" data-cmd="copy" title="分享到复制网址"></a><a href="#" class="bds_print" data-cmd="print" title="分享到打印"></a></div>
@@ -204,6 +204,11 @@ end threads ... 2
 </code></pre></div></div>
 
 <h2 id="0x04-源代码">0x04 源代码</h2>
+
+<ul>
+  <li>源代码地址：http://payloads.online/tools/dns_enum.txt</li>
+  <li>字典地址：http://payloads.online/tools/dict.txt</li>
+</ul>
 
 <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
 <span class="c1">//dns_enum</span>
@@ -631,6 +636,8 @@ end threads ... 2
     <span class="n">_dest</span><span class="p">.</span><span class="n">sin_family</span> <span class="o">=</span> <span class="n">AF_INET</span><span class="p">;</span>
     <span class="n">_dest</span><span class="p">.</span><span class="n">sin_port</span> <span class="o">=</span> <span class="n">htons</span><span class="p">(</span><span class="mi">53</span><span class="p">);</span>
     <span class="n">_dest</span><span class="p">.</span><span class="n">sin_addr</span><span class="p">.</span><span class="n">s_addr</span> <span class="o">=</span> <span class="n">inet_addr</span><span class="p">(</span><span class="n">_dnsServer</span><span class="p">.</span><span class="n">c_str</span><span class="p">());</span> <span class="c1">//dns servers</span>
+    <span class="k">struct</span> <span class="n">timeval</span> <span class="n">timeout</span> <span class="o">=</span> <span class="p">{</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">};</span>
+    <span class="n">setsockopt</span><span class="p">(</span><span class="n">dnsSock</span><span class="p">,</span><span class="n">SOL_SOCKET</span><span class="p">,</span><span class="n">SO_RCVTIMEO</span><span class="p">,(</span><span class="kt">char</span><span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">timeout</span><span class="p">,</span><span class="k">sizeof</span><span class="p">(</span><span class="k">struct</span> <span class="n">timeval</span><span class="p">));</span>
     <span class="k">if</span><span class="p">(</span><span class="n">sendto</span><span class="p">(</span><span class="n">dnsSock</span><span class="p">,(</span><span class="kt">char</span><span class="o">*</span><span class="p">)</span><span class="n">_buff</span><span class="p">,</span><span class="k">sizeof</span><span class="p">(</span><span class="k">struct</span> <span class="n">DNS_HEADER</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">strlen</span><span class="p">((</span><span class="k">const</span> <span class="kt">char</span><span class="o">*</span><span class="p">)</span><span class="n">_qname</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="k">sizeof</span><span class="p">(</span><span class="k">struct</span> <span class="n">QUESTION</span><span class="p">),</span><span class="mi">0</span><span class="p">,(</span><span class="k">struct</span> <span class="n">sockaddr</span><span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">_dest</span><span class="p">,</span><span class="k">sizeof</span><span class="p">(</span><span class="n">_dest</span><span class="p">))</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span>
     <span class="p">{</span>
         <span class="k">return</span><span class="p">;</span>
@@ -851,7 +858,7 @@ end threads ... 2
   </div>
 </nav>
 -->
-<script src="https://s22.cnzz.com/z_stat.php?id=1262492389&web_id=1262492389" language="JavaScript"></script>
+<!-- <script src="https://s22.cnzz.com/z_stat.php?id=1262492389&web_id=1262492389" language="JavaScript"></script> -->
   </body>
 
 </html>

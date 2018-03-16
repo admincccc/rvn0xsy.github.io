@@ -7,19 +7,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta content="倾旋的博客" property="og:site_name">
 
-  <meta content="Kali Linux 优化" property="og:title">
+  <meta content="重放Flash上传数据包" property="og:title">
 
 
   <meta content="article" property="og:type">
 
 
-  <meta content="本文介绍几个优化Kali Linux的方式" property="og:description">
+  <meta content="本篇文章是分享一下分析Flash文件上传数据包的方法" property="og:description">
 
 
-  <meta content="http://localhost:4000/archivers/2017-11-08/2" property="og:url">
+  <meta content="http://localhost:4000/archivers/2018-03-11/1" property="og:url">
 
 
-  <meta content="2017-11-08T00:00:00+08:00" property="article:published_time">
+  <meta content="2018-03-11T00:00:00+08:00" property="article:published_time">
   <meta content="http://localhost:4000/about/" property="article:author">
 
 
@@ -27,14 +27,14 @@
 
 
   
-  <meta content="Kali" property="article:section">
+  <meta content="Web安全" property="article:section">
   
 
 
   
 
-  <title>Kali Linux 优化</title>
-  <meta name="description" content="本文介绍几个优化Kali Linux的方式">
+  <title>重放Flash上传数据包</title>
+  <meta name="description" content="本篇文章是分享一下分析Flash文件上传数据包的方法">
 <script src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/jquery.min.js"></script>
 <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
   
@@ -51,7 +51,7 @@
 <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
   <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-hQpvDQiCJaD2H465dQfA717v7lu5qHWtDbWNPvaTJ0ID5xnPUlVXnKzq7b8YUkbN" crossorigin="anonymous">
   <link rel="stylesheet" href="/css/main.css">
-  <link rel="canonical" href="http://localhost:4000/archivers/2017-11-08/2">
+  <link rel="canonical" href="http://localhost:4000/archivers/2018-03-11/1">
   <link rel="alternate" type="application/rss+xml" title="倾旋的博客" href="http://localhost:4000/feed.xml">
 </head>
 
@@ -121,8 +121,8 @@
 <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
   <div class="jumbotron">
     <div class="container">
-      <h1 class="post-title-main" itemprop="name headline">Kali Linux 优化</h1>
-      <p class="post-meta"><time datetime="2017-11-08T00:00:00+08:00" itemprop="datePublished">Nov 8, 2017</time> • <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span itemprop="name">倾旋</span></span>
+      <h1 class="post-title-main" itemprop="name headline">重放Flash上传数据包</h1>
+      <p class="post-meta"><time datetime="2018-03-11T00:00:00+08:00" itemprop="datePublished">Mar 11, 2018</time> • <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span itemprop="name">倾旋</span></span>
       
       <div class="bdsharebuttonbox" style="background-color: white;width: 27%;border-radius: 10px;padding-left: 10px; "><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_twi" data-cmd="twi" title="分享到Twitter"></a><a href="#" class="bds_fbook" data-cmd="fbook" title="分享到Facebook"></a><a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a><a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a><a href="#" class="bds_evernotecn" data-cmd="evernotecn" title="分享到印象笔记"></a><a href="#" class="bds_youdao" data-cmd="youdao" title="分享到有道云笔记"></a><a href="#" class="bds_sqq" data-cmd="sqq" title="分享到QQ好友"></a><a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a><a href="#" class="bds_tieba" data-cmd="tieba" title="分享到百度贴吧"></a><a href="#" class="bds_copy" data-cmd="copy" title="分享到复制网址"></a><a href="#" class="bds_print" data-cmd="print" title="分享到打印"></a></div>
 <script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":["mshare","qzone","tsina","bdysc","weixin","sqq","youdao","mail","fbook","twi","linkedin","h163","evernotecn","copy","print"],"bdPic":"","bdStyle":"1","bdSize":"16"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
@@ -134,41 +134,43 @@
 
 
   <div class="post-content container" itemprop="articleBody">
-    <p>本文介绍几个优化Kali Linux的方式
+    <p>本篇文章是分享一下分析Flash文件上传数据包的方法
 <!--more--></p>
-<h2 id="0x00-启动应用加速">0x00 启动应用加速</h2>
+<h2 id="0x00-前言">0x00 前言</h2>
 
-<ul>
-  <li><code class="highlighter-rouge">apt-get install preload</code></li>
-</ul>
+<p>由于工作中经常遇到一些网站采用flash文件进行文件上传的处理，但是Burp好像拦截不了flash上传的数据包，这里我就分享一个自己的办法。</p>
 
-<p>该软件能识别一个用户最常用的程序，也能把二进制文件和依赖性预先加载到内存，以提供更快速的访问。随着安装后的第一次重启，它会自动运行。</p>
+<h2 id="0x01-wireshark">0x01 Wireshark</h2>
 
-<h2 id="0x01-垃圾痕迹清除">0x01 垃圾、痕迹清除</h2>
+<p>Wireshark（前称Ethereal）是一个网络封包分析软件。网络封包分析软件的功能是撷取网络封包，并尽可能显示出最为详细的网络封包资料。Wireshark使用WinPCAP作为接口，直接与网卡进行数据报文交换。</p>
 
-<ul>
-  <li><code class="highlighter-rouge">apt-get install bleachbit</code></li>
-</ul>
+<p>由于HTTP协议是明文的，我们可以在抓包的时候直接提取数据包，在Burpsuite里重放</p>
 
-<p>释放磁盘空间，通过释放缓存、删除Cookie、清楚上网记录、粉碎临时文件、删除日志，以及丢弃其他一些非必要的文件来提高隐私性。使用高级技术，包括粉碎文件来防止恢复，擦除磁盘空间来隐藏没有完全删除的文件的踪迹。</p>
+<h2 id="0x02-抓包">0x02 抓包</h2>
 
-<h2 id="0x02-启动项优化">0x02 启动项优化</h2>
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2018-03-11/0x01.png" alt="抓包" /></p>
 
-<ul>
-  <li><code class="highlighter-rouge">apt-get install bum</code></li>
-</ul>
+<p>首先打开Wireshark选择网卡，然进入抓包状态，这时候上传文件，上传文件的数据包会在Wireshark中显示：</p>
 
-<p>从应用菜单-&gt;附件菜单中选择<code class="highlighter-rouge">gnome-do</code>配置它</p>
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2018-03-11/0x05.png" alt="抓包" /></p>
 
-<h2 id="0x03-文件加密-反取证">0x03 文件加密-反取证</h2>
+<p>抓取到数据包我们可以直接将内容COPY出来：</p>
 
-<ul>
-  <li><code class="highlighter-rouge">apt-get install gnupg</code></li>
-</ul>
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2018-03-11/0x02.png" alt="抓包" /></p>
 
-<p>安装完成后可以使用<code class="highlighter-rouge">gpg</code>命令针对文件进行加密</p>
+<p>或者跟踪流：</p>
 
-<p>可以参考：http://www.ruanyifeng.com/blog/2013/07/gpg.html</p>
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2018-03-11/0x03.png" alt="抓包" /></p>
+
+<p>原始数据包就在这里了：</p>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2018-03-11/0x04.png" alt="抓包" /></p>
+
+<h2 id="0x03-重放数据">0x03 重放数据</h2>
+
+<p>我们把原始数据包放入Burpsuite：</p>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2018-03-11/0x06.png" alt="抓包" /></p>
 
 
 
