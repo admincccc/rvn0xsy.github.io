@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta content="倾旋的博客" property="og:site_name">
+
+  <meta content="msfconsole常用命令" property="og:title">
+
+
+  <meta content="article" property="og:type">
+
+
+  <meta content="本文记录一下基础命令" property="og:description">
+
+
+  <meta content="http://localhost:4000/archivers/2018-03-16/2" property="og:url">
+
+
+  <meta content="2018-03-16T00:00:00+08:00" property="article:published_time">
+  <meta content="http://localhost:4000/about/" property="article:author">
+
+
+  <meta property="og:image" content="">
+
+
+  
+  <meta content="Program" property="article:section">
+  
+
+
+  
+
+  <title>msfconsole常用命令</title>
+  <meta name="description" content="本文记录一下基础命令">
+<script src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+  
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/ptsans.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/firamono.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/lato.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/sourcecodepro.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/gentiumbasic.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/alegreya.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/lora.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/firasans400.css' rel='stylesheet' type='text/css'>
+  <script src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/jquery.min2.2.0.js"></script>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/opensans.css' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-hQpvDQiCJaD2H465dQfA717v7lu5qHWtDbWNPvaTJ0ID5xnPUlVXnKzq7b8YUkbN" crossorigin="anonymous">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="http://localhost:4000/archivers/2018-03-16/2">
+  <link rel="alternate" type="application/rss+xml" title="倾旋的博客" href="http://localhost:4000/feed.xml">
+</head>
+
+
+  <body>
+
+<section>
+<nav class="navbar navbar-default navbar-fixed-top">
+
+  <div class="container">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/">倾旋的博客</a>
+    </div>
+
+
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        
+        
+        <li><a href="/about/">关于我</a></li>
+
+        
+
+        
+        
+        <li><a href="/category/">文章分类</a></li>
+
+        
+
+        
+        
+
+        
+        
+
+        
+        
+
+        
+        
+        <li><a href="/other/">其他信息</a></li>
+
+        
+
+        
+
+
+      </ul>
+
+    <!--  <ul class="nav navbar-nav navbar-right">
+        <li><a href="#">Know More!</a></li>
+
+      </ul>-->
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+</section>
+
+<section>
+<article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <div class="jumbotron">
+    <div class="container">
+      <h1 class="post-title-main" itemprop="name headline">msfconsole常用命令</h1>
+      <p class="post-meta"><time datetime="2018-03-16T00:00:00+08:00" itemprop="datePublished">Mar 16, 2018</time> • <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span itemprop="name">倾旋</span></span>
+      
+      <div class="bdsharebuttonbox" style="background-color: white;width: 27%;border-radius: 10px;padding-left: 10px; "><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_twi" data-cmd="twi" title="分享到Twitter"></a><a href="#" class="bds_fbook" data-cmd="fbook" title="分享到Facebook"></a><a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a><a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a><a href="#" class="bds_evernotecn" data-cmd="evernotecn" title="分享到印象笔记"></a><a href="#" class="bds_youdao" data-cmd="youdao" title="分享到有道云笔记"></a><a href="#" class="bds_sqq" data-cmd="sqq" title="分享到QQ好友"></a><a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a><a href="#" class="bds_tieba" data-cmd="tieba" title="分享到百度贴吧"></a><a href="#" class="bds_copy" data-cmd="copy" title="分享到复制网址"></a><a href="#" class="bds_print" data-cmd="print" title="分享到打印"></a></div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":["mshare","qzone","tsina","bdysc","weixin","sqq","youdao","mail","fbook","twi","linkedin","h163","evernotecn","copy","print"],"bdPic":"","bdStyle":"1","bdSize":"16"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+      </p>
+      
+    </div>
+
+</div>
+
+
+  <div class="post-content container" itemprop="articleBody">
+    <p>本文记录一下基础命令
+<!--more--></p>
+
+<blockquote>
+  <p>命令： show exploits</p>
+</blockquote>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>列出metasploit框架中的所有渗透攻击模块。
+</code></pre></div></div>
+
+<blockquote>
+  <p>命令：show payloads</p>
+</blockquote>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>列出metasploit框架中的所有攻击载荷。
+</code></pre></div></div>
+<blockquote>
+  <p>命令：show auxiliary</p>
+</blockquote>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>列出metasploit框架中的所有辅助攻击载荷。
+</code></pre></div></div>
+
+<blockquote>
+  <p>命令：search name</p>
+</blockquote>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>查找metasploit框架中所有的渗透攻击和其他模块。
+</code></pre></div></div>
+
+<blockquote>
+  <p>命令：info</p>
+</blockquote>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>展示出制定渗透攻击或模块的相关信息。
+</code></pre></div></div>
+
+<blockquote>
+  <p>命令：use name</p>
+</blockquote>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>装载一个渗透攻击或模块。
+</code></pre></div></div>
+
+<blockquote>
+  <p>命令：LHOST</p>
+</blockquote>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>你本地可以让目标主机连接的IP地址，通常当目标主机不在同一个局域网内时，就需要是一个公共IP地址，特别为反弹式shell使用。
+</code></pre></div></div>
+
+<blockquote>
+  <p>命令：RHOST</p>
+</blockquote>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>远程主机或是目标主机。
+</code></pre></div></div>
+
+<blockquote>
+  <p>命令：set function</p>
+</blockquote>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>设置特定的配置参数（EG：设置本地或远程主机参数）。
+</code></pre></div></div>
+
+<blockquote>
+  <p>命令：setg function</p>
+</blockquote>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>以全局方式设置特定的配置参数（EG：设置本地或远程主机参数）。
+</code></pre></div></div>
+
+<blockquote>
+  <p>命令：show options</p>
+</blockquote>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>列出某个渗透攻击或模块中所有的配置参数。
+</code></pre></div></div>
+
+<blockquote>
+  <p>命令：show targets</p>
+</blockquote>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>列出渗透攻击所有支持的目标平台。
+</code></pre></div></div>
+
+<blockquote>
+  <p>命令：set target num</p>
+</blockquote>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>指定你所知道的目标的操作系统以及补丁版本类型。
+</code></pre></div></div>
+
+<blockquote>
+  <p>命令：set payload name</p>
+</blockquote>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>指定想要使用的攻击载荷。
+</code></pre></div></div>
+<blockquote>
+  <p>命令：show advanced</p>
+</blockquote>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>列出所有高级配置选项。
+</code></pre></div></div>
+
+<blockquote>
+  <p>命令：set autorunscript migrate -f.</p>
+</blockquote>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>在渗透攻击完成后，将自动迁移到另一个进程。
+</code></pre></div></div>
+
+<blockquote>
+  <p>命令：check</p>
+</blockquote>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>检测目标是否选定渗透攻击存在相应的安全漏洞。
+</code></pre></div></div>
+
+<blockquote>
+  <p>命令：exploit</p>
+</blockquote>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>执行渗透攻击或模块来攻击目标。
+</code></pre></div></div>
+
+<blockquote>
+  <p>命令：exploit -j</p>
+</blockquote>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>在计划任务下进行渗透攻击（攻击将在后台进行）。
+</code></pre></div></div>
+
+<blockquote>
+  <p>命令：exploit -z</p>
+</blockquote>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>渗透攻击完成后不与回话进行交互。
+</code></pre></div></div>
+
+<blockquote>
+  <p>命令：exploit -e encoder</p>
+</blockquote>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>制定使用的攻击载荷编码方式（EG：exploit -e shikata_ga_nai）。
+</code></pre></div></div>
+
+<blockquote>
+  <p>命令：exploit -h</p>
+</blockquote>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>列出exploit命令的帮助信息。
+</code></pre></div></div>
+
+<blockquote>
+  <p>命令：sessions -l</p>
+</blockquote>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>列出可用的交互会话（在处理多个shell时使用）。
+</code></pre></div></div>
+
+<blockquote>
+  <p>命令：sessions -l -v</p>
+</blockquote>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>列出所有可用的交互会话以及详细信息，EG：攻击系统时使用了哪个安全漏洞。
+</code></pre></div></div>
+
+<blockquote>
+  <p>命令：sessions -s script</p>
+</blockquote>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>在所有活跃的metasploit会话中运行一个特定的metasploit脚本。
+</code></pre></div></div>
+
+<blockquote>
+  <p>命令：sessions -K</p>
+</blockquote>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>杀死所有活跃的交互会话。
+</code></pre></div></div>
+
+<blockquote>
+  <p>命令：sessions -c cmd</p>
+</blockquote>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>在所有活跃的metasploit会话上执行一个命令。
+</code></pre></div></div>
+
+<blockquote>
+  <p>命令：sessions -u sessionID</p>
+</blockquote>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>升级一个普通的win32 shell到metasploit shell。
+</code></pre></div></div>
+
+<blockquote>
+  <p>命令：db_create name</p>
+</blockquote>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>创建一个数据库驱动攻击所要使用的数据库（EG：db_create autopwn）。
+</code></pre></div></div>
+
+<blockquote>
+  <p>命令：db_connect name</p>
+</blockquote>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>创建并连接一个数据库驱动攻击所要使用的数据库（EG：db_connect user:passwd@ip/sqlname）。
+</code></pre></div></div>
+
+<blockquote>
+  <p>命令：db_namp</p>
+</blockquote>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>利用nmap并把扫描数据存储到数据库中（支持普通的nmap语句，EG：-sT -v -P0）。
+</code></pre></div></div>
+
+<blockquote>
+  <p>命令：db_autopwn -h</p>
+</blockquote>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>展示出db_autopwn命令的帮助信息。
+</code></pre></div></div>
+
+<blockquote>
+  <p>命令：db_autopwn -p -r -e</p>
+</blockquote>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>对所有发现的开放端口执行db_autopwn，攻击所有系统，并使用一个反弹式shell。
+</code></pre></div></div>
+
+<blockquote>
+  <p>命令：db_destroy</p>
+</blockquote>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>删除当前数据库。
+</code></pre></div></div>
+
+<blockquote>
+  <p>命令：db_destroy user：passwd@host：port/database</p>
+</blockquote>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>使用高级选项来删除数据库。
+</code></pre></div></div>
+
+<h2 id="metasploit命令"><strong><em>metasploit命令</em></strong></h2>
+
+<blockquote>
+  <p>help
+打开meterpreter使用帮助。</p>
+</blockquote>
+
+<blockquote>
+  <p>run scriptname
+运行meterpreter脚本，在scripts/meterpreter目录下可查看到所有脚本名。</p>
+</blockquote>
+
+<blockquote>
+  <p>sysinfo
+列出受控主机的系统信息。</p>
+</blockquote>
+
+<blockquote>
+  <p>ls
+列出目标主机的文件和文件夹信息。</p>
+</blockquote>
+
+<blockquote>
+  <p>use priv
+加载特权提升扩展模块，来扩展metasploit库。</p>
+</blockquote>
+
+<blockquote>
+  <p>ps
+显示所有运行的进程以及相关联的用户账户。</p>
+</blockquote>
+
+<blockquote>
+  <p>migrate PID
+迁移到一个指定的进程ID（PID号可通过ps命令从主机上获得）。</p>
+</blockquote>
+
+<blockquote>
+  <p>use incognito
+加载incognito功能（用来盗窃目标主机的令牌或假冒用户）</p>
+</blockquote>
+
+<blockquote>
+  <p>list_tokens -u
+列出目标主机用户的可用令牌。</p>
+</blockquote>
+
+<blockquote>
+  <p>list_tokens -g
+列出目标主机用户组的可用令牌。</p>
+</blockquote>
+
+<blockquote>
+  <p>impersonate_token DOMAIN_NAME\USERNAME
+假冒目标主机上的可用令牌。</p>
+</blockquote>
+
+<blockquote>
+  <p>steal_token PID
+盗窃给定进程的可用令牌并进行令牌假冒。</p>
+</blockquote>
+
+<blockquote>
+  <p>drop_token
+停止假冒当前令牌。</p>
+</blockquote>
+
+<blockquote>
+  <p>getsystem
+通过各种攻击向量来提升系统用户权限。</p>
+</blockquote>
+
+<blockquote>
+  <p>execute -f cmd.exe -i
+执行cmd.exe命令并进行交互。</p>
+</blockquote>
+
+<blockquote>
+  <p>execute -f cmd.exe -i -t
+以所有可用令牌来执行cmd命令并隐藏该进程。</p>
+</blockquote>
+
+<blockquote>
+  <p>rev2self
+回到控制目标主机的初始用户账户下。</p>
+</blockquote>
+
+<blockquote>
+  <p>reg command
+在目标主机注册表中进行交互，创建，删除，查询等操作。</p>
+</blockquote>
+
+<blockquote>
+  <p>setdesktop number
+切换到另一个用户界面（该功能基于那些用户已登录）。</p>
+</blockquote>
+
+<blockquote>
+  <p>screenshot
+对目标主机的屏幕进行截图。</p>
+</blockquote>
+
+<blockquote>
+  <p>upload file
+向目标主机上传文件。</p>
+</blockquote>
+
+<blockquote>
+  <p>download file
+从目标主机下载文件。</p>
+</blockquote>
+
+<blockquote>
+  <p>keyscan_start
+针对远程目标主机开启键盘记录功能。</p>
+</blockquote>
+
+<blockquote>
+  <p>keyscan_dump
+存储目标主机上捕获的键盘记录。</p>
+</blockquote>
+
+<blockquote>
+  <p>keyscan_stop
+停止针对目标主机的键盘记录。</p>
+</blockquote>
+
+<blockquote>
+  <p>getprivs
+尽可能多的获取目标主机上的特权。</p>
+</blockquote>
+
+<blockquote>
+  <p>uictl enable keyboard/mouse
+接管目标主机的键盘和鼠标。</p>
+</blockquote>
+
+<blockquote>
+  <p>background
+将你当前的metasploit shell转为后台执行。</p>
+</blockquote>
+
+<blockquote>
+  <p>hashdump
+导出目标主机中的口令哈希值。</p>
+</blockquote>
+
+<blockquote>
+  <p>use sniffer
+加载嗅探模式。</p>
+</blockquote>
+
+<blockquote>
+  <p>sniffer_interfaces
+列出目标主机所有开放的网络端口。</p>
+</blockquote>
+
+<blockquote>
+  <p>sniffer_dump interfaceID pcapname
+在目标主机上启动嗅探。</p>
+</blockquote>
+
+<blockquote>
+  <p>sniffer_start interfaceID packet-buffer
+在目标主机上针对特定范围的数据包缓冲区启动嗅探。</p>
+</blockquote>
+
+<blockquote>
+  <p>sniffer_stats interfaceID
+获取正在实施嗅探网络接口的统计数据。</p>
+</blockquote>
+
+<blockquote>
+  <p>sniffer_stop interfaceID
+停止嗅探。</p>
+</blockquote>
+
+<blockquote>
+  <p>add_user username password -h ip
+在远程目标主机上添加一个用户。</p>
+</blockquote>
+
+<blockquote>
+  <p>clearev
+清楚目标主机上的日志记录。</p>
+</blockquote>
+
+<blockquote>
+  <p>timestomp
+修改文件属性，例如修改文件的创建时间（反取证调查）。</p>
+</blockquote>
+
+<blockquote>
+  <p>reboot
+重启目标主机。</p>
+</blockquote>
+
+
+
+<div class="pull-right">
+  <script type="text/javascript">
+    function smoothscroll(){
+    var currentScroll = document.documentElement.scrollTop || document.body.scrollTop;
+    if (currentScroll > 0) {
+         window.requestAnimationFrame(smoothscroll);
+         window.scrollTo (0,currentScroll - (currentScroll/5));
+    }
+};
+  </script>
+<button class="btn btn-primary" onclick="smoothscroll()">回到顶部</button>
+</div>
+<br>
+
+
+    <h3>本文许可协议</h3>
+
+    <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">
+    	<img alt="知识共享许可协议" style="border-width:0;height: 30px;width: 80px;" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br />本作品采用<a rel="license" href="http://creativecommons.org/licenses/by/4.0/">知识共享署名 4.0 国际许可协议</a>进行许可。
+  </div>
+
+</article>
+
+</section>
+<!-- 
+<nav class="navbar navbar-default navbar-fixed-bottom">
+  <div class="container footer-content">
+    Jekyll Theme by Hemang Kumar/Powered By Jekyll/Site owner is 倾旋
+  </div>
+</nav>
+-->
+<!-- <script src="https://s22.cnzz.com/z_stat.php?id=1262492389&web_id=1262492389" language="JavaScript"></script> -->
+  </body>
+
+</html>

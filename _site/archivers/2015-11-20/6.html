@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta content="倾旋的博客" property="og:site_name">
+
+  <meta content="华为MSTP协议" property="og:title">
+
+
+  <meta content="article" property="og:type">
+
+
+  <meta content="本文记录一下华为MSTP协议配置" property="og:description">
+
+
+  <meta content="http://localhost:4000/archivers/2015-11-20/6" property="og:url">
+
+
+  <meta content="2015-11-20T00:00:00+08:00" property="article:published_time">
+  <meta content="http://localhost:4000/about/" property="article:author">
+
+
+  <meta property="og:image" content="">
+
+
+  
+  <meta content="网络工程" property="article:section">
+  
+
+
+  
+
+  <title>华为MSTP协议</title>
+  <meta name="description" content="本文记录一下华为MSTP协议配置">
+<script src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+  
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/ptsans.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/firamono.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/lato.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/sourcecodepro.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/gentiumbasic.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/alegreya.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/lora.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/firasans400.css' rel='stylesheet' type='text/css'>
+  <script src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/jquery.min2.2.0.js"></script>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/opensans.css' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-hQpvDQiCJaD2H465dQfA717v7lu5qHWtDbWNPvaTJ0ID5xnPUlVXnKzq7b8YUkbN" crossorigin="anonymous">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="http://localhost:4000/archivers/2015-11-20/6">
+  <link rel="alternate" type="application/rss+xml" title="倾旋的博客" href="http://localhost:4000/feed.xml">
+</head>
+
+
+  <body>
+
+<section>
+<nav class="navbar navbar-default navbar-fixed-top">
+
+  <div class="container">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/">倾旋的博客</a>
+    </div>
+
+
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        
+        
+        <li><a href="/about/">关于我</a></li>
+
+        
+
+        
+        
+        <li><a href="/category/">文章分类</a></li>
+
+        
+
+        
+        
+
+        
+        
+
+        
+        
+
+        
+        
+        <li><a href="/other/">其他信息</a></li>
+
+        
+
+        
+
+
+      </ul>
+
+    <!--  <ul class="nav navbar-nav navbar-right">
+        <li><a href="#">Know More!</a></li>
+
+      </ul>-->
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+</section>
+
+<section>
+<article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <div class="jumbotron">
+    <div class="container">
+      <h1 class="post-title-main" itemprop="name headline">华为MSTP协议</h1>
+      <p class="post-meta"><time datetime="2015-11-20T00:00:00+08:00" itemprop="datePublished">Nov 20, 2015</time> • <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span itemprop="name">倾旋</span></span>
+      
+      <div class="bdsharebuttonbox" style="background-color: white;width: 27%;border-radius: 10px;padding-left: 10px; "><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_twi" data-cmd="twi" title="分享到Twitter"></a><a href="#" class="bds_fbook" data-cmd="fbook" title="分享到Facebook"></a><a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a><a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a><a href="#" class="bds_evernotecn" data-cmd="evernotecn" title="分享到印象笔记"></a><a href="#" class="bds_youdao" data-cmd="youdao" title="分享到有道云笔记"></a><a href="#" class="bds_sqq" data-cmd="sqq" title="分享到QQ好友"></a><a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a><a href="#" class="bds_tieba" data-cmd="tieba" title="分享到百度贴吧"></a><a href="#" class="bds_copy" data-cmd="copy" title="分享到复制网址"></a><a href="#" class="bds_print" data-cmd="print" title="分享到打印"></a></div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":["mshare","qzone","tsina","bdysc","weixin","sqq","youdao","mail","fbook","twi","linkedin","h163","evernotecn","copy","print"],"bdPic":"","bdStyle":"1","bdSize":"16"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+      </p>
+      
+    </div>
+
+</div>
+
+
+  <div class="post-content container" itemprop="articleBody">
+    <p>本文记录一下华为MSTP协议配置
+<!--more--></p>
+
+<ul>
+  <li>
+    <p>1.创建四个VLAN在四个交换机上,分别是 10 20 30 40。</p>
+  </li>
+  <li>
+    <p>2.分别设置trunk链路</p>
+  </li>
+  <li>
+    <p>3.进入STP配置视图</p>
+  </li>
+  <li>
+    <p>4.设置域名和修订级别</p>
+  </li>
+  <li>
+    <p>5.创建两个实例</p>
+  </li>
+  <li>
+    <p>6.激活实例</p>
+  </li>
+  <li>
+    <p>7.设置实例的优先级别，指定实例的根桥</p>
+  </li>
+</ul>
+
+<h2 id="0x01-创建四个vlan">0x01 创建四个VLAN</h2>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+&lt;Huawei&gt;sys
+
+[Huawei]vlan batch 10 20 30 40
+</code></pre></div></div>
+
+<h2 id="0x02-分别设置trunk链路">0x02 分别设置trunk链路</h2>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+[Huawei]port-group group-member e 0/0/1 to e 0/0/2
+
+[Huawei-port-group]port link-type trunk
+
+[Huawei-port-group]port trunk allow-pass vlan all
+</code></pre></div></div>
+<p>说明：在每个交换机都要创建四个VLAN、并且都设置trunk链路</p>
+
+<h2 id="0x03-进入stp配置视图">0x03 进入STP配置视图</h2>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+[Huawei]stp region-configuration
+</code></pre></div></div>
+
+<h2 id="0x04-创建域名以及修订级别">0x04 创建域名以及修订级别</h2>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+[Huawei-mst-region]region-name xinhua
+
+[Huawei-mst-region]revision-level 1
+</code></pre></div></div>
+
+<h2 id="0x05-创建两个实例分别加入vlan">0x05 创建两个实例分别加入vlan</h2>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+[Huawei-mst-region]instance 1 vlan 10 20
+
+[Huawei-mst-region]instance 2 vlan 30 40
+</code></pre></div></div>
+
+<h2 id="0x06-激活实例">0x06 激活实例</h2>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+[Huawei-mst-region]active region-configuration
+</code></pre></div></div>
+
+<h2 id="0x07-设置实例的优先级别指定实例根桥">0x07 设置实例的优先级别、指定实例根桥</h2>
+
+<p>首先查看一下LSW3：</p>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2018-3-16/0x13.png" alt="enter description here" title="0x13" /></p>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2018-3-16/0x14.png" alt="enter description here" title="0x14" /></p>
+
+<p>可以看到LSW3是总根桥</p>
+
+<p>在LSW4查看STP：</p>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2018-3-16/0x15.png" alt="enter description here" title="0x15" /></p>
+
+<p>然后设置实例2的优先级别为0</p>
+
+<p><code class="highlighter-rouge">[Huawei]stp instance 2 priority 0</code></p>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2018-3-16/0x16.png" alt="enter description here" title="0x16" /></p>
+
+<p>实验文件链接：http://pan.baidu.com/s/1pJpcY1P 密码：1vp9</p>
+
+
+
+<div class="pull-right">
+  <script type="text/javascript">
+    function smoothscroll(){
+    var currentScroll = document.documentElement.scrollTop || document.body.scrollTop;
+    if (currentScroll > 0) {
+         window.requestAnimationFrame(smoothscroll);
+         window.scrollTo (0,currentScroll - (currentScroll/5));
+    }
+};
+  </script>
+<button class="btn btn-primary" onclick="smoothscroll()">回到顶部</button>
+</div>
+<br>
+
+
+    <h3>本文许可协议</h3>
+
+    <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">
+    	<img alt="知识共享许可协议" style="border-width:0;height: 30px;width: 80px;" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br />本作品采用<a rel="license" href="http://creativecommons.org/licenses/by/4.0/">知识共享署名 4.0 国际许可协议</a>进行许可。
+  </div>
+
+</article>
+
+</section>
+<!-- 
+<nav class="navbar navbar-default navbar-fixed-bottom">
+  <div class="container footer-content">
+    Jekyll Theme by Hemang Kumar/Powered By Jekyll/Site owner is 倾旋
+  </div>
+</nav>
+-->
+<!-- <script src="https://s22.cnzz.com/z_stat.php?id=1262492389&web_id=1262492389" language="JavaScript"></script> -->
+  </body>
+
+</html>
