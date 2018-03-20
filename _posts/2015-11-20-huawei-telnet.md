@@ -60,6 +60,6 @@ Trying 192.168.1.1 …
 Connected to 192.168.1.1 …
 ```
 
-  [1]: http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2018-3-16/0x05.png "0x05"
+[1]: http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2018-3-16/0x05.png "0x05"
   
   

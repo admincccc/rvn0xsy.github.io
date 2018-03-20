@@ -1,23 +1,47 @@
-# Welcome to Jekyll!
-#
-# This config file is meant for settings that affect your whole blog, values
-# which you are expected to set up once and rarely need to edit after that.
-# For technical reasons, this file is *NOT* reloaded automatically when you use
-# 'jekyll serve'. If you change this file, please restart the server process.
-
 # Site settings
 title: 倾旋的博客
-email: payloads@aliyun.com
+url: "http://payloads.online"    # the protocol and hostname of your site, eg. `http://laobubu.github.io`
+baseurl: "" # the prefix of your site uri, eg. `"/jekyll-theme-EasyBook"` or empty string `""`
+timezone: Asia/Chongqing
+description: >
+  岁月静好，现世安稳。
+#email: payloads@aliyun.com
 author: 倾旋
-#write html inside the double quotes to display in jumbotron
-description: "<h1 style='color:white;'>倾旋的博客</h1><h3>岁月静好，现世安稳。</h3>"
-excerpt_separator: "<!--more-->"
+avatar: "/images/timg.jpeg"
+profile: 岁月静好，现世安稳。
+#twitter_username: twitter_username
+github_username:  rvn0xsy
+profile_links:
+  #Email: "payloads@aliyun.com"
+  #GitHub: "https://github.com/Rvn0xsy"
+excerpt_separator: <!--more-->
+
+header:
+  links: 
+    About: /about/
+    Category: /category/
+
+permalink: /archivers/:title
+plugins:
+ - jekyll-paginate
+ - jekyll-gist
+ - jemoji
 
 paginate: 10
-baseurl: "" # the subpath of your site, e.g. /blog
-url: "http://rvn0xsy.github.io" # the base hostname & protocol for your site
-twitter_username: Rvn0xsy
-github_username:  Rvn0xsy
+paginate_path: "page:num"
 
-# Build settings
+highlighter: rouge
 markdown: kramdown
+
+defaults:
+  -
+    scope:
+      path: ""
+      type: "posts"
+    values:
+      layout: "post"
+
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
+  math_engine: mathjax

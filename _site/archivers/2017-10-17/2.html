@@ -5,135 +5,47 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta content="倾旋的博客" property="og:site_name">
 
-  <meta content="使用C++操作Postgresql" property="og:title">
-
-
-  <meta content="article" property="og:type">
-
-
-  <meta content="本文简述一下近期想做的一个项目铺垫，使用C++操作Postgresql" property="og:description">
-
-
-  <meta content="http://localhost:4000/archivers/2017-10-17/2" property="og:url">
-
-
-  <meta content="2017-10-18T00:00:00+08:00" property="article:published_time">
-  <meta content="http://localhost:4000/about/" property="article:author">
-
-
-  <meta property="og:image" content="">
-
-
-  
-  <meta content="database" property="article:section">
-  
-
-
-  
-
-  <title>使用C++操作Postgresql</title>
+  <title>使用C++操作Postgresql « 倾旋的博客</title>
   <meta name="description" content="本文简述一下近期想做的一个项目铺垫">
-<script src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/jquery.min.js"></script>
-<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-  
-  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/ptsans.css' rel='stylesheet' type='text/css'>
-  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/firamono.css' rel='stylesheet' type='text/css'>
-  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/lato.css' rel='stylesheet' type='text/css'>
-  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/sourcecodepro.css' rel='stylesheet' type='text/css'>
-  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/gentiumbasic.css' rel='stylesheet' type='text/css'>
-  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/alegreya.css' rel='stylesheet' type='text/css'>
-  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/lora.css' rel='stylesheet' type='text/css'>
-  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/firasans400.css' rel='stylesheet' type='text/css'>
-  <script src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/jquery.min2.2.0.js"></script>
-  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/opensans.css' rel='stylesheet' type='text/css'>
-<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-hQpvDQiCJaD2H465dQfA717v7lu5qHWtDbWNPvaTJ0ID5xnPUlVXnKzq7b8YUkbN" crossorigin="anonymous">
+
   <link rel="stylesheet" href="/css/main.css">
   <link rel="canonical" href="http://localhost:4000/archivers/2017-10-17/2">
-  <link rel="alternate" type="application/rss+xml" title="倾旋的博客" href="http://localhost:4000/feed.xml">
+  <link rel="alternate" type="application/rss+xml" title="倾旋的博客" href="http://localhost:4000/feed.xml" />
 </head>
 
 
   <body>
 
-<section>
-<nav class="navbar navbar-default navbar-fixed-top">
-
-  <div class="container">
-    <!-- Brand and toggle get grouped for better mobile display -->
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a class="navbar-brand" href="/">倾旋的博客</a>
-    </div>
-
-
-    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-      <ul class="nav navbar-nav">
-        
-        
-        <li><a href="/about/">关于我</a></li>
-
-        
-
-        
-        
-        <li><a href="/category/">文章分类</a></li>
-
-        
-
-        
-        
-
-        
-        
-
-        
-        
-
-        
-        
-        <li><a href="/other/">其他信息</a></li>
-
-        
-
-        
-
-
-      </ul>
-
-    <!--  <ul class="nav navbar-nav navbar-right">
-        <li><a href="#">Know More!</a></li>
-
-      </ul>-->
-    </div><!-- /.navbar-collapse -->
-  </div><!-- /.container-fluid -->
-</nav>
-</section>
-
-<section>
-<article class="post" itemscope itemtype="http://schema.org/BlogPosting">
-  <div class="jumbotron">
-    <div class="container">
-      <h1 class="post-title-main" itemprop="name headline">使用C++操作Postgresql</h1>
-      <p class="post-meta"><time datetime="2017-10-18T00:00:00+08:00" itemprop="datePublished">Oct 18, 2017</time> • <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span itemprop="name">倾旋</span></span>
+    <div class="header-placeholder"></div>
+<header class="header">
+  <div class="wrapper">
+    <div id="sidebar-toggle">TOC</div>
+    <a class="site-title" href="/">倾旋的博客</a>
+    <nav class="site-nav">
       
-      <div class="bdsharebuttonbox" style="background-color: white;width: 27%;border-radius: 10px;padding-left: 10px; "><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_twi" data-cmd="twi" title="分享到Twitter"></a><a href="#" class="bds_fbook" data-cmd="fbook" title="分享到Facebook"></a><a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a><a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a><a href="#" class="bds_evernotecn" data-cmd="evernotecn" title="分享到印象笔记"></a><a href="#" class="bds_youdao" data-cmd="youdao" title="分享到有道云笔记"></a><a href="#" class="bds_sqq" data-cmd="sqq" title="分享到QQ好友"></a><a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a><a href="#" class="bds_tieba" data-cmd="tieba" title="分享到百度贴吧"></a><a href="#" class="bds_copy" data-cmd="copy" title="分享到复制网址"></a><a href="#" class="bds_print" data-cmd="print" title="分享到打印"></a></div>
-<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":["mshare","qzone","tsina","bdysc","weixin","sqq","youdao","mail","fbook","twi","linkedin","h163","evernotecn","copy","print"],"bdPic":"","bdStyle":"1","bdSize":"16"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
-      </p>
+        
+        <a class="page-link" href="/about/">About</a>
       
-    </div>
+        
+        <a class="page-link" href="/category/">Category</a>
+      
+    </nav>
+  </div>
+</header>
 
-</div>
 
+    <div class="page-content">
+      <div class="wrapper">
+        <div class="col-main">
+          <div class="post">
 
-  <div class="post-content container" itemprop="articleBody">
+  <header class="post-header">
+    <h1 class="post-title">使用C++操作Postgresql</h1>
+    <p class="post-meta">Oct 18, 2017</p>
+  </header>
+
+  <article class="post-content">
     <p>本文简述一下近期想做的一个项目铺垫
 <!--more--></p>
 <h2 id="0x00-安装扩展库---libpqxx">0x00 安装扩展库 - libpqxx</h2>
@@ -184,39 +96,98 @@ make install
 <p>参考：http://www.yiibai.com/html/postgresql/2013/080894.html</p>
 
 
+  </article>
+  
+  
 
-<div class="pull-right">
-  <script type="text/javascript">
-    function smoothscroll(){
-    var currentScroll = document.documentElement.scrollTop || document.body.scrollTop;
-    if (currentScroll > 0) {
-         window.requestAnimationFrame(smoothscroll);
-         window.scrollTo (0,currentScroll - (currentScroll/5));
-    }
-};
-  </script>
-<button class="btn btn-primary" onclick="smoothscroll()">回到顶部</button>
+
+
+
 </div>
-<br>
+
+        </div>
+        <div class="col-second">
+          <div class="col-box col-box-author">
+  <img class="avatar" src="/images/timg.jpeg" alt="倾旋">
+  <div class="col-box-title name">倾旋</div>
+  <p>岁月静好，现世安稳。</p>
+  <p class="contact">
+    
+    <a href="https://github.com/rvn0xsy">GitHub</a>
+    
+    
+    <a href="mailto:payloads@aliyun.com">Email</a>
+    
+    <div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_twi" data-cmd="twi" title="分享到Twitter"></a><a href="#" class="bds_fbook" data-cmd="fbook" title="分享到Facebook"></a><a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a><a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a><a href="#" class="bds_evernotecn" data-cmd="evernotecn" title="分享到印象笔记"></a><a href="#" class="bds_youdao" data-cmd="youdao" title="分享到有道云笔记"></a><a href="#" class="bds_sqq" data-cmd="sqq" title="分享到QQ好友"></a><a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a><a href="#" class="bds_tieba" data-cmd="tieba" title="分享到百度贴吧"></a><a href="#" class="bds_copy" data-cmd="copy" title="分享到复制网址"></a><a href="#" class="bds_print" data-cmd="print" title="分享到打印"></a></div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":["mshare","qzone","tsina","bdysc","weixin","sqq","youdao","mail","fbook","twi","linkedin","h163","evernotecn","copy","print"],"bdPic":"","bdStyle":"1","bdSize":"16"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+  </p>
+</div>
+
+<div class="col-box">
+  <div class="col-box-title">Newest Posts</div>
+  <ul class="post-list">
+    
+      <li><a class="post-link" href="/archivers/2018-03-20/1">浅谈使用C语言开发服务端漏洞扫描设计</a></li>
+    
+      <li><a class="post-link" href="/archivers/2018-03-18/1">渗透测试中使用Ubuntu的一些小技巧</a></li>
+    
+      <li><a class="post-link" href="/archivers/2018-03-16/4">Redis未授权访问简介</a></li>
+    
+      <li><a class="post-link" href="/archivers/2018-03-16/1">信安从业人员的编程之路</a></li>
+    
+      <li><a class="post-link" href="/archivers/2018-03-16/2">msfconsole常用命令</a></li>
+    
+      <li><a class="post-link" href="/archivers/2018-03-16/3">Python命令行:getopt模块详解</a></li>
+    
+      <li><a class="post-link" href="/archivers/2018-03-11/1">重放Flash上传数据包</a></li>
+    
+      <li><a class="post-link" href="/archivers/2018-03-05/1">C/C++ 子域名A记录枚举(多线程)</a></li>
+    
+      <li><a class="post-link" href="/archivers/2018-03-04/1">使用C语言发送伪造源IP的UDP请求及DRDOS拒绝服务攻击原理剖析</a></li>
+    
+      <li><a class="post-link" href="/archivers/2018-02-28/1">C++/C实现DNS查询</a></li>
+    
+      <li><a class="post-link" href="/archivers/2018-02-11/1">无聊写个C语言创建Jekyll文章的程序</a></li>
+    
+      <li><a class="post-link" href="/archivers/2018-02-10/1">DNS协议编程</a></li>
+    
+      <li><a class="post-link" href="/archivers/2018-02-07/1">关于CVE-2018-6580其他Tips分析</a></li>
+    
+      <li><a class="post-link" href="/archivers/2018-02-05/1">Fuzzing With FuzzDB to Web Attack</a></li>
+    
+      <li><a class="post-link" href="/archivers/2018-02-02/1">内网渗透常见端口转发方式</a></li>
+    
+      <li><a class="post-link" href="/archivers/2018-02-01/1">Metasploit - MS17010通用模块</a></li>
+    
+      <li><a class="post-link" href="/archivers/2018-01-25/1">从网络扼杀Metasploit木马</a></li>
+    
+      <li><a class="post-link" href="/archivers/2018-01-23/1">封装好的CURL class 尽情享用</a></li>
+    
+      <li><a class="post-link" href="/archivers/2018-01-30/1">针对某跨国企业的一次渗透测试-持续</a></li>
+    
+      <li><a class="post-link" href="/archivers/2018-01-22/1">我的丽江之旅</a></li>
+    
+  </ul>
+</div>
+
+<div class="col-box post-toc hide">
+  <div class="col-box-title">TOC</div>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+<div class="wrapper">
+&copy; 2018 倾旋
+</div>
+</footer>
+
+<script type="text/x-mathjax-config">MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$']]}});</script>
+<script src="/js/easybook.js"></script>
 
 
-    <h3>本文许可协议</h3>
-
-    <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">
-    	<img alt="知识共享许可协议" style="border-width:0;height: 30px;width: 80px;" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br />本作品采用<a rel="license" href="http://creativecommons.org/licenses/by/4.0/">知识共享署名 4.0 国际许可协议</a>进行许可。
-  </div>
-
-</article>
-
-</section>
-<!-- 
-<nav class="navbar navbar-default navbar-fixed-bottom">
-  <div class="container footer-content">
-    Jekyll Theme by Hemang Kumar/Powered By Jekyll/Site owner is 倾旋
-  </div>
-</nav>
--->
-<!-- <script src="https://s22.cnzz.com/z_stat.php?id=1262492389&web_id=1262492389" language="JavaScript"></script> -->
   </body>
 
 </html>
