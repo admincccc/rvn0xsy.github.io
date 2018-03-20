@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta content="倾旋的博客" property="og:site_name">
+
+  <meta content="浅谈使用C语言开发服务端漏洞扫描设计" property="og:title">
+
+
+  <meta content="article" property="og:type">
+
+
+  <meta content="本文记录一下自己学习这么久以来，目前设计的漏洞扫描最好的方式" property="og:description">
+
+
+  <meta content="http://localhost:4000/archivers/2018-03-20/1" property="og:url">
+
+
+  <meta content="2018-03-20T00:00:00+08:00" property="article:published_time">
+  <meta content="http://localhost:4000/about/" property="article:author">
+
+
+  <meta property="og:image" content="">
+
+
+  
+  <meta content="Linux" property="article:section">
+  
+
+
+  
+
+  <title>浅谈使用C语言开发服务端漏洞扫描设计</title>
+  <meta name="description" content="本文记录一下自己学习这么久以来，目前设计的漏洞扫描最好的方式">
+<script src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+  
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/ptsans.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/firamono.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/lato.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/sourcecodepro.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/gentiumbasic.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/alegreya.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/lora.css' rel='stylesheet' type='text/css'>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/firasans400.css' rel='stylesheet' type='text/css'>
+  <script src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/jquery.min2.2.0.js"></script>
+  <link href='http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/static/opensans.css' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-hQpvDQiCJaD2H465dQfA717v7lu5qHWtDbWNPvaTJ0ID5xnPUlVXnKzq7b8YUkbN" crossorigin="anonymous">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="http://localhost:4000/archivers/2018-03-20/1">
+  <link rel="alternate" type="application/rss+xml" title="倾旋的博客" href="http://localhost:4000/feed.xml">
+</head>
+
+
+  <body>
+
+<section>
+<nav class="navbar navbar-default navbar-fixed-top">
+
+  <div class="container">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/">倾旋的博客</a>
+    </div>
+
+
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        
+        
+        <li><a href="/about/">关于我</a></li>
+
+        
+
+        
+        
+        <li><a href="/category/">文章分类</a></li>
+
+        
+
+        
+        
+
+        
+        
+
+        
+        
+
+        
+        
+        <li><a href="/other/">其他信息</a></li>
+
+        
+
+        
+
+
+      </ul>
+
+    <!--  <ul class="nav navbar-nav navbar-right">
+        <li><a href="#">Know More!</a></li>
+
+      </ul>-->
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+</section>
+
+<section>
+<article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <div class="jumbotron">
+    <div class="container">
+      <h1 class="post-title-main" itemprop="name headline">浅谈使用C语言开发服务端漏洞扫描设计</h1>
+      <p class="post-meta"><time datetime="2018-03-20T00:00:00+08:00" itemprop="datePublished">Mar 20, 2018</time> • <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span itemprop="name">倾旋</span></span>
+      
+      <div class="bdsharebuttonbox" style="background-color: white;width: 27%;border-radius: 10px;padding-left: 10px; "><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_twi" data-cmd="twi" title="分享到Twitter"></a><a href="#" class="bds_fbook" data-cmd="fbook" title="分享到Facebook"></a><a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a><a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a><a href="#" class="bds_evernotecn" data-cmd="evernotecn" title="分享到印象笔记"></a><a href="#" class="bds_youdao" data-cmd="youdao" title="分享到有道云笔记"></a><a href="#" class="bds_sqq" data-cmd="sqq" title="分享到QQ好友"></a><a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a><a href="#" class="bds_tieba" data-cmd="tieba" title="分享到百度贴吧"></a><a href="#" class="bds_copy" data-cmd="copy" title="分享到复制网址"></a><a href="#" class="bds_print" data-cmd="print" title="分享到打印"></a></div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":["mshare","qzone","tsina","bdysc","weixin","sqq","youdao","mail","fbook","twi","linkedin","h163","evernotecn","copy","print"],"bdPic":"","bdStyle":"1","bdSize":"16"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+      </p>
+      
+    </div>
+
+</div>
+
+
+  <div class="post-content container" itemprop="articleBody">
+    <p>本文记录一下自己学习这么久以来，目前设计的漏洞扫描最好的方式
+<!--more--></p>
+<h2 id="0x00-前言">0x00 前言</h2>
+
+<p>都是自己闷头搞出来的经验，对于自己是经验，对大家就不知道合不合口味了。</p>
+
+<p>本文可能过多的穿插以下知识点：</p>
+
+<ul>
+  <li>套接字</li>
+  <li>协议选择</li>
+  <li>服务端模型</li>
+  <li>信号处理</li>
+  <li>多进程、多线程</li>
+  <li>任务派发过程</li>
+</ul>
+
+<p>能尽量图示就图示了。顺便总结一下自己网络编程的经验。 :D</p>
+
+<h2 id="0x01-网络套接字socket">0x01 网络套接字(SOCKET)</h2>
+
+<h3 id="什么是套接字">什么是套接字</h3>
+
+<p>在我的理解中，网络套接字是一个被封装在传输层与应用层之间的API接口。</p>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2018-3-20/0x01.jpg" alt="enter description here" title="0x01" /></p>
+
+<p>每一个方法都被操作系统支持，我们只需要知道创建套接字的流程以及网络基本知识就可以进行套接字的编程了。</p>
+
+<p>许多的远程利用攻击、漏洞验证工具都离不开套接字，没有套接字就没有现在能够进行“进程”与“进程”之间通信的过程实现。</p>
+
+<p>下面引用百科的解释：</p>
+
+<p>TCP用主机的IP地址加上主机上的端口号作为TCP连接的端点，这种端点就叫做套接字（socket）或插口。</p>
+
+<p>套接字用（IP地址：端口号）表示。</p>
+
+<p>它是网络通信过程中端点的抽象表示，包含进行网络通信必需的五种信息：连接使用的协议，本地主机的IP地址，本地进程的协议端口，远地主机的IP地址，远地进程的协议端口。</p>
+
+<p>听起来还是非常模糊、太抽象了！</p>
+
+<p>那么我们来看看它到底是什么？</p>
+
+<h3 id="套接字的地址结构">套接字的地址结构</h3>
+
+<p>刚才百科告诉我们，套接字用（IP地址：端口号）表示。</p>
+
+<p>那么在网络编程中如何告诉计算机，什么是端口，什么是端口号呢？</p>
+
+<p>于是出现了被计算机界公认的结构体，这个结构体保存在系统的标准库中：</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="cp">#include &lt;arpa/inet.h&gt;
+</span><span class="k">struct</span> <span class="n">sockaddr_in</span>
+  <span class="p">{</span>
+    <span class="n">__SOCKADDR_COMMON</span> <span class="p">(</span><span class="n">sin_</span><span class="p">);</span>
+    <span class="n">in_port_t</span> <span class="n">sin_port</span><span class="p">;</span>			<span class="cm">/* Port number.  */</span>
+    <span class="k">struct</span> <span class="n">in_addr</span> <span class="n">sin_addr</span><span class="p">;</span>		<span class="cm">/* Internet address.  */</span>
+
+    <span class="cm">/* Pad to size of `struct sockaddr'.  */</span>
+    <span class="kt">unsigned</span> <span class="kt">char</span> <span class="n">sin_zero</span><span class="p">[</span><span class="k">sizeof</span> <span class="p">(</span><span class="k">struct</span> <span class="n">sockaddr</span><span class="p">)</span> <span class="o">-</span>
+			   <span class="n">__SOCKADDR_COMMON_SIZE</span> <span class="o">-</span>
+			   <span class="k">sizeof</span> <span class="p">(</span><span class="n">in_port_t</span><span class="p">)</span> <span class="o">-</span>
+			   <span class="k">sizeof</span> <span class="p">(</span><span class="k">struct</span> <span class="n">in_addr</span><span class="p">)];</span>
+  <span class="p">};</span>
+</code></pre></div></div>
+
+<p>看起来还是比较复杂的，但是用起来一点都不复杂。</p>
+
+<h3 id="套接字的类型3种">套接字的类型（3种）</h3>
+
+<p>套接字的类型一般在创建套接字描述符的时候用到。</p>
+
+<ul>
+  <li>SOCK_STREAM 字节流套接字  — TCP</li>
+  <li>SOCK_DGRAM 数据报套接字   —  UDP</li>
+  <li>SOCK_SEQPACKET 有序分组套接字 — ALL</li>
+  <li>SOCK_RAW 原始套接字   — ALL</li>
+</ul>
+
+<h3 id="套接字描述符">套接字描述符</h3>
+
+<p>这里就要引入一个<code class="highlighter-rouge">socket</code>函数了，它在C语言的头文件中：</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="cp">#include &lt;sys/socket.h&gt;
+</span><span class="kt">int</span> <span class="n">socket</span> <span class="p">(</span><span class="kt">int</span> <span class="n">__domain</span><span class="p">,</span> <span class="kt">int</span> <span class="n">__type</span><span class="p">,</span> <span class="kt">int</span> <span class="n">__protocol</span><span class="p">)</span>
+
+</code></pre></div></div>
+
+<p>该函数用于创建描述符</p>
+
+<p>我们的操作系统中此时此刻有很多网络连接，为了区分他们，我们就给它们编个号，也就相当于我们自己的身份证。有了身份证做其他事情就比较方便了。</p>
+
+<h3 id="网络字节序">网络字节序</h3>
+
+<p>不同的CPU有不同的字节序类型，这些字节序是指 整数 在内存中保存的顺序，这个叫做 主机序。</p>
+
+<p>最常见的有两种：</p>
+
+<ul>
+  <li>1．将低序字节存储在起始地址（小端）</li>
+  <li>2．将高序字节存储在起始地址（大端）</li>
+</ul>
+
+<p>俗称 大端、小端字节序</p>
+
+<p>网络字节顺序是TCP/IP中规定好的一种数据表示格式，它与具体的CPU类型、操作系统等无关，从而可以保证数据在不同主机之间传输时能够被正确解释。网络字节顺序采用大端排序方式。</p>
+
+<p>而我们的操作系统，一般是小端排序方式，所以需要进行字节序的转换。</p>
+
+<h3 id="创建套接字的过程">创建套接字的过程</h3>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2018-3-20/0x02.jpg" alt="enter description here" title="0x02" /></p>
+
+<p>到这里，我们就需要动手写代码了！</p>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2018-3-20/0x03.png" alt="enter description here" title="0x03" /></p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="cp">#include &lt;stdio.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;sys/socket.h&gt;
+#include &lt;arpa/inet.h&gt;
+</span><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span><span class="kt">char</span> <span class="o">**</span> <span class="n">argv</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="kt">int</span> <span class="n">clientSock</span><span class="p">,</span><span class="n">serverSock</span><span class="p">,</span><span class="n">serverPort</span><span class="p">;</span>
+    <span class="n">serverPort</span> <span class="o">=</span> <span class="mi">8877</span><span class="p">;</span>
+
+    <span class="n">serverSock</span> <span class="o">=</span> <span class="n">socket</span><span class="p">(</span><span class="n">AF_INET</span><span class="p">,</span><span class="n">SOCK_STREAM</span><span class="p">,</span><span class="n">IPPROTO_TCP</span><span class="p">);</span>
+
+    <span class="k">struct</span> <span class="n">sockaddr_in</span> <span class="n">serverAddr</span><span class="p">,</span><span class="n">clientAddr</span><span class="p">;</span>
+
+    <span class="n">socklen_t</span> <span class="n">clientSockLen</span><span class="p">;</span>
+    <span class="n">clientSockLen</span> <span class="o">=</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">clientAddr</span><span class="p">);</span>
+
+    <span class="n">serverAddr</span><span class="p">.</span><span class="n">sin_addr</span><span class="p">.</span><span class="n">s_addr</span> <span class="o">=</span> <span class="n">inet_addr</span><span class="p">(</span><span class="s">"127.0.0.1"</span><span class="p">);</span>
+
+    <span class="n">serverAddr</span><span class="p">.</span><span class="n">sin_port</span> <span class="o">=</span> <span class="n">htons</span><span class="p">(</span><span class="n">serverPort</span><span class="p">);</span>
+
+    <span class="n">serverAddr</span><span class="p">.</span><span class="n">sin_family</span> <span class="o">=</span> <span class="n">AF_INET</span><span class="p">;</span>
+
+    <span class="n">bind</span><span class="p">(</span><span class="n">serverSock</span><span class="p">,(</span><span class="k">struct</span> <span class="n">sockaddr</span> <span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">serverAddr</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">serverAddr</span><span class="p">));</span>
+
+    <span class="n">listen</span><span class="p">(</span><span class="n">serverSock</span><span class="p">,</span><span class="mi">5</span><span class="p">);</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">"[*]Listen Port : %d </span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="n">serverPort</span><span class="p">);</span>
+    <span class="k">while</span><span class="p">((</span><span class="n">clientSock</span> <span class="o">=</span> <span class="n">accept</span><span class="p">(</span><span class="n">serverSock</span><span class="p">,(</span><span class="k">struct</span> <span class="n">sockaddr</span> <span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">clientAddr</span><span class="p">,</span><span class="o">&amp;</span><span class="n">clientSockLen</span><span class="p">))){</span>
+        <span class="kt">char</span> <span class="n">recvBuff</span><span class="p">[</span><span class="mi">100</span><span class="p">];</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">"[*]Client %s Connected .. </span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="n">inet_ntoa</span><span class="p">(</span><span class="n">clientAddr</span><span class="p">.</span><span class="n">sin_addr</span><span class="p">));</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">recv</span><span class="p">(</span><span class="n">clientSock</span><span class="p">,</span><span class="n">recvBuff</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">recvBuff</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">){</span>
+            <span class="n">printf</span><span class="p">(</span><span class="s">"[*]Recv : %s</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="n">recvBuff</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="n">close</span><span class="p">(</span><span class="n">clientSock</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>这只是一个简单的TCP服务端，只能发送一次内容，就会断开连接</p>
+
+<h2 id="0x02-协议选择">0x02 协议选择</h2>
+
+<p>由于是任务处理的服务端，我比较倾向于UDP协议，无需繁琐的握手，只需要发送接收一次即可。</p>
+
+<p>这个后面的服务端模型会介绍到为什么选择UDP协议。</p>
+
+<h3 id="tcp与udp区别总结">TCP与UDP区别总结：</h3>
+
+<ul>
+  <li>1、TCP面向连接（如打电话要先拨号建立连接）;UDP是无连接的，即发送数据之前不需要建立连接</li>
+  <li>2、TCP提供可靠的服务。也就是说，通过TCP连接传送的数据，无差错，不丢失，不重复，且按序到达;UDP尽最大努力交付，即不保   证可靠交付</li>
+  <li>3、TCP面向字节流，实际上是TCP把数据看成一连串无结构的字节流;UDP是面向报文的
+UDP没有拥塞控制，因此网络出现拥塞不会使源主机的发送速率降低（对实时应用很有用，如IP电话，实时视频会议等）</li>
+  <li>4、每一条TCP连接只能是点到点的;UDP支持一对一，一对多，多对一和多对多的交互通信</li>
+  <li>5、TCP首部开销20字节;UDP的首部开销小，只有8个字节</li>
+  <li>6、TCP的逻辑通信信道是全双工的可靠信道，UDP则是不可靠信道</li>
+</ul>
+
+<h2 id="0x03-服务端模型">0x03 服务端模型</h2>
+
+<p>终于等到本文的重点了！</p>
+
+<p>先来个图：</p>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2018-3-20/0x04.png" alt="enter description here" title="0x04" /></p>
+
+<h3 id="模型解读">模型解读</h3>
+
+<p>首先，主进程用于创建套接字，管理僵尸进程，子进程用于服务监听，接收客户端发送来的数据，它主要用于创建孙进程，客户端派发N个任务就创建N个孙进程。</p>
+
+<p>这个模型很适合UDP协议呀，有木有！</p>
+
+<h3 id="模型代码">模型代码</h3>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="kt">bool</span> <span class="n">Server</span><span class="o">::</span><span class="n">startServer</span><span class="p">()</span> <span class="p">{</span>
+
+    <span class="n">signal</span><span class="p">(</span><span class="n">SIGCHLD</span><span class="p">,</span> <span class="n">_signalHandler</span><span class="p">);</span>
+    <span class="n">pid_t</span> <span class="n">pid</span><span class="o">=</span><span class="n">fork</span><span class="p">();</span> <span class="c1">// 创建子进程</span>
+
+    <span class="k">if</span><span class="p">(</span><span class="n">pid</span><span class="o">==</span><span class="mi">0</span><span class="p">){</span>  <span class="c1">//子进程处理开始</span>
+
+        <span class="c1">// 创建SOCKET描述符</span>
+        <span class="n">_serverSock</span> <span class="o">=</span> <span class="n">socket</span><span class="p">(</span><span class="n">AF_INET</span><span class="p">,</span><span class="n">SOCK_STREAM</span><span class="p">,</span><span class="mi">0</span><span class="p">);</span>
+
+        <span class="c1">// 设置超时</span>
+        <span class="k">struct</span> <span class="n">linger</span> <span class="n">timeWit</span><span class="p">;</span>
+        <span class="n">timeWit</span><span class="p">.</span><span class="n">l_onoff</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="n">timeWit</span><span class="p">.</span><span class="n">l_linger</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+        <span class="n">setsockopt</span><span class="p">(</span><span class="n">_serverSock</span><span class="p">,</span><span class="n">SOL_SOCKET</span><span class="p">,</span><span class="n">SO_LINGER</span><span class="p">,</span><span class="o">&amp;</span><span class="n">timeWit</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">timeWit</span><span class="p">));</span>
+
+        <span class="c1">// 地址重用</span>
+        <span class="kt">int</span> <span class="n">reuse</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="n">setsockopt</span><span class="p">(</span><span class="n">_serverSock</span><span class="p">,</span><span class="n">SOL_SOCKET</span><span class="p">,</span><span class="n">SO_REUSEADDR</span><span class="p">,</span><span class="o">&amp;</span><span class="n">reuse</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">reuse</span><span class="p">));</span>
+
+        <span class="n">_serverAddr</span><span class="p">.</span><span class="n">sin_family</span> <span class="o">=</span> <span class="n">AF_INET</span><span class="p">;</span>
+        <span class="n">_serverAddr</span><span class="p">.</span><span class="n">sin_addr</span><span class="p">.</span><span class="n">s_addr</span> <span class="o">=</span> <span class="n">INADDR_ANY</span><span class="p">;</span>
+
+        <span class="c1">// 绑定端口</span>
+        <span class="n">_serverAddr</span><span class="p">.</span><span class="n">sin_port</span> <span class="o">=</span> <span class="n">htons</span><span class="p">((</span><span class="kt">uint16_t</span><span class="p">)</span><span class="n">_listenPort</span><span class="p">);</span>
+
+        <span class="k">if</span><span class="p">(</span><span class="n">bind</span><span class="p">(</span><span class="n">_serverSock</span><span class="p">,(</span><span class="k">struct</span> <span class="n">sockaddr</span> <span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">_serverAddr</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">_serverAddr</span><span class="p">))</span><span class="o">==</span> <span class="mi">0</span><span class="p">){</span>
+            <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"[*]Server bind Success ..."</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+        <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+            <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"[!]Server bind Fail ..."</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+            <span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="n">_clientSize</span> <span class="o">=</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">_clientAddr</span><span class="p">);</span>
+
+        <span class="n">listen</span><span class="p">(</span><span class="n">_serverSock</span><span class="p">,</span><span class="n">_clientMaxNum</span><span class="p">);</span>
+        <span class="k">while</span><span class="p">(</span><span class="mi">1</span><span class="p">){</span>
+            <span class="c1">// 接收客户端请求</span>
+            <span class="k">if</span><span class="p">((</span><span class="n">_clientSock</span> <span class="o">=</span> <span class="n">accept</span><span class="p">(</span><span class="n">_serverSock</span><span class="p">,(</span><span class="k">struct</span> <span class="n">sockaddr</span> <span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">_clientAddr</span><span class="p">,</span><span class="o">&amp;</span><span class="n">_clientSize</span><span class="p">))</span><span class="o">!=-</span><span class="mi">1</span><span class="p">){</span>
+                <span class="n">_clientPID</span> <span class="o">=</span> <span class="n">fork</span><span class="p">();</span>
+                <span class="k">if</span><span class="p">(</span><span class="n">_clientPID</span> <span class="o">==</span> <span class="mi">0</span><span class="p">){</span>
+                    <span class="n">close</span><span class="p">(</span><span class="n">_serverSock</span><span class="p">);</span> <span class="c1">// 关闭服务端Socket</span>
+                    <span class="n">recv</span><span class="p">(</span><span class="n">_clientSock</span><span class="p">,</span><span class="n">_fromClientBUFF</span><span class="p">,</span><span class="mi">500</span><span class="p">,</span><span class="mi">0</span><span class="p">);</span> <span class="c1">// 接收数据</span>
+
+						<span class="c1">// ........</span>
+
+                    <span class="n">shutdown</span><span class="p">(</span><span class="n">_clientSock</span><span class="p">,</span><span class="n">SHUT_RDWR</span><span class="p">);</span>
+                    <span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+        <span class="kt">int</span> <span class="n">status</span><span class="p">;</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"[*]Server is running ..."</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+        <span class="n">waitpid</span><span class="p">(</span><span class="n">pid</span><span class="p">,</span><span class="o">&amp;</span><span class="n">status</span><span class="p">,</span><span class="mi">0</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>## 0x04 信号处理</p>
+
+<p>信号机制是进程之间相互传递消息的一种方法，信号全称为软中断信号，也有人称软中断。从它的命名可以看出，它的实质和使用很像中断，所有，信号可以说是进程控制的一部分</p>
+
+<p>这段话写的可能有点晦涩难懂，我就写一个程序给你看看：</p>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2018-3-20/0x05.png" alt="enter description here" title="0x05" /></p>
+
+<p>这段程序运行以后，我们一直按一次CTRL+C，会输出：“Are you sure quit this program ??”</p>
+
+<p>然后过10秒后，程序会输出“Exiting…..”，然后会自动退出……</p>
+
+<h3 id="信号列表">信号列表</h3>
+
+<ul>
+  <li>SIGHUP：本信号在用户终端连接（正常或非正常）结束时发出，通常是在终端的控制进程结束的，通知同一session内的各个作用，这是它们与控制终端不再关联</li>
+  <li>SIGINT：程序终止(interrupt)信号, 在用户键入INTR字符(通常是Ctrl-C)时发出，用于通知前台进程组终止进程</li>
+  <li>SIGQUIT：和SIGINT类似, 但由QUIT字符(通常是Ctrl-/)来控制. 进程在因收到SIGQUIT退出时会产生core文件,在这个意义上类似于一个程序错误信号</li>
+  <li>SIGILL：执行了非法指令. 通常是因为可执行文件本身出现错误, 或者试图执行数据段. 堆栈溢出时也有可能产生这个信号</li>
+  <li>SIGTRAP：由断点指令或其它trap指令产生. 由debugger使用</li>
+  <li>SIGABRT：调用abort函数生成的信号</li>
+  <li>SIGBUS：非法地址, 包括内存地址对齐(alignment)出错。比如访问一个四个字长的整数, 但其地址不是4的倍数。它与SIGSEGV的区别在于后者是由于对合法存储地址的非法访问触发的(如访问不属于自己存储空间或只读存储空间)</li>
+  <li>SIGFPE：在发生致命的算术运算错误时发出. 不仅包括浮点运算错误, 还包括溢出及除数为0等其它所有的算术的错误。</li>
+  <li>SIGKILL：用来立即结束程序的运行. 本信号不能被阻塞、处理和忽略。如果管理员发现某个进程终止不了，可尝试发送这个信号。</li>
+  <li>SIGUSR1：留给用户使用</li>
+  <li>SIGSEGV：试图访问未分配给自己的内存, 或试图往没有写权限的内存地址写数据</li>
+  <li>SIGUSR2：留给用户使用</li>
+  <li>SIGPIPE：管道破裂。这个信号通常在进程间通信产生，比如采用FIFO(管道)通信的两个进程，读管道没打开或者意外终止就往管道写，写进程会收到SIGPIPE信号。此外用Socket通信的两个进程，写进程在写Socket的时候，读进程已经终止</li>
+  <li>SIGALRM：时钟定时信号, 计算的是实际的时间或时钟时间. alarm函数使用该信号</li>
+  <li>SIGTERM：程序结束(terminate)信号, 与SIGKILL不同的是该信号可以被阻塞和处理。通常用来要求程序自己正常退出，shell命令kill缺省产生这个信号。如果进程终止不了，我们才会尝试SIGKILL</li>
+  <li>SIGCHLD：子进程结束时, 父进程会收到这个信号</li>
+  <li>SIGCONT：让一个停止(stopped)的进程继续执行. 本信号不能被阻塞. 可以用一个handler来让程序在由stopped状态变为继续执行时完成特定的工作. 例如, 重新显示提示符</li>
+  <li>SIGSTOP：停止(stopped)进程的执行. 注意它和terminate以及interrupt的区别:该进程还未结束,只是暂停执行. 本信号不能被阻塞, 处理或忽略</li>
+  <li>SIGTSTP：停止进程的运行, 但该信号可以被处理和忽略. 用户键入SUSP字符时(通常是Ctrl-Z)发出这个信号</li>
+  <li>SIGTTIN：当后台作业要从用户终端读数据时, 该作业中的所有进程会收到SIGTTIN信号. 缺省时这些进程会停止执行</li>
+  <li>SIGTTOU：类似于SIGTTIN, 但在写终端(或修改终端模式)时收到</li>
+  <li>SIGURG：有”紧急”数据或out-of-band数据到达socket时产生</li>
+  <li>SIGXCPU：超过CPU时间资源限制. 这个限制可以由getrlimit/setrlimit来读取/改变</li>
+  <li>SIGXFSZ：当进程企图扩大文件以至于超过文件大小资源限制</li>
+  <li>SIGVTALRM：虚拟时钟信号. 类似于SIGALRM, 但是计算的是该进程占用的CPU时间</li>
+  <li>SIGPROF：类似于SIGALRM/SIGVTALRM, 但包括该进程用的CPU时间以及系统调用的时间</li>
+  <li>SIGWINCH：窗口大小改变时发出</li>
+  <li>SIGIO：文件描述符准备就绪, 可以开始进行输入/输出操作</li>
+  <li>SIGPWR：Powerfailure</li>
+  <li>SIGSYS：非法的系统调用。</li>
+</ul>
+
+<h3 id="处理僵尸进程">处理僵尸进程</h3>
+
+<p>waitpid()会暂时停止目前进程的执行，直到有信号来到或子进程结束。</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code> 
+<span class="cp">#include&lt;sys/types.h&gt;
+#include&lt;sys/wait.h&gt;
+</span><span class="n">pid_t</span> <span class="n">waitpid</span><span class="p">(</span><span class="n">pid_t</span> <span class="n">pid</span><span class="p">,</span><span class="kt">int</span> <span class="o">*</span> <span class="n">status</span><span class="p">,</span><span class="kt">int</span> <span class="n">options</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p>## 0x05 多进程、多线程</p>
+
+<p>由于客户端派发过来的任务需要子进程处理，来创建孙进程。</p>
+
+<p>孙进程处理任务会创建N个线程</p>
+
+<p>### 进程的创建fork()</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code> 
+ <span class="cp">#include &lt;unistd.h&gt;
+</span> <span class="n">pid_t</span> <span class="n">fork</span><span class="p">();</span>
+ 
+</code></pre></div></div>
+
+<p>实例代码：</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code> 
+ <span class="cp">#include &lt;stdio.h&gt;
+</span> <span class="cp">#include &lt;unistd.h&gt;
+</span> <span class="n">pid_t</span> <span class="n">childPid</span> <span class="o">=</span> <span class="n">fork</span><span class="p">();</span>
+ <span class="k">if</span><span class="p">(</span><span class="n">childPid</span> <span class="o">==</span> <span class="mi">0</span><span class="p">){</span>
+ 
+ <span class="n">printf</span><span class="p">(</span><span class="s">"child ..."</span><span class="p">);</span>
+  <span class="c1">// .... 子进程处理</span>
+ <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+ <span class="c1">/// 父进程处理</span>
+ <span class="p">}</span>
+</code></pre></div></div>
+
+<p>为什么两个进程的fpid不同呢，这与fork函数的特性有关。fork调用的一个奇妙之处就是它仅仅被调用一次，却能够返回两次，它可能有三种不同的返回值：</p>
+
+<ul>
+  <li>1）在父进程中，fork返回新创建子进程的进程ID；
+    * 2）在子进程中，fork返回0；
+    * 3）如果出现错误，fork返回一个负值；</li>
+</ul>
+
+<p>### 多线程</p>
+
+<p>Linux系统下的多线程遵循POSIX线程接口，称为pthread。编写Linux下的多线程程序，需要使用头文件pthread.h，连接时需要使用库libpthread.a。</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+#include &lt;pthread.h&gt;
+int pthread_create(pthread_t  *  thread,
+
+pthread_attr_t * attr,
+
+void * (*start_routine)(void *),
+
+void * arg)
+</code></pre></div></div>
+
+<ul>
+  <li>
+    <p>thread：返回创建的线程的ID</p>
+  </li>
+  <li>
+    <p>attr：线程属性，调度策略、优先级等都在这里设置，如果为NULL则表示用默认属性</p>
+  </li>
+  <li>
+    <p>start_routine：线程入口函数，可以返回一个void*类型的返回值，该返回值可由pthread_join()捕获</p>
+  </li>
+  <li>
+    <p>arg：传给start_routine的参数， 可以为NULL</p>
+  </li>
+</ul>
+
+<p><strong>返回值：成功返回0，出错返回-1</strong></p>
+
+<h2 id="0x06-任务派发过程">0x06 任务派发过程</h2>
+
+<p>我的项目在：https://github.com/KoonsTools/PenloopGather
+为了锻炼编程能力，我选择了TCP协议，后面优化的时候自己再改成UDP吧</p>
+
+<p>首先，需要自己拟定一个协议，让客户端与服务器端能解析报文。</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="cp">#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;string.h&gt;
+#include &lt;sys/socket.h&gt;
+#include &lt;arpa/inet.h&gt;
+</span><span class="k">typedef</span> <span class="k">struct</span> <span class="n">shadowPls</span><span class="p">{</span>
+    <span class="kt">unsigned</span> <span class="kt">short</span> <span class="kt">int</span> <span class="n">id</span><span class="p">;</span>
+    <span class="kt">unsigned</span> <span class="kt">short</span> <span class="kt">int</span>  <span class="n">rq</span><span class="p">;</span>
+    <span class="kt">unsigned</span> <span class="kt">short</span> <span class="kt">int</span>  <span class="n">type</span><span class="p">;</span>
+    <span class="kt">char</span>  <span class="n">authcode</span><span class="p">[</span><span class="mi">33</span><span class="p">];</span>
+    <span class="kt">char</span>  <span class="n">target</span><span class="p">[</span><span class="mi">100</span><span class="p">];</span>
+    <span class="kt">char</span>  <span class="n">comment</span><span class="p">[</span><span class="mi">100</span><span class="p">];</span>
+    <span class="kt">char</span>  <span class="n">jobname</span><span class="p">[</span><span class="mi">100</span><span class="p">];</span>
+    <span class="kt">char</span>  <span class="n">username</span><span class="p">[</span><span class="mi">100</span><span class="p">];</span>
+<span class="p">}</span><span class="n">Pls</span><span class="p">;</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span><span class="kt">char</span> <span class="o">*</span> <span class="n">argv</span><span class="p">[])</span> <span class="p">{</span>
+    <span class="kt">char</span> <span class="n">sendBuff</span><span class="p">[</span><span class="mi">500</span><span class="p">];</span>
+
+    <span class="n">Pls</span> <span class="o">*</span> <span class="n">data</span> <span class="o">=</span> <span class="p">(</span><span class="n">Pls</span> <span class="o">*</span> <span class="p">)</span><span class="n">sendBuff</span><span class="p">;</span>
+
+    <span class="n">data</span><span class="o">-&gt;</span><span class="n">id</span><span class="o">=</span><span class="n">htons</span><span class="p">(</span><span class="mi">12</span><span class="p">);</span>
+    <span class="n">data</span><span class="o">-&gt;</span><span class="n">rq</span><span class="o">=</span><span class="n">htons</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+    <span class="n">data</span><span class="o">-&gt;</span><span class="n">type</span><span class="o">=</span><span class="n">htons</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+    <span class="n">strcpy</span><span class="p">(</span><span class="n">data</span><span class="o">-&gt;</span><span class="n">authcode</span><span class="p">,</span><span class="s">"6848d756da66e55b42f79c0728e351ad"</span><span class="p">);</span>
+    <span class="n">strcpy</span><span class="p">(</span><span class="n">data</span><span class="o">-&gt;</span><span class="n">target</span><span class="p">,</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+    <span class="n">strcpy</span><span class="p">(</span><span class="n">data</span><span class="o">-&gt;</span><span class="n">comment</span><span class="p">,</span><span class="s">"wwww"</span><span class="p">);</span>
+    <span class="n">strcpy</span><span class="p">(</span><span class="n">data</span><span class="o">-&gt;</span><span class="n">jobname</span><span class="p">,</span><span class="s">"123"</span><span class="p">);</span>
+    <span class="n">strcpy</span><span class="p">(</span><span class="n">data</span><span class="o">-&gt;</span><span class="n">username</span><span class="p">,</span><span class="s">"admin"</span><span class="p">);</span>
+    <span class="kt">int</span> <span class="n">clientSock</span> <span class="o">=</span> <span class="n">socket</span><span class="p">(</span><span class="n">AF_INET</span><span class="p">,</span><span class="n">SOCK_STREAM</span><span class="p">,</span><span class="mi">0</span><span class="p">);</span>
+
+    <span class="k">struct</span> <span class="n">sockaddr_in</span> <span class="n">serverAddr</span><span class="p">;</span>
+    <span class="n">serverAddr</span><span class="p">.</span><span class="n">sin_port</span> <span class="o">=</span> <span class="n">htons</span><span class="p">(</span><span class="mi">7788</span><span class="p">);</span>
+    <span class="n">serverAddr</span><span class="p">.</span><span class="n">sin_addr</span><span class="p">.</span><span class="n">s_addr</span> <span class="o">=</span> <span class="n">inet_addr</span><span class="p">(</span><span class="s">"10.211.55.14"</span><span class="p">);</span>
+    <span class="n">serverAddr</span><span class="p">.</span><span class="n">sin_family</span> <span class="o">=</span> <span class="n">AF_INET</span><span class="p">;</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">connect</span><span class="p">(</span><span class="n">clientSock</span><span class="p">,(</span><span class="k">struct</span> <span class="n">sockaddr</span> <span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">serverAddr</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">serverAddr</span><span class="p">))</span><span class="o">==</span><span class="mi">0</span><span class="p">){</span>
+        <span class="n">send</span><span class="p">(</span><span class="n">clientSock</span><span class="p">,</span><span class="n">sendBuff</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">sendBuff</span><span class="p">),</span><span class="mi">0</span><span class="p">);</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">"buff : %s</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="n">sendBuff</span><span class="p">);</span>
+    <span class="p">}</span>
+
+        <span class="c1">//sleep(13);</span>
+        <span class="n">shutdown</span><span class="p">(</span><span class="n">clientSock</span><span class="p">,</span><span class="n">SHUT_RDWR</span><span class="p">);</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+</code></pre></div></div>
+
+<p>上面是客户端，主要是封装了一个报文，把扫描任务发给服务器。</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="k">typedef</span> <span class="k">struct</span> <span class="n">shadowPls</span><span class="p">{</span>
+    <span class="kt">unsigned</span> <span class="kt">short</span> <span class="kt">int</span> <span class="n">id</span><span class="p">;</span> <span class="c1">// ID</span>
+    <span class="kt">unsigned</span> <span class="kt">short</span> <span class="kt">int</span>  <span class="n">rq</span><span class="p">;</span> <span class="c1">// 请求状态</span>
+    <span class="kt">unsigned</span> <span class="kt">short</span> <span class="kt">int</span>  <span class="n">type</span><span class="p">;</span> <span class="c1">// 扫描类型，可以是 1=&gt;域名，2=&gt;IP</span>
+    <span class="kt">char</span>  <span class="n">authcode</span><span class="p">[</span><span class="mi">33</span><span class="p">];</span> <span class="c1">// KEY</span>
+    <span class="kt">char</span>  <span class="n">target</span><span class="p">[</span><span class="mi">100</span><span class="p">];</span> <span class="c1">// 扫描目标</span>
+    <span class="kt">char</span>  <span class="n">comment</span><span class="p">[</span><span class="mi">100</span><span class="p">];</span> <span class="c1">// 任务说明</span>
+    <span class="kt">char</span>  <span class="n">jobname</span><span class="p">[</span><span class="mi">100</span><span class="p">];</span> <span class="c1">// 任务名称</span>
+    <span class="kt">char</span>  <span class="n">username</span><span class="p">[</span><span class="mi">100</span><span class="p">];</span> <span class="c1">// 用户名</span>
+<span class="p">}</span><span class="n">Pls</span><span class="p">;</span>
+
+</code></pre></div></div>
+<p>服务器根据数据包格式来解析，读取目标、描述、注释，并且在创建子进程之前认证用户是否有权限派发任务。</p>
+
+<p>有了独有的协议，我们可以使用：任何语言来做客户端，大大的方便了我们的工作！</p>
+
+<p>## 参考</p>
+
+<ul>
+  <li>http://blog.csdn.net/li_ning_/article/details/52117463</li>
+  <li>https://baike.baidu.com/item/waitpid/4071590</li>
+  <li>http://blog.csdn.net/thanksgining/article/details/41979699</li>
+  <li>https://www.cnblogs.com/weizhixiang/p/6298523.html</li>
+  <li>https://www.cnblogs.com/Leo_wl/p/5735009.html</li>
+</ul>
+
+
+
+<div class="pull-right">
+  <script type="text/javascript">
+    function smoothscroll(){
+    var currentScroll = document.documentElement.scrollTop || document.body.scrollTop;
+    if (currentScroll > 0) {
+         window.requestAnimationFrame(smoothscroll);
+         window.scrollTo (0,currentScroll - (currentScroll/5));
+    }
+};
+  </script>
+<button class="btn btn-primary" onclick="smoothscroll()">回到顶部</button>
+</div>
+<br>
+
+
+    <h3>本文许可协议</h3>
+
+    <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">
+    	<img alt="知识共享许可协议" style="border-width:0;height: 30px;width: 80px;" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br />本作品采用<a rel="license" href="http://creativecommons.org/licenses/by/4.0/">知识共享署名 4.0 国际许可协议</a>进行许可。
+  </div>
+
+</article>
+
+</section>
+<!-- 
+<nav class="navbar navbar-default navbar-fixed-bottom">
+  <div class="container footer-content">
+    Jekyll Theme by Hemang Kumar/Powered By Jekyll/Site owner is 倾旋
+  </div>
+</nav>
+-->
+<!-- <script src="https://s22.cnzz.com/z_stat.php?id=1262492389&web_id=1262492389" language="JavaScript"></script> -->
+  </body>
+
+</html>
