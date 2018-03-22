@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>准备在博客记录Web安全测试学习手册 « 倾旋的博客</title>
+  <meta name="description" content="准备在博客记录Web安全测试学习手册，先把目录列出来，之前参考了OWASP测试指南，写了一份Word，但是在Word里不好阐述风险的成因以及危害，所以针对每个风险我会以环境来详细的扣清楚。">
+
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="http://localhost:4000/archivers/2018-03-21/1">
+  <link rel="alternate" type="application/rss+xml" title="倾旋的博客" href="http://localhost:4000/feed.xml" />
+  <link href="/css/lightbox.min.css" rel="stylesheet">
+</head>
+
+
+  <body>
+
+    <div class="header-placeholder"></div>
+<header class="header">
+  <div class="wrapper">
+    <div id="sidebar-toggle">TOC</div>
+    <a class="site-title" href="/">倾旋的博客</a>
+    <nav class="site-nav">
+      
+        
+        <a class="page-link" href="/about/">About</a>
+      
+        
+        <a class="page-link" href="/category/">Category</a>
+      
+    </nav>
+  </div>
+</header>
+
+
+    <div class="page-content">
+      <div class="wrapper">
+        <div class="col-main">
+          <div class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">准备在博客记录Web安全测试学习手册</h1>
+    <p class="post-meta">Mar 21, 2018</p>
+  </header>
+
+  <article class="post-content">
+    <p>准备在博客记录Web安全测试学习手册，先把目录列出来，之前参考了OWASP测试指南，写了一份Word，但是在Word里不好阐述风险的成因以及危害，所以针对每个风险我会以环境来详细的扣清楚。
+<!--more--></p>
+
+<h2 id="0x01-配置管理测试">0x01 配置管理测试</h2>
+
+<ul>
+  <li>远程代码执行</li>
+  <li>Slow HTTP DDOS</li>
+  <li>点击劫持：X-Frame-Options头丢失</li>
+  <li>OPTIONS方法启用</li>
+  <li>服务器启用了不安全的HTTP方法</li>
+  <li>中间件版本信息泄露</li>
+  <li>服务器端目录遍历</li>
+  <li>中间件解析漏洞</li>
+  <li>IIS短文件名漏洞</li>
+  <li>FTP匿名访问</li>
+  <li>应用程序未容错</li>
+  <li>危险端口</li>
+  <li>默认管理后台</li>
+  <li>SVN文件泄露</li>
+  <li>OpenSSL心脏出血漏洞</li>
+  <li>SSL/TLS “受戒礼”漏洞</li>
+  <li>SSL POODLE漏洞</li>
+  <li>具有弱密钥长度的HTTPS连接</li>
+  <li>敏感信息泄露</li>
+  <li>分布式部署文件可读</li>
+  <li>敏感信息GET方式传输</li>
+</ul>
+
+<h2 id="0x02-数据验证测试">0x02 数据验证测试</h2>
+
+<ul>
+  <li>XSS跨站脚本攻击</li>
+  <li>SQL注入</li>
+  <li>任意文件读取</li>
+  <li>任意文件上传漏洞</li>
+  <li>XML实体注入</li>
+  <li>代码注入</li>
+  <li>命令注入</li>
+  <li>任意文件下载</li>
+  <li>本地文件包含</li>
+  <li>远程文件包含</li>
+  <li>框架注入</li>
+  <li>链接注入</li>
+  <li>SSRF服务器请求伪造</li>
+  <li>CSRF跨站脚本伪造</li>
+  <li>任意URL跳转</li>
+  <li>JSON劫持</li>
+</ul>
+
+<h2 id="0x03-会话管理测试">0x03 会话管理测试</h2>
+
+<ul>
+  <li>会话固定</li>
+  <li>多次登录错误锁定机制</li>
+  <li>COOKIE未设置HTTP Only属性</li>
+  <li>COOKIE未加密</li>
+  <li>COOKIE有效期时间过长</li>
+</ul>
+
+<h2 id="0x04-业务逻辑测试">0x04 业务逻辑测试</h2>
+
+<ul>
+  <li>任意用户密码重置</li>
+  <li>图形验证码绕过</li>
+  <li>短信验证码绕过</li>
+  <li>短信验证码重放</li>
+  <li>业务流程绕过</li>
+  <li>加密算法脆弱</li>
+  <li>支付逻辑漏洞</li>
+  <li>条件竞争(HTTP并发)</li>
+  <li>前端认证绕过</li>
+</ul>
+
+<h2 id="0x05-身份认证测试">0x05 身份认证测试</h2>
+
+<ul>
+  <li>账号弱口令</li>
+  <li>登录错误消息凭证枚举</li>
+  <li>空口令攻击</li>
+  <li>垂直越权</li>
+  <li>水平越权</li>
+</ul>
+
+<h2 id="0x06-结语">0x06 结语</h2>
+
+<p>这些测试项参考了OWASP测试指南与AWVS扫描报告</p>
+
+<p>：D 如果有什么缺陷，还望联系我补充。</p>
+
+<p>另外，每一篇的参考链接都会放在文末，只是做一些方便工作归档的整理。</p>
+
+
+  </article>
+  
+  
+
+
+
+
+</div>
+
+        </div>
+        <div class="col-second">
+          <div class="col-box col-box-author">
+  <img class="avatar" src="/images/timg.jpeg" alt="倾旋">
+  <div class="col-box-title name">倾旋</div>
+  <p>安全从业者，爱好安全产品开发，渗透测试，Web漏洞研究</p>
+  <p class="contact">
+    
+    <a href="https://github.com/rvn0xsy">GitHub</a>
+    
+    
+    <a href="mailto:payloads@aliyun.com">Email</a>
+    
+    <div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_twi" data-cmd="twi" title="分享到Twitter"></a><a href="#" class="bds_fbook" data-cmd="fbook" title="分享到Facebook"></a><a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a><a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a><a href="#" class="bds_evernotecn" data-cmd="evernotecn" title="分享到印象笔记"></a><a href="#" class="bds_youdao" data-cmd="youdao" title="分享到有道云笔记"></a><a href="#" class="bds_sqq" data-cmd="sqq" title="分享到QQ好友"></a><a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a><a href="#" class="bds_tieba" data-cmd="tieba" title="分享到百度贴吧"></a><a href="#" class="bds_copy" data-cmd="copy" title="分享到复制网址"></a><a href="#" class="bds_print" data-cmd="print" title="分享到打印"></a></div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":["mshare","qzone","tsina","bdysc","weixin","sqq","youdao","mail","fbook","twi","linkedin","h163","evernotecn","copy","print"],"bdPic":"","bdStyle":"1","bdSize":"16"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+  </p>
+</div>
+
+<div class="col-box">
+  <div class="col-box-title">Newest Posts</div>
+  <ul class="post-list">
+    
+      <li><a class="post-link" href="/archivers/2018-03-21/1">准备在博客记录Web安全测试学习手册</a></li>
+    
+      <li><a class="post-link" href="/archivers/2018-03-20/1">浅谈使用C语言开发服务端漏洞扫描设计</a></li>
+    
+      <li><a class="post-link" href="/archivers/2018-03-18/1">渗透测试中使用Ubuntu的一些小技巧</a></li>
+    
+      <li><a class="post-link" href="/archivers/2018-03-16/4">Redis未授权访问简介</a></li>
+    
+      <li><a class="post-link" href="/archivers/2018-03-16/1">信安从业人员的编程之路</a></li>
+    
+      <li><a class="post-link" href="/archivers/2018-03-16/2">msfconsole常用命令</a></li>
+    
+      <li><a class="post-link" href="/archivers/2018-03-16/3">Python命令行:getopt模块详解</a></li>
+    
+      <li><a class="post-link" href="/archivers/2018-03-11/1">重放Flash上传数据包</a></li>
+    
+      <li><a class="post-link" href="/archivers/2018-03-05/1">C/C++ 子域名A记录枚举(多线程)</a></li>
+    
+      <li><a class="post-link" href="/archivers/2018-03-04/1">使用C语言发送伪造源IP的UDP请求及DRDOS拒绝服务攻击原理剖析</a></li>
+    
+      <li><a class="post-link" href="/archivers/2018-02-28/1">C++/C实现DNS查询</a></li>
+    
+      <li><a class="post-link" href="/archivers/2018-02-11/1">无聊写个C语言创建Jekyll文章的程序</a></li>
+    
+      <li><a class="post-link" href="/archivers/2018-02-10/1">DNS协议编程</a></li>
+    
+      <li><a class="post-link" href="/archivers/2018-02-07/1">关于CVE-2018-6580其他Tips分析</a></li>
+    
+      <li><a class="post-link" href="/archivers/2018-02-05/1">Fuzzing With FuzzDB to Web Attack</a></li>
+    
+      <li><a class="post-link" href="/archivers/2018-02-02/1">内网渗透常见端口转发方式</a></li>
+    
+      <li><a class="post-link" href="/archivers/2018-02-01/1">Metasploit - MS17010通用模块</a></li>
+    
+      <li><a class="post-link" href="/archivers/2018-01-25/1">从网络扼杀Metasploit木马</a></li>
+    
+      <li><a class="post-link" href="/archivers/2018-01-23/1">封装好的CURL class 尽情享用</a></li>
+    
+      <li><a class="post-link" href="/archivers/2018-01-30/1">针对某跨国企业的一次渗透测试-持续</a></li>
+    
+  </ul>
+</div>
+
+<div class="col-box post-toc hide">
+  <div class="col-box-title">TOC</div>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+<div class="wrapper">
+&copy; 2018 倾旋
+</div>
+</footer>
+
+<script type="text/x-mathjax-config">MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$']]}});</script>
+<script src="/js/easybook.js"></script>
+
+<script type="text/javascript" src="/js/lightbox-plus-jquery.min.js"></script>
+<script type="text/javascript" src="/js/global.js"></script>
+  </body>
+
+</html>
