@@ -6,11 +6,11 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>思科路由 « 倾旋的博客</title>
-  <meta name="description" content="本文介绍一下思科设备的简单配置">
+  <title>《Web安全测试学习手册》- 远程代码执行 « 倾旋的博客</title>
+  <meta name="description" content="《Web安全测试学习手册》- 远程代码执行">
 
   <link rel="stylesheet" href="/css/main.css">
-  <link rel="canonical" href="http://localhost:4000/archivers/2015-11-23/1">
+  <link rel="canonical" href="http://localhost:4000/archivers/2018-03-22/1">
   <link rel="alternate" type="application/rss+xml" title="倾旋的博客" href="http://localhost:4000/feed.xml" />
   <link href="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/css/lightbox.min.css" rel="stylesheet">
 </head>
@@ -42,207 +42,43 @@
           <div class="post">
 
   <header class="post-header">
-    <h1 class="post-title">思科路由</h1>
-    <p class="post-meta">Nov 23, 2015</p>
+    <h1 class="post-title">《Web安全测试学习手册》- 远程代码执行</h1>
+    <p class="post-meta">Mar 22, 2018</p>
   </header>
 
   <article class="post-content">
-    <p>本文介绍一下思科设备的简单配置
+    <p>《Web安全测试学习手册》- 远程代码执行
 <!--more--></p>
 
-<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2018-3-16/0x01.png" alt="enter description here" title="0x01" /></p>
+<h2 id="0x00-远程代码执行---介绍">0x00 远程代码执行 - 介绍</h2>
 
-<h2 id="0x01-思科rip">0x01 思科RIP</h2>
+<h3 id="1什么是远程代码执行">1）什么是远程代码执行</h3>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
-Router5:
-Router&gt;en
-Router#conf t
-Router(config)#int FastEthernet 0/1
-Router(config-if)#no shutdown
-Router(config-if)#ip add 172.16.1.1 255.255.255.0
-Router(config-if)#no shutdown
-Router(config-if)#exit
-Router(config)#int se
-Router(config)#int serial 1/0
-Router(config-if)#no shutdown
-Router(config-if)#ip add 172.16.2.1 255.255.255.0
-Router(config-if)#int f0/0
-Router(config-if)#no shutdown
-Router(config-if)#ip add 192.168.1.1 255.255.255.0
-Router(config-if)#exit
-Router(config)#route rip
-Router(config-router)#version 2
-Router(config-router)#network 192.168.1.0
-Router(config-router)#network 172.16.2.0
-Router(config-router)#network 172.16.1.0
-Router(config-router)#
-Router7:
-Router&gt;
-Router&gt;en
-Router#conf t
-Router(config)#int f0/0
-Router(config-if)#no shutdown
-Router(config-if)#ip add 172.16.1.2 255.255.255.0
-Router(config-if)#int s1/0
-Router(config-if)#no shutdown
-Router(config-if)#ip add 172.16.2.2 255.255.255.0
-Router(config-if)#int f0/1
-Router(config-if)#no shutdown
-Router(config-if)#ip add 172.16.3.1 255.255.255.0
-Router(config-if)#int s1/1
-Router(config-if)#no shutdown
-Router(config-if)#ip add 172.16.4.1 255.255.255.0
-Router(config-if)#exit
-Router(config)#route rip
-Router(config-router)#version 2
-Router(config-router)#network 172.16.1.0
-Router(config-router)#network 172.16.2.0
-Router(config-router)#network 172.16.3.0
-Router(config-router)#network 172.16.4.0
-Router(config-router)#
-Router9:
-Router&gt;en
-Router#conf t
-Router(config)#int f0/0
-Router(config-if)#no shutdown
-Router(config-if)#ip add 172.16.3.2 255.255.255.0
-Router(config-if)#int s1/0
-Router(config-if)#no shutdown
-Router(config-if)#ip add 172.16.4.2 255.255.255.0
-Router(config-if)#int f0/1
-Router(config-if)#no shutdown
-Router(config-if)#ip add 192.168.2.1 255.255.255.0
-Router(config-if)#exit
-Router(config)#route rip
-Router(config-router)#version 2
-Router(config-router)#network 172.16.3.0
-Router(config-router)#network 172.16.4.0
-Router(config-router)#network 192.168.2.0
-Router(config-router)#
-</code></pre></div></div>
+<p>远程命令执行 英文名称：<strong>RCE remote code execution</strong> ，简称<strong>RCE</strong>漏洞，是指用户通过浏览器提交执行命令，由于服务器端没有针对执行函数做过滤，导致在没有指定绝对路径的情况下就执行命令，可能会允许攻击者通过改变 $PATH 或程序执行环境的其他方面来执行一个恶意构造的代码。</p>
 
-<p>通信测试：</p>
+<h3 id="2远程代码执行的特点">2）远程代码执行的特点</h3>
 
-<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2018-3-16/0x02.png" alt="enter description here" title="0x02" /></p>
+<p>远程代码执行是指攻击者可能会通过远调用的方式来攻击或控制计算机设备，无论该设备在哪里。</p>
 
-<h2 id="0x02-思科ospf">0x02 思科OSPF</h2>
+<h2 id="0x01-远程代码执行---风险等级">0x01 远程代码执行 - 风险等级</h2>
 
-<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2018-3-16/0x03.png" alt="enter description here" title="0x03" /></p>
+<p><strong>高</strong></p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
-Router10:
-Router&gt;en
-Router#conf t
-Router(config)#int FastEthernet 0/1
-Router(config-if)#no shutdown
-Router(config-if)#ip add 172.16.1.1 255.255.255.0
-Router(config-if)#no shutdown
-Router(config-if)#exit
-Router(config)#int se
-Router(config)#int serial 1/0
-Router(config-if)#no shutdown
-Router(config-if)#ip add 172.16.2.1 255.255.255.0
-Router(config-if)#int f0/0
-Router(config-if)#no shutdown
-Router(config-if)#ip add 192.168.1.1 255.255.255.0
-Router(config-if)#exit
-Router(config)#route ospf 1
-Router(config-router)#router-id 1.1.1.1
-Router(config-router)#network 192.168.1.0 0.0.0.255 area 0
-Router(config-router)#network 172.16.1.0 0.0.0.255 area 0
-Router(config-router)#network 172.16.2.0 0.0.0.255 area 0
-Router(config-router)#
-Router11:
-Router&gt;
-Router&gt;en
-Router#conf t
-Router(config)#int f0/0
-Router(config-if)#no shutdown
-Router(config-if)#ip add 172.16.1.2 255.255.255.0
-Router(config-if)#int s1/0
-Router(config-if)#no shutdown
-Router(config-if)#ip add 172.16.2.2 255.255.255.0
-Router(config-if)#int f0/1
-Router(config-if)#no shutdown
-Router(config-if)#ip add 172.16.3.1 255.255.255.0
-Router(config-if)#int s1/1
-Router(config-if)#no shutdown
-Router(config-if)#ip add 172.16.4.1 255.255.255.0
-Router(config-if)#exit
-Router(config)#router ospf 1
-Router(config-router)#route
-Router(config-router)#router-id 2.2.2.2
-Router(config-router)#network 172.16.1.0 0.0.0.255 area 0
-Router(config-router)#network 172.16.2.0 0.0.0.255 area 0
-Router(config-router)#network 172.16.3.0 0.0.0.255 area 0
-Router(config-router)#networl 172.16.4.0 0.0.0.255 area 0
-Router(config-router)#
-Router12:
-Router&gt;en
-Router#conf t
-Router(config)#int f0/0
-Router(config-if)#no shutdown
-Router(config-if)#ip add 172.16.3.2 255.255.255.0
-Router(config-if)#int s1/0
-Router(config-if)#no shutdown
-Router(config-if)#ip add 172.16.4.2 255.255.255.0
-Router(config-if)#int f0/1
-Router(config-if)#no shutdown
-Router(config-if)#ip add 192.168.2.1 255.255.255.0
-Router(config-if)#exit
-Router(config)#router ospf 1
-Router(config-router)#route
-Router(config-router)#router-id 3.3.3.3
-Router(config-router)#network 172.16.3.0 0.0.0.255 area 0
-Router(config-router)#network 172.16.4.0 0.0.0.255 area 0
-Router(config-router)#network 192.168.2.0 0.0.0.255 area 0
-Router(config-router)#
-</code></pre></div></div>
+<h2 id="0x02-远程代码执行---原理">0x02 远程代码执行 - 原理</h2>
 
-<h2 id="0x04-思科静态路由">0x04 思科静态路由</h2>
+<p>由于开发人员编写源码，没有针对代码中可执行的特殊函数入口做过滤，导致客户端可以提交恶意构造语句提交，并交由服务器端执行。命令注入攻击中WEB服务器没有过滤类似system(),eval()，exec()等函数是该漏洞攻击成功的最主要原因。</p>
 
-<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2018-3-16/0x04.png" alt="enter description here" title="0x04" /></p>
+<h2 id="0x03-远程代码执行---常见场景">0x03 远程代码执行 - 常见场景</h2>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
-Router13:
-Router&gt;en
-Router#conf t
-Router(config)#int f0/0
-Router(config-if)#no shutdown
-Router(config-if)#ip add 192.168.1.1 255.255.255.0
-Router(config-if)#int f0/1
-Router(config-if)#ip add 172.16.1.1 255.255.255.0
-Router(config-if)#no shutdown
-Router(config-if)#exit
-Router(config)#ip route 0.0.0.0 0.0.0.0 172.16.1.2
-Router(config)#
-Router 14：
-Router&gt;en
-Router#conf t
-Enter configuration commands, one per line. End with CNTL/Z.
-Router(config)#int f0/0
-Router(config-if)#no shutdown
-Router(config-if)#ip add 172.16.1.2 255.255.255.0
-Router(config-if)#int f0/1
-Router(config-if)#no shutdown
-Router(config-if)#ip add 172.16.2.1 255.255.255.0
-Router(config-if)#exit
-Router(config)#ip route 192.168.1.0 255.255.255.0 172.16.1.1
-Router(config)#ip route 192.168.2.0 255.255.255.0 172.16.2.2
-Router15：
-Router&gt;en
-Router#conf t
-Enter configuration commands, one per line. End with CNTL/Z.
-Router(config)#int f0/0
-Router(config-if)#no shutdown
-Router(config-if)#ip add 172.16.2.2 255.255.255.0
-Router(config-if)#int f0/1
-Router(config-if)#no shutdown
-Router(config-if)#ip add 192.168.2.1 255.255.255.0
-Router(config-if)#exit
-Router(config)#ip route 0.0.0.0 0.0.0.0 172.16.2.1
-</code></pre></div></div>
+<ul>
+  <li>使用了危险函数的Web应用</li>
+  <li>低版本的Java语言Struts框架</li>
+</ul>
+
+<h2 id="0x04-测试方案">0x04 测试方案</h2>
+
+<h3 id="1php中常见场景">1）PHP中常见场景</h3>
+
 
   </article>
   
