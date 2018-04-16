@@ -6,9 +6,132 @@
 </description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Mon, 16 Apr 2018 15:29:55 +0800</pubDate>
-    <lastBuildDate>Mon, 16 Apr 2018 15:29:55 +0800</lastBuildDate>
+    <pubDate>Mon, 16 Apr 2018 16:28:07 +0800</pubDate>
+    <lastBuildDate>Mon, 16 Apr 2018 16:28:07 +0800</lastBuildDate>
     <generator>Jekyll v3.6.2</generator>
+    
+      <item>
+        <title>《Web安全测试学习手册》- 点击劫持：X-Frame-Options头丢失</title>
+        <description>&lt;p&gt;《Web安全测试学习手册》- 点击劫持：X-Frame-Options头丢失
+&lt;!--more--&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;0x00-点击劫持x-frame-options头丢失---介绍&quot;&gt;0x00 点击劫持：X-Frame-Options头丢失 - 介绍&lt;/h2&gt;
+
+&lt;h3 id=&quot;1什么是点击劫持x-frame-options头丢失&quot;&gt;1）什么是点击劫持：X-Frame-Options头丢失&lt;/h3&gt;
+
+&lt;p&gt;X-Frame-Options HTTP 响应头， 可以指示浏览器是否应该加载一个 iframe 中的页面。 网站可以通过设置 X-Frame-Options 阻止站点内的页面被其他页面嵌入从而防止点击劫持。&lt;/p&gt;
+
+&lt;h3 id=&quot;2点击劫持x-frame-options头丢失的特点&quot;&gt;2）点击劫持：X-Frame-Options头丢失的特点&lt;/h3&gt;
+
+&lt;p&gt;属于一种具有迷惑性高、利用难度中等、攻击方式单一的攻击手法。&lt;/p&gt;
+
+&lt;h2 id=&quot;0x01-点击劫持x-frame-options头丢失---风险等级&quot;&gt;0x01 点击劫持：X-Frame-Options头丢失 - 风险等级&lt;/h2&gt;
+
+&lt;p&gt;&lt;strong&gt;中&lt;/strong&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;0x02-点击劫持x-frame-options头丢失---原理&quot;&gt;0x02 点击劫持：X-Frame-Options头丢失 - 原理&lt;/h2&gt;
+
+&lt;p&gt;当X-Frame-Options HTTP 响应头丢失的时候，攻击者可以伪造一个页面，该页面使用前端技术精心构造一些诱惑用户点击的按钮、图片，该元素下方就是一个iframe标签，当用户点击后上层的元素后，就相当于点击了iframe标签引入的网页页面。&lt;/p&gt;
+
+&lt;h2 id=&quot;0x03-点击劫持x-frame-options头丢失---常见场景&quot;&gt;0x03 点击劫持：X-Frame-Options头丢失 - 常见场景&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;默认配置的WebServer&lt;/li&gt;
+  &lt;li&gt;单一交互的网站（按钮）&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;0x04-测试方案&quot;&gt;0x04 测试方案&lt;/h2&gt;
+
+&lt;p&gt;使用CURL请求网站，查看响应头是否包含&lt;code class=&quot;highlighter-rouge&quot;&gt;X-Frame-Options&lt;/code&gt;&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;curl -I http://target
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;未修复&quot;&gt;未修复&lt;/h3&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;payloads@Online$ curl -I http://localhost
+HTTP/1.1 200 OK
+Server: nginx/1.12.1 (Ubuntu)
+Date: Mon, 16 Apr 2018 07:48:51 GMT
+Content-Type: text/html
+Content-Length: 612
+Last-Modified: Sun, 08 Apr 2018 02:41:44 GMT
+Connection: keep-alive
+ETag: &quot;5ac98168-264&quot;
+Accept-Ranges: bytes
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;不存在&lt;code class=&quot;highlighter-rouge&quot;&gt;X-Frame-Options&lt;/code&gt;响应头。&lt;/p&gt;
+
+&lt;h3 id=&quot;修复后&quot;&gt;修复后&lt;/h3&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;payloads@Online$ curl -I http://localhost
+HTTP/1.1 200 OK
+Server: nginx/1.12.1 (Ubuntu)
+Date: Mon, 16 Apr 2018 07:52:08 GMT
+Content-Type: text/html
+Content-Length: 612
+Last-Modified: Sun, 08 Apr 2018 02:41:44 GMT
+Connection: keep-alive
+ETag: &quot;5ac98168-264&quot;
+X-Frame-Options: SAMEORIGIN
+Accept-Ranges: bytes
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;0x05-修复方案&quot;&gt;0x05 修复方案&lt;/h2&gt;
+
+&lt;p&gt;配置WebServer，更改配置文件，添加自定义响应头&lt;/p&gt;
+
+&lt;p&gt;使用 X-Frame-Options 有三个可选的值：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;DENY：浏览器拒绝当前页面加载任何Frame页面&lt;/li&gt;
+  &lt;li&gt;SAMEORIGIN：frame页面的地址只能为同源域名下的页面&lt;/li&gt;
+  &lt;li&gt;ALLOW-FROM：origin为允许frame加载的页面地址&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;若网站内有使用iframe标签链接同源资源的，需要设置为&lt;code class=&quot;highlighter-rouge&quot;&gt;SAMEORIGIN&lt;/code&gt;。&lt;/p&gt;
+
+&lt;h3 id=&quot;apache&quot;&gt;Apache&lt;/h3&gt;
+
+&lt;p&gt;配置 &lt;code class=&quot;highlighter-rouge&quot;&gt;Apache&lt;/code&gt; 在所有页面上发送 &lt;code class=&quot;highlighter-rouge&quot;&gt;X-Frame-Options&lt;/code&gt; 响应头，需要把下面这行添加到 &lt;code class=&quot;highlighter-rouge&quot;&gt;site&lt;/code&gt; 的配置中:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Header always append X-Frame-Options SAMEORIGIN
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;nginx&quot;&gt;Nginx&lt;/h3&gt;
+
+&lt;p&gt;配置 &lt;code class=&quot;highlighter-rouge&quot;&gt;nginx&lt;/code&gt; 发送 &lt;code class=&quot;highlighter-rouge&quot;&gt;X-Frame-Options&lt;/code&gt; 响应头，把下面这行添加到 &lt;code class=&quot;highlighter-rouge&quot;&gt;http&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;server&lt;/code&gt; 或者 &lt;code class=&quot;highlighter-rouge&quot;&gt;location&lt;/code&gt; 的配置中:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;add_header X-Frame-Options SAMEORIGIN;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;iis&quot;&gt;IIS&lt;/h3&gt;
+
+&lt;p&gt;配置 &lt;code class=&quot;highlighter-rouge&quot;&gt;IIS&lt;/code&gt; 发送 &lt;code class=&quot;highlighter-rouge&quot;&gt;X-Frame-Options&lt;/code&gt; 响应头，添加下面的配置到 &lt;code class=&quot;highlighter-rouge&quot;&gt;Web.config&lt;/code&gt; 文件中:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;lt;system.webServer&amp;gt;
+  ...
+ 
+  &amp;lt;httpProtocol&amp;gt;
+    &amp;lt;customHeaders&amp;gt;
+      &amp;lt;add name=&quot;X-Frame-Options&quot; value=&quot;SAMEORIGIN&quot; /&amp;gt;
+    &amp;lt;/customHeaders&amp;gt;
+  &amp;lt;/httpProtocol&amp;gt;
+ 
+  ...
+&amp;lt;/system.webServer&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+</description>
+        <pubDate>Mon, 16 Apr 2018 00:00:00 +0800</pubDate>
+        <link>http://localhost:4000/archivers/2018-04-16/3</link>
+        <guid isPermaLink="true">http://localhost:4000/archivers/2018-04-16/3</guid>
+        
+        
+        <category>Web安全测试学习手册</category>
+        
+      </item>
     
       <item>
         <title>《Web安全测试学习手册》- Slow HTTP DOS</title>
@@ -340,24 +463,17 @@ SMB         192.168.3.5     445    LIYINGZHEA30B    [+] Dumped 5 LSA secrets to 
   &lt;li&gt;远程代码执行&lt;/li&gt;
   &lt;li&gt;Slow HTTP DDOS&lt;/li&gt;
   &lt;li&gt;点击劫持：X-Frame-Options头丢失&lt;/li&gt;
-  &lt;li&gt;OPTIONS方法启用&lt;/li&gt;
   &lt;li&gt;服务器启用了不安全的HTTP方法&lt;/li&gt;
   &lt;li&gt;中间件版本信息泄露&lt;/li&gt;
   &lt;li&gt;服务器端目录遍历&lt;/li&gt;
   &lt;li&gt;中间件解析漏洞&lt;/li&gt;
   &lt;li&gt;IIS短文件名漏洞&lt;/li&gt;
-  &lt;li&gt;FTP匿名访问&lt;/li&gt;
   &lt;li&gt;应用程序未容错&lt;/li&gt;
-  &lt;li&gt;危险端口&lt;/li&gt;
-  &lt;li&gt;默认管理后台&lt;/li&gt;
   &lt;li&gt;SVN文件泄露&lt;/li&gt;
   &lt;li&gt;OpenSSL心脏出血漏洞&lt;/li&gt;
   &lt;li&gt;SSL/TLS “受戒礼”漏洞&lt;/li&gt;
   &lt;li&gt;SSL POODLE漏洞&lt;/li&gt;
-  &lt;li&gt;具有弱密钥长度的HTTPS连接&lt;/li&gt;
-  &lt;li&gt;敏感信息泄露&lt;/li&gt;
   &lt;li&gt;分布式部署文件可读&lt;/li&gt;
-  &lt;li&gt;敏感信息GET方式传输&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;h2 id=&quot;0x02-数据验证测试&quot;&gt;0x02 数据验证测试&lt;/h2&gt;
@@ -376,7 +492,7 @@ SMB         192.168.3.5     445    LIYINGZHEA30B    [+] Dumped 5 LSA secrets to 
   &lt;li&gt;框架注入&lt;/li&gt;
   &lt;li&gt;链接注入&lt;/li&gt;
   &lt;li&gt;SSRF服务器请求伪造&lt;/li&gt;
-  &lt;li&gt;CSRF跨站脚本伪造&lt;/li&gt;
+  &lt;li&gt;CSRF跨站请求伪造&lt;/li&gt;
   &lt;li&gt;任意URL跳转&lt;/li&gt;
   &lt;li&gt;JSON劫持&lt;/li&gt;
 &lt;/ul&gt;
@@ -387,8 +503,6 @@ SMB         192.168.3.5     445    LIYINGZHEA30B    [+] Dumped 5 LSA secrets to 
   &lt;li&gt;会话固定&lt;/li&gt;
   &lt;li&gt;多次登录错误锁定机制&lt;/li&gt;
   &lt;li&gt;COOKIE未设置HTTP Only属性&lt;/li&gt;
-  &lt;li&gt;COOKIE未加密&lt;/li&gt;
-  &lt;li&gt;COOKIE有效期时间过长&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;h2 id=&quot;0x04-业务逻辑测试&quot;&gt;0x04 业务逻辑测试&lt;/h2&gt;
@@ -1727,201 +1841,6 @@ requirepass [密码]
         <pubDate>Fri, 16 Mar 2018 00:00:00 +0800</pubDate>
         <link>http://localhost:4000/archivers/2018-03-16/2</link>
         <guid isPermaLink="true">http://localhost:4000/archivers/2018-03-16/2</guid>
-        
-        
-        <category>Program</category>
-        
-      </item>
-    
-      <item>
-        <title>Python命令行:getopt模块详解</title>
-        <description>&lt;p&gt;本文介绍一下Python getopt模块
-&lt;!--more--&gt;&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;之前一直在写关于python的项目，大部分工具都想运行在命令行下面怎么办呢？
-自行谷歌了一下，看到有一个getopt模块
-官方介绍地址： https://docs.python.org/3.1/library/getopt.html&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;h3 id=&quot;铺垫一下基础知识&quot;&gt;铺垫一下基础知识&lt;/h3&gt;
-&lt;p&gt;我最早接触的脚本语言是asp，但是并没有怎么学习，不过40-50%的代码还是可以看懂的。&lt;/p&gt;
-
-&lt;p&gt;之前我唯一掌握的脚本语言是PHP。当时自己想写一个POC，由于不想通过浏览器的形式去访问，我直接把脚本传入脚本解释器去运行，心里很痛快！到后来发觉不怎么方便，每次使用都得去打开文件修改，然后保存，最后执行它。&lt;/p&gt;
-
-&lt;p&gt;让我唯一想到的是我接触Ｃ语言的时候，第一个小程序大家都知道，叫”hello world”
-Ｃ语言的代码如下：&lt;/p&gt;
-
-&lt;div class=&quot;language-cpp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;
-&lt;span class=&quot;cp&quot;&gt;#include &amp;lt;stdio.h&amp;gt;
-&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;arg&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;char&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;argv&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[]){&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;printf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;hello world !!&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;当时很纳闷这个main里面的东西，就去了解了一下。&lt;/p&gt;
-&lt;blockquote&gt;
-  &lt;p&gt;int arg 是参数的个数 arv是参数的值&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;到此我就明白了它是如何使用的　&lt;/p&gt;
-&lt;blockquote&gt;
-  &lt;p&gt;root@Kali:~#./progrom abc bcd
-此时arg为2,arv的元素里就已经包含了[文件名,abc,bcd]&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;那么文件名就是&lt;code class=&quot;highlighter-rouge&quot;&gt;argv[0]&lt;/code&gt;咯～&lt;/p&gt;
-
-&lt;p&gt;当时搞明白了以后就用Ｃ语言写了个文件管理器，但是现在忘的差不多了。
-查阅资料后发现PHP脚本也一样支持，那个问题我就是通过Ｃ语言的特性去解决的。&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;在php中是$argc,$argv[]　这两个是预先定义好的变量
-真的发现接触了脚本语言让人懒惰了不少呢，但是也省去了很多造轮子的时间，是人们更加容易学习它。&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;h3 id=&quot;进阶&quot;&gt;进阶&lt;/h3&gt;
-
-&lt;p&gt;好啦，我先简单概述一下python的getopt模块。&lt;/p&gt;
-
-&lt;p&gt;如果不想听我叨叨，那就告诉你个小例子：&lt;/p&gt;
-
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt; print(getopt.__doc__) &lt;/code&gt;&lt;/p&gt;
-
-&lt;h5 id=&quot;参数&quot;&gt;参数&lt;/h5&gt;
-
-&lt;p&gt;这个模块一共有两个函数，两个属性&lt;/p&gt;
-
-&lt;p&gt;函数：&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;getopt.getopt&lt;/li&gt;
-  &lt;li&gt;getopt.gnu_getopt&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;属性：&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;getopt.error&lt;/li&gt;
-  &lt;li&gt;getopt.GetoptError&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;这两个属性主要是用来抛出错误信息的，非常友好不是吗？&lt;/p&gt;
-
-&lt;p&gt;我们主要经常使用getopt这个函数，那下面我们先瞧瞧这个家伙有哪些参数吧！&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;getopt.getopt(&lt;em&gt;args&lt;/em&gt;, &lt;em&gt;shortopts&lt;/em&gt;, &lt;em&gt;longopts=&lt;/em&gt;[])
-args指的是当前脚本接收的参数，它是一个列表，可以通过sys.argv获得
-shortopts 是短参数　　啥是短参数啊？　　类似于　这样：python test.py -h # 输出帮助信息
-longopts  是长参数　　啥是长参数啊？　　类似于　这样：python test.py -help # 输出帮助信息&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;可能你已经明白一点了，但是重要的还在后面，那就是此函数的返回值&lt;/p&gt;
-
-&lt;h5 id=&quot;返回值&quot;&gt;返回值&lt;/h5&gt;
-&lt;p&gt;这个函数返回是一个两元组的列表（复习一下，元组的值是不可修改的！）
-下面我写一个小例子，让你稍微顿悟一下&lt;/p&gt;
-
-&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;
-
-&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;getopt&lt;/span&gt;
-&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;sys&lt;/span&gt;
-
-&lt;span class=&quot;n&quot;&gt;arg&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;getopt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;getopt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sys&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;argv&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:],&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'-h'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'help'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;arg&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;结果如下：&lt;/p&gt;
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;
-root@Kali:~/python# python3.5 test.py -h
-([('-h', '')], [])
-root@Kali:~/python# python3.5 test.py --help
-([('--help', '')], [])
-root@Kali:~/python# 
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;可以看到已经接收了参数。并且做了处理，为啥我传入sys.argv[1:]？&lt;/p&gt;
-&lt;blockquote&gt;
-  &lt;p&gt;因为sys.argv里的argv[0]是当前脚本的文件名，不需要它去参与，要不然你的选项和选项值无法匹配，问题多多。
-假设我要接收一个参数+参数值的选项怎么办？&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;再写个小例子！&lt;/p&gt;
-
-&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;
-
-&lt;span class=&quot;c&quot;&gt;#!/usr/bin/env python3.5&lt;/span&gt;
-&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;urllib.request&lt;/span&gt;
-&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;getopt&lt;/span&gt;
-&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;sys&lt;/span&gt;
-
-&lt;span class=&quot;n&quot;&gt;opts&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;args&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;getopt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;getopt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sys&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;argv&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:],&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'-h-f:-v'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'help'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'filename='&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'version'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;opt_name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;opt_value&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;opts&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;opt_name&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'-h'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'--help'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
-        &lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;[*] Help info&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-        &lt;span class=&quot;nb&quot;&gt;exit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;opt_name&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'-v'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'--version'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
-        &lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;[*] Version is 0.01 &quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-        &lt;span class=&quot;nb&quot;&gt;exit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;opt_name&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'-f'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'--filename'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;fileName&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;opt_value&lt;/span&gt;
-        &lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;[*] Filename is &quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fileName&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-        &lt;span class=&quot;c&quot;&gt;# do something&lt;/span&gt;
-        &lt;span class=&quot;nb&quot;&gt;exit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;运行测试结果如下：&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;
-root@Kali:~/python# python3.5 test.py --filename=test
-[*] Filename is  test
-root@Kali:~/python# python3.5 test.py --filename=
-[*] Filename is  
-root@Kali:~/python# python3.5 test.py --help
-[*] Help info
-root@Kali:~/python# python3.5 test.py --version
-[*] Version is 0.01 
-root@Kali:~/python# python3.5 test.py -v
-[*] Version is 0.01 
-root@Kali:~/python# python3.5 test.py -f test
-[*] Filename is  test
-root@Kali:~/python# 
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;来详细解释一下这几行代码
-首先从短参数名开始。&lt;/p&gt;
-
-&lt;p&gt;我定义了&lt;code class=&quot;highlighter-rouge&quot;&gt;'-h-f:-v'&lt;/code&gt; 大家发现没有，在&lt;code class=&quot;highlighter-rouge&quot;&gt;-f&lt;/code&gt;后面多了一个&lt;code class=&quot;highlighter-rouge&quot;&gt;&quot;:&quot;&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;这个&lt;code class=&quot;highlighter-rouge&quot;&gt;&quot;:&quot;&lt;/code&gt;代表了当前参数是有值的，是一个参数名+参数值的参数
-如果我再加一个&lt;code class=&quot;highlighter-rouge&quot;&gt;-o: &lt;/code&gt;那么证明&lt;code class=&quot;highlighter-rouge&quot;&gt;-o&lt;/code&gt;后面是可以接收一个值，这个值就是&lt;code class=&quot;highlighter-rouge&quot;&gt;-o&lt;/code&gt;的参数值，将会保存到&lt;code class=&quot;highlighter-rouge&quot;&gt;opts&lt;/code&gt;变量中。&lt;/p&gt;
-
-&lt;p&gt;长参数名的方式和短参数差不多，唯一的区别就是长参数如果要接收值，那必须得在后面加上一个&lt;code class=&quot;highlighter-rouge&quot;&gt;&quot;=&quot;&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;http://upload-images.jianshu.io/upload_images/3150364-043c5b27c05805e2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240&quot; alt=&quot;运行结果&quot; /&gt;&lt;/p&gt;
-
-&lt;h5 id=&quot;调用问题&quot;&gt;调用问题&lt;/h5&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;短参数使用的时候是参数名[空格]参数值
-长参数使用的时候是参数名=参数值
-PS:不理解可以看我的测试结果&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;h5 id=&quot;opts和args&quot;&gt;opts和args&lt;/h5&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;opts 为分析出的格式信息。args 为不属于格式信息的剩余的命令行参数。&lt;/li&gt;
-  &lt;li&gt;opts 是一个两元组的列表。每个元素为：( 选项串, 附加参数) 。如果没有附加参数则为空串’’ 。&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;总结&quot;&gt;总结&lt;/h3&gt;
-&lt;p&gt;到此你就可以总结sqlmap是如何接收那么多的参数啦～
-附上一张运行图&lt;/p&gt;
-
-&lt;p&gt;总之这个多写几个例子就可以了，我之前的项目就是采用了这个模块。
-你可以去看看：http://www.jianshu.com/p/2163b305b7f8&lt;/p&gt;
-</description>
-        <pubDate>Fri, 16 Mar 2018 00:00:00 +0800</pubDate>
-        <link>http://localhost:4000/archivers/2018-03-16/3</link>
-        <guid isPermaLink="true">http://localhost:4000/archivers/2018-03-16/3</guid>
         
         
         <category>Program</category>

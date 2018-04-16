@@ -6,12 +6,11 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>倾旋的博客</title>
-  <meta name="description" content="岁月静好，现世安稳。
-">
+  <title>《Web安全测试学习手册》- 点击劫持：X-Frame-Options头丢失 « 倾旋的博客</title>
+  <meta name="description" content="《Web安全测试学习手册》- 点击劫持：X-Frame-Options头丢失">
 
   <link rel="stylesheet" href="/css/main.css">
-  <link rel="canonical" href="http://localhost:4000/page7/">
+  <link rel="canonical" href="http://localhost:4000/archivers/2018-04-16/3">
   <link rel="alternate" type="application/rss+xml" title="倾旋的博客" href="http://localhost:4000/feed.xml" />
   <link href="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/css/lightbox.min.css" rel="stylesheet">
 </head>
@@ -40,114 +39,132 @@
     <div class="page-content">
       <div class="wrapper">
         <div class="col-main">
-          <div class="home">
-  <a class="rss-link" href="/feed.xml">RSS Feed</a>
-  <h1 class="page-heading">Articles</h1>
+          <div class="post">
 
-  <ul class="post-list">
-    
-      <li>
-        <h2>
-          <a class="post-link" href="/archivers/2015-11-20/4">华为交换机VLAN聚合实例</a>
-        </h2>
-        
-        <div class="post-meta">Nov 20, 2015</div>
+  <header class="post-header">
+    <h1 class="post-title">《Web安全测试学习手册》- 点击劫持：X-Frame-Options头丢失</h1>
+    <p class="post-meta">Apr 16, 2018</p>
+  </header>
 
-        <div class="post-excerpt">
-          <p>本文记录一下华为交换机VLAN聚合实例配置</p>
+  <article class="post-content">
+    <p>《Web安全测试学习手册》- 点击劫持：X-Frame-Options头丢失
+<!--more--></p>
+
+<h2 id="0x00-点击劫持x-frame-options头丢失---介绍">0x00 点击劫持：X-Frame-Options头丢失 - 介绍</h2>
+
+<h3 id="1什么是点击劫持x-frame-options头丢失">1）什么是点击劫持：X-Frame-Options头丢失</h3>
+
+<p>X-Frame-Options HTTP 响应头， 可以指示浏览器是否应该加载一个 iframe 中的页面。 网站可以通过设置 X-Frame-Options 阻止站点内的页面被其他页面嵌入从而防止点击劫持。</p>
+
+<h3 id="2点击劫持x-frame-options头丢失的特点">2）点击劫持：X-Frame-Options头丢失的特点</h3>
+
+<p>属于一种具有迷惑性高、利用难度中等、攻击方式单一的攻击手法。</p>
+
+<h2 id="0x01-点击劫持x-frame-options头丢失---风险等级">0x01 点击劫持：X-Frame-Options头丢失 - 风险等级</h2>
+
+<p><strong>中</strong></p>
+
+<h2 id="0x02-点击劫持x-frame-options头丢失---原理">0x02 点击劫持：X-Frame-Options头丢失 - 原理</h2>
+
+<p>当X-Frame-Options HTTP 响应头丢失的时候，攻击者可以伪造一个页面，该页面使用前端技术精心构造一些诱惑用户点击的按钮、图片，该元素下方就是一个iframe标签，当用户点击后上层的元素后，就相当于点击了iframe标签引入的网页页面。</p>
+
+<h2 id="0x03-点击劫持x-frame-options头丢失---常见场景">0x03 点击劫持：X-Frame-Options头丢失 - 常见场景</h2>
+
+<ul>
+  <li>默认配置的WebServer</li>
+  <li>单一交互的网站（按钮）</li>
+</ul>
+
+<h2 id="0x04-测试方案">0x04 测试方案</h2>
+
+<p>使用CURL请求网站，查看响应头是否包含<code class="highlighter-rouge">X-Frame-Options</code></p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>curl -I http://target
+</code></pre></div></div>
+
+<h3 id="未修复">未修复</h3>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>payloads@Online$ curl -I http://localhost
+HTTP/1.1 200 OK
+Server: nginx/1.12.1 (Ubuntu)
+Date: Mon, 16 Apr 2018 07:48:51 GMT
+Content-Type: text/html
+Content-Length: 612
+Last-Modified: Sun, 08 Apr 2018 02:41:44 GMT
+Connection: keep-alive
+ETag: "5ac98168-264"
+Accept-Ranges: bytes
+</code></pre></div></div>
+
+<p>不存在<code class="highlighter-rouge">X-Frame-Options</code>响应头。</p>
+
+<h3 id="修复后">修复后</h3>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>payloads@Online$ curl -I http://localhost
+HTTP/1.1 200 OK
+Server: nginx/1.12.1 (Ubuntu)
+Date: Mon, 16 Apr 2018 07:52:08 GMT
+Content-Type: text/html
+Content-Length: 612
+Last-Modified: Sun, 08 Apr 2018 02:41:44 GMT
+Connection: keep-alive
+ETag: "5ac98168-264"
+X-Frame-Options: SAMEORIGIN
+Accept-Ranges: bytes
+</code></pre></div></div>
+
+<h2 id="0x05-修复方案">0x05 修复方案</h2>
+
+<p>配置WebServer，更改配置文件，添加自定义响应头</p>
+
+<p>使用 X-Frame-Options 有三个可选的值：</p>
+
+<ul>
+  <li>DENY：浏览器拒绝当前页面加载任何Frame页面</li>
+  <li>SAMEORIGIN：frame页面的地址只能为同源域名下的页面</li>
+  <li>ALLOW-FROM：origin为允许frame加载的页面地址</li>
+</ul>
+
+<p>若网站内有使用iframe标签链接同源资源的，需要设置为<code class="highlighter-rouge">SAMEORIGIN</code>。</p>
+
+<h3 id="apache">Apache</h3>
+
+<p>配置 <code class="highlighter-rouge">Apache</code> 在所有页面上发送 <code class="highlighter-rouge">X-Frame-Options</code> 响应头，需要把下面这行添加到 <code class="highlighter-rouge">site</code> 的配置中:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Header always append X-Frame-Options SAMEORIGIN
+</code></pre></div></div>
+
+<h3 id="nginx">Nginx</h3>
+
+<p>配置 <code class="highlighter-rouge">nginx</code> 发送 <code class="highlighter-rouge">X-Frame-Options</code> 响应头，把下面这行添加到 <code class="highlighter-rouge">http</code>, <code class="highlighter-rouge">server</code> 或者 <code class="highlighter-rouge">location</code> 的配置中:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>add_header X-Frame-Options SAMEORIGIN;
+</code></pre></div></div>
+
+<h3 id="iis">IIS</h3>
+
+<p>配置 <code class="highlighter-rouge">IIS</code> 发送 <code class="highlighter-rouge">X-Frame-Options</code> 响应头，添加下面的配置到 <code class="highlighter-rouge">Web.config</code> 文件中:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;system.webServer&gt;
+  ...
+ 
+  &lt;httpProtocol&gt;
+    &lt;customHeaders&gt;
+      &lt;add name="X-Frame-Options" value="SAMEORIGIN" /&gt;
+    &lt;/customHeaders&gt;
+  &lt;/httpProtocol&gt;
+ 
+  ...
+&lt;/system.webServer&gt;
+</code></pre></div></div>
 
 
-          
-          <p>
-            <a class="post-link" href="/archivers/2015-11-20/4">Read More &raquo;</a>
-          </p>
-        </div>
-      </li>
-    
-      <li>
-        <h2>
-          <a class="post-link" href="/archivers/2015-11-20/3">华为路由OSPF被动接口配置</a>
-        </h2>
-        
-        <div class="post-meta">Nov 20, 2015</div>
-
-        <div class="post-excerpt">
-          <p>本文记录一下华为路由OSPF被动接口配置</p>
-
-
-          
-          <p>
-            <a class="post-link" href="/archivers/2015-11-20/3">Read More &raquo;</a>
-          </p>
-        </div>
-      </li>
-    
-      <li>
-        <h2>
-          <a class="post-link" href="/archivers/2015-11-20/5">华为交换机MUX-VLAN</a>
-        </h2>
-        
-        <div class="post-meta">Nov 20, 2015</div>
-
-        <div class="post-excerpt">
-          <p>本文记录一下华为交换机MUX-VLAN配置</p>
-
-
-          
-          <p>
-            <a class="post-link" href="/archivers/2015-11-20/5">Read More &raquo;</a>
-          </p>
-        </div>
-      </li>
-    
-      <li>
-        <h2>
-          <a class="post-link" href="/archivers/2015-11-20/6">华为MSTP协议</a>
-        </h2>
-        
-        <div class="post-meta">Nov 20, 2015</div>
-
-        <div class="post-excerpt">
-          <p>本文记录一下华为MSTP协议配置</p>
-
-
-          
-          <p>
-            <a class="post-link" href="/archivers/2015-11-20/6">Read More &raquo;</a>
-          </p>
-        </div>
-      </li>
-    
-      <li>
-        <h2>
-          <a class="post-link" href="/archivers/2015-11-20/1">华为交换机Telnet远程登录</a>
-        </h2>
-        
-        <div class="post-meta">Nov 20, 2015</div>
-
-        <div class="post-excerpt">
-          <p>本文记录一下华为交换机Telnet远程登录的简单配置</p>
-
-
-          
-          <p>
-            <a class="post-link" href="/archivers/2015-11-20/1">Read More &raquo;</a>
-          </p>
-        </div>
-      </li>
-    
-  </ul>
+  </article>
   
-  <!-- Pagination links -->
-<div class="pagination">
   
-    <a href="/page6" class="previous">PREV</a>
-  
-  <span class="page_number ">7 of 7</span>
-  
-    <span class="next ">NEXT</span>
-  
-</div>
+
+
+
 
 </div>
 
