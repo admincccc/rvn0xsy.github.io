@@ -54,7 +54,7 @@
 
 <h3 id="1什么是远程代码执行">1）什么是远程代码执行</h3>
 
-<p>远程命令执行 英文名称：<strong>RCE remote code execution</strong> ，简称<strong>RCE</strong>漏洞，是指用户通过浏览器提交执行命令，由于服务器端没有针对执行函数做过滤，导致在没有指定绝对路径的情况下就执行命令，可能会允许攻击者通过改变 $PATH 或程序执行环境的其他方面来执行一个恶意构造的代码。</p>
+<p>远程命令执行 英文名称：<strong>RCE (remote code execution)</strong> ，简称<strong>RCE</strong>漏洞，是指用户通过浏览器提交执行命令，由于服务器端没有针对执行函数做过滤，导致在没有指定绝对路径的情况下就执行命令，可能会允许攻击者通过改变 $PATH 或程序执行环境的其他方面来执行一个恶意构造的代码。</p>
 
 <h3 id="2远程代码执行的特点">2）远程代码执行的特点</h3>
 
@@ -87,7 +87,7 @@
   <p>CVE-ID : CVE-2017-1000480</p>
 </blockquote>
 
-<p>由于未对用户的输入点进行过滤，导致经过eval函数，造成代码执行</p>
+<p>产生原因：由于未对用户的输入点进行过滤，导致经过eval函数，造成代码执行</p>
 
 <p>测试Payload：</p>
 
@@ -98,7 +98,15 @@
 
 <h3 id="java-struts2-s2-045">Java Struts2 （S2-045）</h3>
 
-<p>由于未对用户输入点进行过滤，被带入ErrorMessage，当做OGLN表达式解析，造成代码执行</p>
+<p>Struts 简介</p>
+
+<blockquote>
+  <p>Struts2是一个基于MVC设计模式的Web应用框架，它本质上相当于一个servlet，在MVC设计模式中，Struts2作为控制器(Controller)来建立模型与视图的数据交互。Struts 2是Struts的下一代产品，是在 struts 1和WebWork的技术基础上进行了合并的全新的Struts 2框架。</p>
+
+  <p>CVE-ID : CVE-2017-5638</p>
+</blockquote>
+
+<p>产生原因：由于未对用户输入点进行过滤，被带入ErrorMessage，当做OGLN表达式解析，造成代码执行</p>
 
 <p>测试Payload：</p>
 
@@ -141,6 +149,8 @@
 <div class="col-box">
   <div class="col-box-title">Newest Posts</div>
   <ul class="post-list">
+    
+      <li><a class="post-link" href="/archivers/2018-04-16/2">《Web安全测试学习手册》- Slow HTTP DOS</a></li>
     
       <li><a class="post-link" href="/archivers/2018-03-27/1">使用CrackMapExec 进行 NTLM Hash传递攻击</a></li>
     
@@ -219,8 +229,6 @@
       <li><a class="post-link" href="/archivers/2017-10-24/1">C++调用CURL进行信息搜集</a></li>
     
       <li><a class="post-link" href="/archivers/2017-10-23/2">C语言读取文件</a></li>
-    
-      <li><a class="post-link" href="/archivers/2017-10-23/1">一个暂时没有名字的项目</a></li>
     
   </ul>
 </div>
