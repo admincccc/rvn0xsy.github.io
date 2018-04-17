@@ -484,10 +484,11 @@ var ONE = {
 		var method = 'urlencode';
 		if (type == 0) {
 			method = 'urldecode';
+			//decodeURIComponent
+			PUT.output(decodeURIComponent(PUT.input()));
+		}else{
+			PUT.output(encodeURIComponent(PUT.input()));
 		}
-		// encodeURI
-		PUT.output(encodeURIComponent(PUT.input()));
-		//func.post_new("POST", DOMAIN + '/developtoolbox/urlencode.php?method=' + method, PUT.input());
 	},
 	'base64encode': function(type) {
 		if(!ONE.init(true)) return false;
