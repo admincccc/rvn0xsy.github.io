@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "《Web安全测试学习手册》- 点击劫持：X-Frame-Options头丢失"
+title:  "点击劫持：X-Frame-Options头丢失"
 date:   2018-04-16
 categories: Web安全测试学习手册
 permalink: /archivers/2018-04-16/3

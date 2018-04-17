@@ -6,12 +6,12 @@
 </description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Mon, 16 Apr 2018 16:28:12 +0800</pubDate>
-    <lastBuildDate>Mon, 16 Apr 2018 16:28:12 +0800</lastBuildDate>
+    <pubDate>Tue, 17 Apr 2018 15:01:14 +0800</pubDate>
+    <lastBuildDate>Tue, 17 Apr 2018 15:01:14 +0800</lastBuildDate>
     <generator>Jekyll v3.6.2</generator>
     
       <item>
-        <title>《Web安全测试学习手册》- 点击劫持：X-Frame-Options头丢失</title>
+        <title>点击劫持：X-Frame-Options头丢失</title>
         <description>&lt;p&gt;《Web安全测试学习手册》- 点击劫持：X-Frame-Options头丢失
 &lt;!--more--&gt;&lt;/p&gt;
 
@@ -134,8 +134,8 @@ Accept-Ranges: bytes
       </item>
     
       <item>
-        <title>《Web安全测试学习手册》- Slow HTTP DOS</title>
-        <description>&lt;p&gt;《Web安全测试学习手册》- Slow HTTP DDOS
+        <title>Slow HTTP DOS</title>
+        <description>&lt;p&gt;《Web安全测试学习手册》- Slow HTTP DOS
 &lt;!--more--&gt;&lt;/p&gt;
 
 &lt;h2 id=&quot;0x00-slow-http-dos---介绍&quot;&gt;0x00 Slow HTTP DOS - 介绍&lt;/h2&gt;
@@ -370,7 +370,7 @@ SMB         192.168.3.5     445    LIYINGZHEA30B    [+] Dumped 5 LSA secrets to 
       </item>
     
       <item>
-        <title>《Web安全测试学习手册》- 远程代码执行</title>
+        <title>远程代码执行</title>
         <description>&lt;p&gt;《Web安全测试学习手册》- 远程代码执行
 &lt;!--more--&gt;&lt;/p&gt;
 
@@ -453,9 +453,11 @@ SMB         192.168.3.5     445    LIYINGZHEA30B    [+] Dumped 5 LSA secrets to 
       </item>
     
       <item>
-        <title>准备在博客记录Web安全测试学习手册</title>
+        <title>Web安全测试学习手册</title>
         <description>&lt;p&gt;准备在博客记录Web安全测试学习手册，先把目录列出来，之前参考了OWASP测试指南，写了一份Word，但是在Word里不好阐述风险的成因以及危害，所以针对每个风险我会以环境来详细的扣清楚。
 &lt;!--more--&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2018-04-17/0x00.png&quot; alt=&quot;Web安全测试学习手册&quot; /&gt;&lt;/p&gt;
 
 &lt;h2 id=&quot;0x01-配置管理测试&quot;&gt;0x01 配置管理测试&lt;/h2&gt;
 
@@ -533,7 +535,7 @@ SMB         192.168.3.5     445    LIYINGZHEA30B    [+] Dumped 5 LSA secrets to 
 
 &lt;p&gt;这些测试项参考了OWASP测试指南与AWVS扫描报告&lt;/p&gt;
 
-&lt;p&gt;：D 如果有什么缺陷，还望联系我补充。&lt;/p&gt;
+&lt;p&gt;:D 如果有什么缺陷，还望联系我补充。&lt;/p&gt;
 
 &lt;p&gt;另外，每一篇的参考链接都会放在文末，只是做一些方便工作归档的整理。&lt;/p&gt;
 
