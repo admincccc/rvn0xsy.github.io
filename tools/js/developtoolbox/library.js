@@ -8,7 +8,7 @@
 // Alert弹窗
 var timeout = null;
 var globals = {
-	'url': 'http://www.box3.cn'
+	'url': 'http://payloads.online'
 }
  
 // localStorage封装

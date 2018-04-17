@@ -134,8 +134,9 @@ $(document).ready(function(){
 		if(!$(this).attr('name')) return false;
 		
 		try {
+			
 			ONE[$(this).attr('name')](str_params, $(this));
-			func.dd("POST", DOMAIN + "/developtoolbox/menu.php?menu=" + $.trim($(this).text()));
+			//func.dd("POST", DOMAIN + "/developtoolbox/menu.php?menu=" + $.trim($(this).text()));
 		} catch(e) {
 			PUT.alert($.trim($(this).text()) + ": " + "本次操作失败了!");
 		}
@@ -479,11 +480,14 @@ var ONE = {
 	//<!--编码转换 开始--!>
 	'urlencode' : function(type, charset) {
 		if(!ONE.init(true)) return false;
+		
 		var method = 'urlencode';
 		if (type == 0) {
 			method = 'urldecode';
 		}
-		func.post_new("POST", DOMAIN + '/developtoolbox/urlencode.php?method=' + method, PUT.input());
+		// encodeURI
+		PUT.output(encodeURIComponent(PUT.input()));
+		//func.post_new("POST", DOMAIN + '/developtoolbox/urlencode.php?method=' + method, PUT.input());
 	},
 	'base64encode': function(type) {
 		if(!ONE.init(true)) return false;
