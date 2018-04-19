@@ -201,7 +201,7 @@ F5负载均衡设备有相应的防护模块，如无购买可参考附件中的
 * 2、设置AJAX的全局timeout时间（默认为30000ms） $.ajaxSetup({timeout:8000}).
 
 <address>
-感谢<b><a href="mailto:webmaster@example.com">Wingkyun</a></b>给予我的修复建议<br>
+感谢<b><a href="mailto:lyquan16@gmail.com">Wingkyun</a></b>给予我的修复建议<br>
 </address>
 
 
