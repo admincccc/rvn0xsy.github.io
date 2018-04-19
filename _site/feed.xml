@@ -6,9 +6,151 @@
 </description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Tue, 17 Apr 2018 15:32:28 +0800</pubDate>
-    <lastBuildDate>Tue, 17 Apr 2018 15:32:28 +0800</lastBuildDate>
+    <pubDate>Thu, 19 Apr 2018 19:44:17 +0800</pubDate>
+    <lastBuildDate>Thu, 19 Apr 2018 19:44:17 +0800</lastBuildDate>
     <generator>Jekyll v3.6.2</generator>
+    
+      <item>
+        <title>服务器启用了不安全的HTTP方法</title>
+        <description>&lt;p&gt;《Web安全测试学习手册》- 服务器启用了不安全的HTTP方法
+&lt;!--more--&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;0x00-不安全的http方法&quot;&gt;0x00 不安全的HTTP方法&lt;/h2&gt;
+
+&lt;h3 id=&quot;1什么是不安全的http方法&quot;&gt;1）什么是不安全的HTTP方法&lt;/h3&gt;
+
+&lt;p&gt;开发人员、运维人员一般可能用于调试服务器，开启了一些客户端能够直接读写服务器端文件的方法，例如： DELETE, PUT, COPY, MOVE, PROPFIND, PROPPATCH, SEARCH, LOCK, UNLOCK 等HTTP协议支持的方法。&lt;/p&gt;
+
+&lt;h3 id=&quot;2不安全的http方法特点&quot;&gt;2）不安全的HTTP方法特点&lt;/h3&gt;
+
+&lt;p&gt;可通过浏览器直接读写服务器端文件&lt;/p&gt;
+
+&lt;h2 id=&quot;0x01-不安全的http方法---风险等级&quot;&gt;0x01 不安全的HTTP方法 - 风险等级&lt;/h2&gt;
+
+&lt;p&gt;&lt;strong&gt;高&lt;/strong&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;0x02-不安全的http方法---原理&quot;&gt;0x02 不安全的HTTP方法 - 原理&lt;/h2&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;方法&lt;/th&gt;
+      &lt;th&gt;说明&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;PUT&lt;/td&gt;
+      &lt;td&gt;向指定的目录上载文件&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;DELETE&lt;/td&gt;
+      &lt;td&gt;删除指定的资源&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;COPY&lt;/td&gt;
+      &lt;td&gt;将指定的资源复制到Destination消息头指定的位置&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;MOVE&lt;/td&gt;
+      &lt;td&gt;将指定的资源移动到Destination消息头指定的位置&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;SEARCH&lt;/td&gt;
+      &lt;td&gt;在一个目录路径中搜索资源&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;PROPFIND&lt;/td&gt;
+      &lt;td&gt;获取与指定资源有关的信息，如作者、大小与内容类型&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;TRACE&lt;/td&gt;
+      &lt;td&gt;在响应中返回服务器收到的原始请求&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;服务器端由于配置权限不当，导致允许了客户端发送 DELETE, PUT, COPY, MOVE, PROPFIND, PROPPATCH, SEARCH, LOCK, UNLOCK等请求，并且解析请求进行操作文件。&lt;/p&gt;
+
+&lt;h2 id=&quot;0x03-不安全的http方法---常见场景&quot;&gt;0x03 不安全的HTTP方法 - 常见场景&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Tomcat 中间件&lt;/li&gt;
+  &lt;li&gt;IIS 中间件&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;0x04-测试方案&quot;&gt;0x04 测试方案&lt;/h2&gt;
+
+&lt;p&gt;使用CURL发送OPTIONS请求，查看响应头中的Allow行&lt;/p&gt;
+
+&lt;p&gt;命令：&lt;code class=&quot;highlighter-rouge&quot;&gt;curl -I -X OPTIONS http://payloads.online&lt;/code&gt;&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;➜  ~ curl -I -X OPTIONS http://10.211.55.16/
+HTTP/1.1 200 OK
+Date: Wed, 18 Apr 2018 02:17:47 GMT
+Server: Microsoft-IIS/6.0
+MS-Author-Via: DAV
+Content-Length: 0
+Accept-Ranges: none
+DASL: &amp;lt;DAV:sql&amp;gt;
+DAV: 1, 2
+Public: OPTIONS, TRACE, GET, HEAD, DELETE, PUT, POST, COPY, MOVE, MKCOL, PROPFIND, PROPPATCH, LOCK, UNLOCK, SEARCH
+Allow: OPTIONS, TRACE, GET, HEAD, DELETE, COPY, MOVE, PROPFIND, PROPPATCH, SEARCH, MKCOL, LOCK, UNLOCK
+Cache-Control: private
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;若出现PUT、DELETE….等方法，则存在此风险&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2018-04-18/0x00.png&quot; alt=&quot;0x00&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;0x05-修复方案&quot;&gt;0x05 修复方案&lt;/h2&gt;
+
+&lt;h3 id=&quot;iis&quot;&gt;IIS&lt;/h3&gt;
+
+&lt;p&gt;修改站点权限，取消“写入”&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2018-04-18/0x01.gif&quot; alt=&quot;0x01&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;tomcat&quot;&gt;Tomcat&lt;/h3&gt;
+
+&lt;p&gt;修改&lt;code class=&quot;highlighter-rouge&quot;&gt;web.xml&lt;/code&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-xml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nt&quot;&gt;&amp;lt;security-constraint&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;web-resource-collection&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;web-resource-name&amp;gt;&lt;/span&gt;fortune&lt;span class=&quot;nt&quot;&gt;&amp;lt;/web-resource-name&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;url-pattern&amp;gt;&lt;/span&gt;/*&lt;span class=&quot;nt&quot;&gt;&amp;lt;/url-pattern&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;http-method&amp;gt;&lt;/span&gt;PUT&lt;span class=&quot;nt&quot;&gt;&amp;lt;/http-method&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;http-method&amp;gt;&lt;/span&gt;DELETE&lt;span class=&quot;nt&quot;&gt;&amp;lt;/http-method&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;http-method&amp;gt;&lt;/span&gt;HEAD&lt;span class=&quot;nt&quot;&gt;&amp;lt;/http-method&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;http-method&amp;gt;&lt;/span&gt;OPTIONS&lt;span class=&quot;nt&quot;&gt;&amp;lt;/http-method&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;http-method&amp;gt;&lt;/span&gt;TRACE&lt;span class=&quot;nt&quot;&gt;&amp;lt;/http-method&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;/web-resource-collection&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;auth-constraint&amp;gt;&amp;lt;/auth-constraint&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;/security-constraint&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;login-config&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;auth-method&amp;gt;&lt;/span&gt;BASIC&lt;span class=&quot;nt&quot;&gt;&amp;lt;/auth-method&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;/login-config&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;nginx&quot;&gt;Nginx&lt;/h3&gt;
+
+&lt;p&gt;在 &lt;code class=&quot;highlighter-rouge&quot;&gt;server&lt;/code&gt;代码块内写入如下代码，用于屏蔽非GET、POST请求：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;if ($request_method !~* GET|POST) {
+            return 403;
+
+   }
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+</description>
+        <pubDate>Wed, 18 Apr 2018 00:00:00 +0800</pubDate>
+        <link>http://localhost:4000/archivers/2018-04-18/1</link>
+        <guid isPermaLink="true">http://localhost:4000/archivers/2018-04-18/1</guid>
+        
+        
+        <category>内网渗透</category>
+        
+      </item>
     
       <item>
         <title>点击劫持：X-Frame-Options头丢失</title>
@@ -228,6 +370,117 @@ Accept: *.*\r\n
     &lt;p&gt;3.默认安装的 Apache 存在 Slow Attack 的威胁，原因就是虽然设置的 timeoute，但是最大连接数不够，如果攻击的请求频率足够大，仍然会占满 Apache 的所有连接&lt;/p&gt;
   &lt;/li&gt;
 &lt;/ul&gt;
+
+&lt;p&gt;针对不同的Server其对慢速http拒绝服务攻击防范方法也不同，建议使用以下措施防范慢速http拒绝服务攻击：&lt;/p&gt;
+
+&lt;h3 id=&quot;websphere&quot;&gt;WebSphere&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;1、限制 HTTP 数据的大小
+在WebSphere Application Server 中进行如下设置：&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;任何单个 HTTP 头的默认最大大小为 32768 字节。可以将它设置为不同的值。&lt;/p&gt;
+
+&lt;p&gt;HTTP 头的默认最大数量为 50。可以将它设置为不同的限制值。&lt;/p&gt;
+
+&lt;p&gt;另一种常见的 DOS 攻击是发送一个请求，这个请求会导致一个长期运行的 GET 请求。WebSphere Application Server Plug-in 中的 ServerIOTimeoutRetry 属性可限制任何请求的重试数量。这可以降低这种长期运行的请求的影响。&lt;/p&gt;
+
+&lt;p&gt;设置限制任何请求正文的最大大小。详见参考链接。&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;2、设置keepalive参数&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;打开ibm http server安装目录，打开文件夹conf，打开文件httpd.conf,查找KeepAlive值，改ON为OFF,其默认为ON。&lt;/p&gt;
+
+&lt;p&gt;这个值说明是否保持客户与HTTP SERVER的连接，如果设置为ON，则请求数到达MaxKeepAliveRequests设定值时请求将排队，导致响应变慢。&lt;/p&gt;
+
+&lt;h3 id=&quot;weblogic&quot;&gt;Weblogic&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;1、在配置管理界面中的协议-&amp;gt;一般信息下设置 完成消息超时时间小于400&lt;/li&gt;
+  &lt;li&gt;2、在配置管理界面中的协议-&amp;gt;HTTP下设置 POST 超时、持续时间、最大 POST 大小为安全值范围。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;nginx&quot;&gt;Nginx&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;1、通过调整$request_method，配置服务器接受http包的操作限制；&lt;/li&gt;
+  &lt;li&gt;2、在保证业务不受影响的前提下，调整client_max_body_size, client_body_buffer_size, client_header_buffer_size,large_client_header_buffersclient_body_timeout, client_header_timeout的值，必要时可以适当的增加；&lt;/li&gt;
+  &lt;li&gt;3、对于会话或者相同的ip地址，可以使用HttpLimitReqModule and HttpLimitZoneModule参数去限制请求量或者并发连接数；&lt;/li&gt;
+  &lt;li&gt;4、根据CPU和负载的大小，来配置worker_processes 和 worker_connections的值，公式是：max_clients = worker_processes * worker_connections。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;apache&quot;&gt;Apache&lt;/h3&gt;
+
+&lt;p&gt;建议使用mod_reqtimeout和mod_qos两个模块相互配合来防护。&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;1、mod_reqtimeout用于控制每个连接上请求发送的速率。配置例如：
+#请求头部分，设置超时时间初始为10秒，并在收到客户端发送的数据后，每接收到500字节数据就将超时时间延长1秒，但最长不超过40秒。可以防护slowloris型的慢速攻击。
+RequestReadTimeout header=10-40,minrate=500
+#请求正文部分，设置超时时间初始为10秒，并在收到客户端发送的数据后，每接收到500字节数据就将超时时间延长1秒，但最长不超过40秒。可以防护slow message body型的慢速攻击。
+RequestReadTimeout body=10-40,minrate=500
+需注意，对于HTTPS站点，需要把初始超时时间上调，比如调整到20秒。&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;2、mod_qos用于控制并发连接数。配置例如：&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;当服务器并发连接数超过600时，关闭keepalive&lt;/p&gt;
+
+&lt;p&gt;QS_SrvMaxConnClose 600&lt;/p&gt;
+
+&lt;p&gt;限制每个源IP最大并发连接数为50&lt;/p&gt;
+
+&lt;p&gt;QS_SrvMaxConnPerIP 50
+这两个数值可以根据服务器的性能调整。&lt;/p&gt;
+
+&lt;h3 id=&quot;ihs服务器&quot;&gt;IHS服务器&lt;/h3&gt;
+
+&lt;p&gt;请您先安装最新补丁包，然后启用&lt;code class=&quot;highlighter-rouge&quot;&gt;mod_reqtimeout&lt;/code&gt;模块，在配置文件中加入：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;LoadModule reqtimeout_module modules/mod_reqtimeout.so
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;为&lt;code class=&quot;highlighter-rouge&quot;&gt;mod_reqtimeout&lt;/code&gt;模块添加配置：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;lt;IfModule mod_reqtimeout.c&amp;gt;
+RequestReadTimeout header=10-40,MinRate=500 body=10-40,MinRate=500
+&amp;lt;/IfModule&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;对于HTTPS站点，建议header=20-40,MinRate=500。&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;参见：http://www-01.ibm.com/support/docview.wss?uid=swg21652165&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;f5负载均衡修复建议&quot;&gt;F5负载均衡修复建议&lt;/h3&gt;
+
+&lt;p&gt;F5负载均衡设备有相应的防护模块，如无购买可参考附件中的详细配置过程。&lt;/p&gt;
+
+&lt;p&gt;关于F5的慢速攻击防护配置，请参考以下链接：&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;https://support.f5.com/kb/en-us/solutions/public/10000/200/sol10260.html&lt;/li&gt;
+  &lt;li&gt;https://devcentral.f5.com/articles/mitigating-slow-http-post-ddos-attacks-with-irules-ndash-follow-up&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;tomcat服务器&quot;&gt;tomcat服务器&lt;/h3&gt;
+
+&lt;p&gt;解决方案：&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;1、设置Tomcat / server.xml文件    connectiontimeout 值，默认为20000ms，修改为8000ms(Tomcat 自身安全漏洞)&lt;/li&gt;
+  &lt;li&gt;2、设置AJAX的全局timeout时间（默认为30000ms） $.ajaxSetup({timeout:8000}).&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;address&gt;
+感谢&lt;b&gt;&lt;a href=&quot;mailto:webmaster@example.com&quot;&gt;Wingkyun&lt;/a&gt;&lt;/b&gt;给予我的修复建议&lt;br /&gt;
+&lt;/address&gt;
+
 </description>
         <pubDate>Mon, 16 Apr 2018 00:00:00 +0800</pubDate>
         <link>http://localhost:4000/archivers/2018-04-16/2</link>
@@ -370,6 +623,21 @@ SMB         192.168.3.5     445    LIYINGZHEA30B    [+] Dumped 5 LSA secrets to 
       </item>
     
       <item>
+        <title>中间件版本信息泄露</title>
+        <description>&lt;p&gt;《Web安全测试学习手册》- 中间件版本信息泄露
+&lt;!--more--&gt;&lt;/p&gt;
+
+</description>
+        <pubDate>Thu, 22 Mar 2018 00:00:00 +0800</pubDate>
+        <link>http://localhost:4000/archivers/2018-04-18/2</link>
+        <guid isPermaLink="true">http://localhost:4000/archivers/2018-04-18/2</guid>
+        
+        
+        <category>Web安全测试学习手册</category>
+        
+      </item>
+    
+      <item>
         <title>远程代码执行</title>
         <description>&lt;p&gt;《Web安全测试学习手册》- 远程代码执行
 &lt;!--more--&gt;&lt;/p&gt;
@@ -463,7 +731,7 @@ SMB         192.168.3.5     445    LIYINGZHEA30B    [+] Dumped 5 LSA secrets to 
 
 &lt;ul&gt;
   &lt;li&gt;远程代码执行&lt;/li&gt;
-  &lt;li&gt;Slow HTTP DDOS&lt;/li&gt;
+  &lt;li&gt;Slow HTTP DOS&lt;/li&gt;
   &lt;li&gt;点击劫持：X-Frame-Options头丢失&lt;/li&gt;
   &lt;li&gt;服务器启用了不安全的HTTP方法&lt;/li&gt;
   &lt;li&gt;中间件版本信息泄露&lt;/li&gt;
@@ -1246,603 +1514,6 @@ requirepass [密码]
         <pubDate>Fri, 16 Mar 2018 00:00:00 +0800</pubDate>
         <link>http://localhost:4000/archivers/2018-03-16/4</link>
         <guid isPermaLink="true">http://localhost:4000/archivers/2018-03-16/4</guid>
-        
-        
-        <category>Program</category>
-        
-      </item>
-    
-      <item>
-        <title>信安从业人员的编程之路</title>
-        <description>&lt;p&gt;本文简述一下自己学习编程的过程
-&lt;!--more--&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;0x00-前言&quot;&gt;0x00 前言&lt;/h2&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;16年上半年准备做PHP程序猿，自己开发了一套框架+博客，可以当做是一个CMS吧，我并没有大量发布它，只是觉得功能太少，一个人维护不过来。&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;16年下半年学习Python，分享、讲课，开发了不少鸡肋工具&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;17年下半年就开始学习C、C++，期间也有想过放弃，但是走到今天了，并不觉得后悔。&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;strong&gt;花费了大量时间在Coding上，没去研究安全。&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;一直以来我坚信编程能给我带来极大的好处，所以才坚持到现在。&lt;/p&gt;
-
-&lt;p&gt;这门古老的计算机高级语言，锤炼了我的耐心，消磨了我的性子，让我知道什么时候我是最专注的，什么时候注意力用完了。&lt;/p&gt;
-
-&lt;h2 id=&quot;0x01-注意力专注力&quot;&gt;0x01 注意力、专注力&lt;/h2&gt;
-
-&lt;p&gt;在电脑面前对普通人是很枯燥的，除了爱玩游戏的发烧友。我学习编程这么久以来，我发现自己的注意力、专注力是有限的。就像一天有24小时，有几个小时你的大脑是空白的，身体是需要休息的。&lt;/p&gt;
-
-&lt;p&gt;当为了学习而消费了我的注意力、专注力的时候，我会感觉一天都过得很充实。这一点我想大家也是感同身受过的。&lt;/p&gt;
-
-&lt;h2 id=&quot;0x02-为什么要学习编程&quot;&gt;0x02 为什么要学习编程?&lt;/h2&gt;
-
-&lt;p&gt;例如C语言属于计算机的高级语言，操作内存很方便，效率很高，而且和计算机网络的发展有莫大的关系。&lt;/p&gt;
-
-&lt;p&gt;倘若我后期需要从Web安全转向二进制，会很方便。（自我感觉）&lt;/p&gt;
-
-&lt;p&gt;很多标准、协议，都在Linux的一些头文件里，我们可以根据RFC文档去解读每一个协议对应的文件。&lt;/p&gt;
-
-&lt;p&gt;在之前我写的DNS协议编程，就学到了很多。&lt;/p&gt;
-
-&lt;h2 id=&quot;0x03-如何学习编程&quot;&gt;0x03 如何学习编程？&lt;/h2&gt;
-
-&lt;p&gt;这个问题我拉出来讨论有点担惊受怕，毕竟我掌握这几门语言，只懂得基本的编程语法、网络协议编程、和使用一些开源库来给我添砖加瓦。&lt;/p&gt;
-
-&lt;h3 id=&quot;学会创造需求&quot;&gt;学会创造需求&lt;/h3&gt;
-
-&lt;p&gt;很多人学习语言的时候觉得特别枯燥，是因为感觉学习一个&lt;code class=&quot;highlighter-rouge&quot;&gt;if&lt;/code&gt;并不能满足你想干的事，这时候就会感觉到烦躁，焦虑，惶恐不安，也就不会坚持下去了&lt;/p&gt;
-
-&lt;p&gt;我说的“创造需求”中的“需求”可以是写一个计算器、判断大小数、循环输出100以内的质数、鸡兔同笼的解答程序等等……&lt;/p&gt;
-
-&lt;p&gt;Web安全开发方向：&lt;/p&gt;
-
-&lt;p&gt;当然也有野路子：直接实现一个子域名枚举、目录枚举、爬虫、字典生成 等等&lt;/p&gt;
-
-&lt;p&gt;当这些需求映入眼帘的时候，你就已经确立了目标，创造了需求。哪怕这个需求对于其他人或自己没有什么意义，你也有必要去实现它。&lt;/p&gt;
-
-&lt;p&gt;学习的过程中收获成就感是一个很好的方式，它可以让你持之以恒的热爱这门语言。&lt;/p&gt;
-
-&lt;p&gt;（殊不知在未来你开发的日子里&lt;code class=&quot;highlighter-rouge&quot;&gt;if&lt;/code&gt;是用的最多的语法其中之一）&lt;/p&gt;
-
-&lt;h3 id=&quot;学会分析需求&quot;&gt;学会分析需求&lt;/h3&gt;
-
-&lt;p&gt;假设你已经有了一个小需求、或者是大需求，那么接下来不是直接去做，而是要思考、去查找。&lt;/p&gt;
-
-&lt;p&gt;思考你的需求需要具备什么能力去实现，去查找这个需求需要满足什么条件才能够实现&lt;/p&gt;
-
-&lt;p&gt;举个例子吧，一个&lt;code class=&quot;highlighter-rouge&quot;&gt;目录枚举&lt;/code&gt;的工具，我们可以使用很多语言来实现，假设你学习的是Python：&lt;/p&gt;
-
-&lt;p&gt;那么实现目录枚举需要具备以下基本的能力：&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;基本语法&lt;/li&gt;
-  &lt;li&gt;基本熟悉一个HTTP库&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;条件：&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;一台能够上网的电脑&lt;/li&gt;
-  &lt;li&gt;有Python环境&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;实现需求&quot;&gt;实现需求&lt;/h3&gt;
-
-&lt;p&gt;这个过程是兴奋的，因为你正在做这件事儿。&lt;/p&gt;
-
-&lt;p&gt;中间肯定会磕磕碰碰遇到许多问题，但是Python有其优势，写这个功能并不需要多少行代码。&lt;/p&gt;
-
-&lt;p&gt;但是我要给你泼冷水了，上面的能力写不出你满意的工具……&lt;/p&gt;
-
-&lt;p&gt;因为效率还达不到！&lt;/p&gt;
-
-&lt;p&gt;你还没有了解线程、进程的概念，还没有OOP这个思想&lt;/p&gt;
-
-&lt;p&gt;所以，做好一个项目需要不断的完善它，优化它，这才是编程的意义~&lt;/p&gt;
-
-&lt;p&gt;往往实现只是开始，当你的代码写的很乱的时候，肯定是你没有在一开始的时候思考够&lt;/p&gt;
-
-&lt;h2 id=&quot;0x04-学习编程的捷径&quot;&gt;0x04 学习编程的捷径&lt;/h2&gt;
-
-&lt;p&gt;没有捷径，老老实实写代码吧！&lt;/p&gt;
-
-&lt;h2 id=&quot;0x05-长期的维护一个项目&quot;&gt;0x05 长期的维护一个项目&lt;/h2&gt;
-
-&lt;p&gt;这个目前我还没有去做，也没有发布什么，只是写一写小工具，方便内网渗透、Web的信息搜集&lt;/p&gt;
-
-&lt;p&gt;但是以我的理解，长期维护一个项目能让你的思想更加坚定，让开发成为习惯、乐趣&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;另外，目前我在开发一个前渗透框架，目前服务端已经架构好了，希望有人一起和我实现
-它。&lt;/p&gt;
-
-&lt;p&gt;服务端语言：C/C++&lt;/p&gt;
-
-&lt;p&gt;需要其他语言及组件：MySQL PHP Linux Python&lt;/p&gt;
-
-&lt;p&gt;它的功能：&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;DNS枚举&lt;/li&gt;
-  &lt;li&gt;端口扫描&lt;/li&gt;
-  &lt;li&gt;以(IP/域名/开放端口/网页标题)生成Hash版本&lt;/li&gt;
-  &lt;li&gt;定时巡检&lt;/li&gt;
-  &lt;li&gt;数据可视化&lt;/li&gt;
-  &lt;li&gt;用户认证&lt;/li&gt;
-  &lt;li&gt;API接口&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;我的微信：Guest_Killer_0nlis&lt;/p&gt;
-
-</description>
-        <pubDate>Fri, 16 Mar 2018 00:00:00 +0800</pubDate>
-        <link>http://localhost:4000/archivers/2018-03-16/1</link>
-        <guid isPermaLink="true">http://localhost:4000/archivers/2018-03-16/1</guid>
-        
-        
-        <category>Program</category>
-        
-      </item>
-    
-      <item>
-        <title>msfconsole常用命令</title>
-        <description>&lt;p&gt;本文记录一下基础命令
-&lt;!--more--&gt;&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;命令： show exploits&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;列出metasploit框架中的所有渗透攻击模块。
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;命令：show payloads&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;列出metasploit框架中的所有攻击载荷。
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;blockquote&gt;
-  &lt;p&gt;命令：show auxiliary&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;列出metasploit框架中的所有辅助攻击载荷。
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;命令：search name&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;查找metasploit框架中所有的渗透攻击和其他模块。
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;命令：info&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;展示出制定渗透攻击或模块的相关信息。
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;命令：use name&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;装载一个渗透攻击或模块。
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;命令：LHOST&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;你本地可以让目标主机连接的IP地址，通常当目标主机不在同一个局域网内时，就需要是一个公共IP地址，特别为反弹式shell使用。
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;命令：RHOST&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;远程主机或是目标主机。
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;命令：set function&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;设置特定的配置参数（EG：设置本地或远程主机参数）。
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;命令：setg function&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;以全局方式设置特定的配置参数（EG：设置本地或远程主机参数）。
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;命令：show options&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;列出某个渗透攻击或模块中所有的配置参数。
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;命令：show targets&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;列出渗透攻击所有支持的目标平台。
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;命令：set target num&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;指定你所知道的目标的操作系统以及补丁版本类型。
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;命令：set payload name&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;指定想要使用的攻击载荷。
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;blockquote&gt;
-  &lt;p&gt;命令：show advanced&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;列出所有高级配置选项。
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;命令：set autorunscript migrate -f.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;在渗透攻击完成后，将自动迁移到另一个进程。
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;命令：check&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;检测目标是否选定渗透攻击存在相应的安全漏洞。
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;命令：exploit&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;执行渗透攻击或模块来攻击目标。
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;命令：exploit -j&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;在计划任务下进行渗透攻击（攻击将在后台进行）。
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;命令：exploit -z&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;渗透攻击完成后不与回话进行交互。
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;命令：exploit -e encoder&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;制定使用的攻击载荷编码方式（EG：exploit -e shikata_ga_nai）。
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;命令：exploit -h&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;列出exploit命令的帮助信息。
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;命令：sessions -l&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;列出可用的交互会话（在处理多个shell时使用）。
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;命令：sessions -l -v&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;列出所有可用的交互会话以及详细信息，EG：攻击系统时使用了哪个安全漏洞。
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;命令：sessions -s script&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;在所有活跃的metasploit会话中运行一个特定的metasploit脚本。
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;命令：sessions -K&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;杀死所有活跃的交互会话。
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;命令：sessions -c cmd&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;在所有活跃的metasploit会话上执行一个命令。
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;命令：sessions -u sessionID&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;升级一个普通的win32 shell到metasploit shell。
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;命令：db_create name&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;创建一个数据库驱动攻击所要使用的数据库（EG：db_create autopwn）。
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;命令：db_connect name&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;创建并连接一个数据库驱动攻击所要使用的数据库（EG：db_connect user:passwd@ip/sqlname）。
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;命令：db_namp&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;利用nmap并把扫描数据存储到数据库中（支持普通的nmap语句，EG：-sT -v -P0）。
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;命令：db_autopwn -h&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;展示出db_autopwn命令的帮助信息。
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;命令：db_autopwn -p -r -e&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;对所有发现的开放端口执行db_autopwn，攻击所有系统，并使用一个反弹式shell。
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;命令：db_destroy&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;删除当前数据库。
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;命令：db_destroy user：passwd@host：port/database&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;使用高级选项来删除数据库。
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h2 id=&quot;metasploit命令&quot;&gt;&lt;strong&gt;&lt;em&gt;metasploit命令&lt;/em&gt;&lt;/strong&gt;&lt;/h2&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;help
-打开meterpreter使用帮助。&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;run scriptname
-运行meterpreter脚本，在scripts/meterpreter目录下可查看到所有脚本名。&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;sysinfo
-列出受控主机的系统信息。&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;ls
-列出目标主机的文件和文件夹信息。&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;use priv
-加载特权提升扩展模块，来扩展metasploit库。&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;ps
-显示所有运行的进程以及相关联的用户账户。&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;migrate PID
-迁移到一个指定的进程ID（PID号可通过ps命令从主机上获得）。&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;use incognito
-加载incognito功能（用来盗窃目标主机的令牌或假冒用户）&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;list_tokens -u
-列出目标主机用户的可用令牌。&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;list_tokens -g
-列出目标主机用户组的可用令牌。&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;impersonate_token DOMAIN_NAME\USERNAME
-假冒目标主机上的可用令牌。&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;steal_token PID
-盗窃给定进程的可用令牌并进行令牌假冒。&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;drop_token
-停止假冒当前令牌。&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;getsystem
-通过各种攻击向量来提升系统用户权限。&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;execute -f cmd.exe -i
-执行cmd.exe命令并进行交互。&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;execute -f cmd.exe -i -t
-以所有可用令牌来执行cmd命令并隐藏该进程。&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;rev2self
-回到控制目标主机的初始用户账户下。&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;reg command
-在目标主机注册表中进行交互，创建，删除，查询等操作。&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;setdesktop number
-切换到另一个用户界面（该功能基于那些用户已登录）。&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;screenshot
-对目标主机的屏幕进行截图。&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;upload file
-向目标主机上传文件。&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;download file
-从目标主机下载文件。&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;keyscan_start
-针对远程目标主机开启键盘记录功能。&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;keyscan_dump
-存储目标主机上捕获的键盘记录。&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;keyscan_stop
-停止针对目标主机的键盘记录。&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;getprivs
-尽可能多的获取目标主机上的特权。&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;uictl enable keyboard/mouse
-接管目标主机的键盘和鼠标。&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;background
-将你当前的metasploit shell转为后台执行。&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;hashdump
-导出目标主机中的口令哈希值。&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;use sniffer
-加载嗅探模式。&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;sniffer_interfaces
-列出目标主机所有开放的网络端口。&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;sniffer_dump interfaceID pcapname
-在目标主机上启动嗅探。&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;sniffer_start interfaceID packet-buffer
-在目标主机上针对特定范围的数据包缓冲区启动嗅探。&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;sniffer_stats interfaceID
-获取正在实施嗅探网络接口的统计数据。&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;sniffer_stop interfaceID
-停止嗅探。&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;add_user username password -h ip
-在远程目标主机上添加一个用户。&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;clearev
-清楚目标主机上的日志记录。&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;timestomp
-修改文件属性，例如修改文件的创建时间（反取证调查）。&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;reboot
-重启目标主机。&lt;/p&gt;
-&lt;/blockquote&gt;
-
-</description>
-        <pubDate>Fri, 16 Mar 2018 00:00:00 +0800</pubDate>
-        <link>http://localhost:4000/archivers/2018-03-16/2</link>
-        <guid isPermaLink="true">http://localhost:4000/archivers/2018-03-16/2</guid>
         
         
         <category>Program</category>

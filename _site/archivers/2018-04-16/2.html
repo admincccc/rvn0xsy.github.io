@@ -141,6 +141,117 @@ Accept: *.*\r\n
   </li>
 </ul>
 
+<p>针对不同的Server其对慢速http拒绝服务攻击防范方法也不同，建议使用以下措施防范慢速http拒绝服务攻击：</p>
+
+<h3 id="websphere">WebSphere</h3>
+
+<ul>
+  <li>1、限制 HTTP 数据的大小
+在WebSphere Application Server 中进行如下设置：</li>
+</ul>
+
+<p>任何单个 HTTP 头的默认最大大小为 32768 字节。可以将它设置为不同的值。</p>
+
+<p>HTTP 头的默认最大数量为 50。可以将它设置为不同的限制值。</p>
+
+<p>另一种常见的 DOS 攻击是发送一个请求，这个请求会导致一个长期运行的 GET 请求。WebSphere Application Server Plug-in 中的 ServerIOTimeoutRetry 属性可限制任何请求的重试数量。这可以降低这种长期运行的请求的影响。</p>
+
+<p>设置限制任何请求正文的最大大小。详见参考链接。</p>
+
+<ul>
+  <li>2、设置keepalive参数</li>
+</ul>
+
+<p>打开ibm http server安装目录，打开文件夹conf，打开文件httpd.conf,查找KeepAlive值，改ON为OFF,其默认为ON。</p>
+
+<p>这个值说明是否保持客户与HTTP SERVER的连接，如果设置为ON，则请求数到达MaxKeepAliveRequests设定值时请求将排队，导致响应变慢。</p>
+
+<h3 id="weblogic">Weblogic</h3>
+
+<ul>
+  <li>1、在配置管理界面中的协议-&gt;一般信息下设置 完成消息超时时间小于400</li>
+  <li>2、在配置管理界面中的协议-&gt;HTTP下设置 POST 超时、持续时间、最大 POST 大小为安全值范围。</li>
+</ul>
+
+<h3 id="nginx">Nginx</h3>
+
+<ul>
+  <li>1、通过调整$request_method，配置服务器接受http包的操作限制；</li>
+  <li>2、在保证业务不受影响的前提下，调整client_max_body_size, client_body_buffer_size, client_header_buffer_size,large_client_header_buffersclient_body_timeout, client_header_timeout的值，必要时可以适当的增加；</li>
+  <li>3、对于会话或者相同的ip地址，可以使用HttpLimitReqModule and HttpLimitZoneModule参数去限制请求量或者并发连接数；</li>
+  <li>4、根据CPU和负载的大小，来配置worker_processes 和 worker_connections的值，公式是：max_clients = worker_processes * worker_connections。</li>
+</ul>
+
+<h3 id="apache">Apache</h3>
+
+<p>建议使用mod_reqtimeout和mod_qos两个模块相互配合来防护。</p>
+
+<ul>
+  <li>
+    <p>1、mod_reqtimeout用于控制每个连接上请求发送的速率。配置例如：
+#请求头部分，设置超时时间初始为10秒，并在收到客户端发送的数据后，每接收到500字节数据就将超时时间延长1秒，但最长不超过40秒。可以防护slowloris型的慢速攻击。
+RequestReadTimeout header=10-40,minrate=500
+#请求正文部分，设置超时时间初始为10秒，并在收到客户端发送的数据后，每接收到500字节数据就将超时时间延长1秒，但最长不超过40秒。可以防护slow message body型的慢速攻击。
+RequestReadTimeout body=10-40,minrate=500
+需注意，对于HTTPS站点，需要把初始超时时间上调，比如调整到20秒。</p>
+  </li>
+  <li>
+    <p>2、mod_qos用于控制并发连接数。配置例如：</p>
+  </li>
+</ul>
+
+<p>当服务器并发连接数超过600时，关闭keepalive</p>
+
+<p>QS_SrvMaxConnClose 600</p>
+
+<p>限制每个源IP最大并发连接数为50</p>
+
+<p>QS_SrvMaxConnPerIP 50
+这两个数值可以根据服务器的性能调整。</p>
+
+<h3 id="ihs服务器">IHS服务器</h3>
+
+<p>请您先安装最新补丁包，然后启用<code class="highlighter-rouge">mod_reqtimeout</code>模块，在配置文件中加入：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>LoadModule reqtimeout_module modules/mod_reqtimeout.so
+</code></pre></div></div>
+
+<p>为<code class="highlighter-rouge">mod_reqtimeout</code>模块添加配置：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;IfModule mod_reqtimeout.c&gt;
+RequestReadTimeout header=10-40,MinRate=500 body=10-40,MinRate=500
+&lt;/IfModule&gt;
+</code></pre></div></div>
+
+<p>对于HTTPS站点，建议header=20-40,MinRate=500。</p>
+
+<ul>
+  <li>参见：http://www-01.ibm.com/support/docview.wss?uid=swg21652165</li>
+</ul>
+
+<h3 id="f5负载均衡修复建议">F5负载均衡修复建议</h3>
+
+<p>F5负载均衡设备有相应的防护模块，如无购买可参考附件中的详细配置过程。</p>
+
+<p>关于F5的慢速攻击防护配置，请参考以下链接：</p>
+<ul>
+  <li>https://support.f5.com/kb/en-us/solutions/public/10000/200/sol10260.html</li>
+  <li>https://devcentral.f5.com/articles/mitigating-slow-http-post-ddos-attacks-with-irules-ndash-follow-up</li>
+</ul>
+
+<h3 id="tomcat服务器">tomcat服务器</h3>
+
+<p>解决方案：</p>
+<ul>
+  <li>1、设置Tomcat / server.xml文件    connectiontimeout 值，默认为20000ms，修改为8000ms(Tomcat 自身安全漏洞)</li>
+  <li>2、设置AJAX的全局timeout时间（默认为30000ms） $.ajaxSetup({timeout:8000}).</li>
+</ul>
+
+<address>
+感谢<b><a href="mailto:webmaster@example.com">Wingkyun</a></b>给予我的修复建议<br />
+</address>
+
+
   </article>
   
   
@@ -172,11 +283,15 @@ Accept: *.*\r\n
   <div class="col-box-title">Newest Posts</div>
   <ul class="post-list">
     
+      <li><a class="post-link" href="/archivers/2018-04-18/1">服务器启用了不安全的HTTP方法</a></li>
+    
       <li><a class="post-link" href="/archivers/2018-04-16/3">点击劫持：X-Frame-Options头丢失</a></li>
     
       <li><a class="post-link" href="/archivers/2018-04-16/2">Slow HTTP DOS</a></li>
     
       <li><a class="post-link" href="/archivers/2018-03-27/1">使用CrackMapExec 进行 NTLM Hash传递攻击</a></li>
+    
+      <li><a class="post-link" href="/archivers/2018-04-18/2">中间件版本信息泄露</a></li>
     
       <li><a class="post-link" href="/archivers/2018-03-22/1">远程代码执行</a></li>
     
@@ -247,10 +362,6 @@ Accept: *.*\r\n
       <li><a class="post-link" href="/archivers/2017-11-09/1">DNS信息搜集工具小结</a></li>
     
       <li><a class="post-link" href="/archivers/2017-11-08/1">Windows下命令行下载文件总结</a></li>
-    
-      <li><a class="post-link" href="/archivers/2017-11-08/2">Kali Linux 优化</a></li>
-    
-      <li><a class="post-link" href="/archivers/2017-10-24/1">C++调用CURL进行信息搜集</a></li>
     
   </ul>
 </div>
