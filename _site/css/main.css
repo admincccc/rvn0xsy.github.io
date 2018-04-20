@@ -93,7 +93,7 @@ body { background-color: #e0e0e3; }
 .post .post-header .post-meta { color: #999; font-size: 17.5px; margin: 0 -100px; }
 @media screen and (max-width: 600px) { .post .post-header { text-align: center; margin-bottom: 10px; padding: 10px; } }
 .post .post-content { color: #333; }
-.post .post-content h1, .post .post-content h2, .post .post-content h3, .post .post-content h4, .post .post-content h5, .post .post-content h6 { /*color: #000;*/ border-bottom: 1px solid #CCC; background: linear-gradient(to right, #666, white); color: white; border: 1px solid; border-radius: 10px; padding-left: 20px; }
+.post .post-content h1, .post .post-content h2, .post .post-content h3, .post .post-content h4, .post .post-content h5, .post .post-content h6 { /*color: #000;*/ border-bottom: 1px solid #CCC; background: linear-gradient(to right, #666, #7FA3B4); color: white; border: 1px solid; border-radius: 10px; padding-left: 20px; }
 .post .post-content h1, .post .post-content h2 { margin-bottom: 10px; margin-top: 30px; }
 .post .post-content h1, .post .post-content h2, .post .post-content h3 { border-bottom: 1px solid #CCC; }
 .post .post-content pre { margin: 0 -30px; }
