@@ -6,11 +6,11 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Tomcat 开启 https支持 « 倾旋的博客</title>
-  <meta name="description" content="本文介绍一下tomcat 开启 https支持">
+  <title>新生活 - 上海，我来了 « 倾旋的博客</title>
+  <meta name="description" content="">
 
   <link rel="stylesheet" href="/css/main.css">
-  <link rel="canonical" href="http://localhost:4000/archivers/2017-08-21/1">
+  <link rel="canonical" href="http://localhost:4000/archivers/2018-04-20/1">
   <link rel="alternate" type="application/rss+xml" title="倾旋的博客" href="http://localhost:4000/feed.xml" />
   <link href="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/css/lightbox.min.css" rel="stylesheet">
 </head>
@@ -42,56 +42,19 @@
           <div class="post">
 
   <header class="post-header">
-    <h1 class="post-title">Tomcat 开启 https支持</h1>
-    <p class="post-meta">Aug 21, 2017</p>
+    <h1 class="post-title">新生活 - 上海，我来了</h1>
+    <p class="post-meta">Apr 20, 2018</p>
   </header>
 
   <article class="post-content">
-    <p>本文介绍一下tomcat 开启 https支持
-<!--more--></p>
-<h2 id="0x00-配置keystore">0x00 配置keystore</h2>
+    <!--more-->
 
-<p>要使用ssl connector，必须先创建一个keystore。他包含了服务器中被客户端用于验证服务器的数字证书。一旦客户端接受了这个证书，客户端就可以使用public key去加密他们要发送的数据。而服务器，拥有一个private key，作为唯一解密数据的密钥。</p>
+<p>完成了一个梦想，真好，转眼间逝去的两年，我不断成长，感受人情冷暖、接纳新鲜事物，至今已学会如何照顾自己，让生活更具有色彩，人生更加无憾。</p>
 
-<p>进入JDK环境的bin目录，调用keytool来完成我们的证书生成：</p>
+<hr />
 
-<p><code class="highlighter-rouge">keytool -genkey -alias tomcat -keyalg RSA</code></p>
+<p>谢谢我的朋友们给我的支持！</p>
 
-<ul>
-  <li>-genkey:创建一个public-private key pair</li>
-  <li>-alias tomcat：用户别名为tomcat</li>
-  <li>-keyalg RSA： 使用RSA算法。  MD5算法也是被支持的，但是建议使用RSA获得更好的兼容。</li>
-</ul>
-
-<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-08-21/0x00.jpg" alt="生成证书" /></p>
-
-<p>生成证书后，此证书会被保存在当前用户主目录下。</p>
-
-<h2 id="0x01-修改配置文件">0x01 修改配置文件</h2>
-
-<p>找到tomcat目录下的<code class="highlighter-rouge">conf/server.xml</code>，将原来的<code class="highlighter-rouge">Connector </code>更改一下即可。</p>
-
-<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!--
-
-    &lt;Connector port="8443" protocol="HTTP/1.1" SSLEnabled="true"
-
-               maxThreads="150" scheme="https" secure="true"
-
-               clientAuth="false" sslProtocol="TLS" /&gt;
-
-    --&gt;</span>
-</code></pre></div></div>
-
-<p>改成：</p>
-
-<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;Connector</span> <span class="na">port=</span><span class="s">"端口"</span> <span class="na">protocol=</span><span class="s">"org.apache.coyote.http11.Http11Protocol"</span>  
-                <span class="na">maxThreads=</span><span class="s">"150"</span> <span class="na">SSLEnabled=</span><span class="s">"true"</span> <span class="na">scheme=</span><span class="s">"https"</span> <span class="na">secure=</span><span class="s">"true"</span>  
-                <span class="na">clientAuth=</span><span class="s">"false"</span> <span class="na">sslProtocol=</span><span class="s">"TLS"</span>  
-                <span class="na">keystoreFile=</span><span class="s">"keystore文件路径"</span>   
-          <span class="na">keystorePass=</span><span class="s">"口令"</span> <span class="nt">/&gt;</span>
-</code></pre></div></div>
-
-<p>重启tomcat后生效~</p>
 
   </article>
   

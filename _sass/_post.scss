@@ -26,7 +26,13 @@
         color: #333;
         
         h1,h2,h3,h4,h5,h6 {
-            color: #000;
+            /*color: #000;*/
+            border-bottom: 1px solid #CCC;
+            background: linear-gradient(to right, #666 , white);
+            color: white;
+            border: 1px solid;
+            border-radius: 10px;
+            padding-left: 20px;
         }
         
         h1, h2 {
