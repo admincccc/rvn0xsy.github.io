@@ -6,11 +6,11 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>IIS短文件名漏洞 « 倾旋的博客</title>
-  <meta name="description" content="《Web安全测试学习手册》- IIS短文件名漏洞">
+  <title>SVN文件泄露 « 倾旋的博客</title>
+  <meta name="description" content="《Web安全测试学习手册》- SVN文件泄露">
 
   <link rel="stylesheet" href="/css/main.css">
-  <link rel="canonical" href="http://localhost:4000/archivers/2018-04-27/2">
+  <link rel="canonical" href="http://localhost:4000/archivers/2018-04-27/4">
   <link rel="alternate" type="application/rss+xml" title="倾旋的博客" href="http://localhost:4000/feed.xml" />
   <link href="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/css/lightbox.min.css" rel="stylesheet">
 </head>
@@ -42,98 +42,97 @@
           <div class="post">
 
   <header class="post-header">
-    <h1 class="post-title">IIS短文件名漏洞</h1>
+    <h1 class="post-title">SVN文件泄露</h1>
     <p class="post-meta">Apr 27, 2018</p>
   </header>
 
   <article class="post-content">
-    <p>《Web安全测试学习手册》- IIS短文件名漏洞
+    <p>《Web安全测试学习手册》- SVN文件泄露
 <!--more--></p>
 
-<h2 id="0x00-iis短文件名漏洞">0x00 IIS短文件名漏洞</h2>
+<h2 id="0x00-svn文件泄露">0x00 SVN文件泄露</h2>
 
-<h3 id="1什么是iis短文件名漏洞">1）什么是IIS短文件名漏洞</h3>
+<h3 id="1什么是svn文件泄露">1）什么是SVN文件泄露</h3>
 
-<p>IIS短文件名是一个Windows系统为了兼容16位MS-DOS程序，Windows为文件名较长的文件（和文件夹）生成了对应的windows 8.3 短文件名。当这种特性被IIS中间件继承后，我们就可以使用短文件名进行目录猜解。</p>
+<p>Subversion，简称SVN，是一个开放源代码的版本控制系统，相对于的RCS、CVS，采用了分支管理系统，它的设计目标就是取代CVS。互联网上越来越多的控制服务从CVS转移到Subversion。</p>
 
-<h3 id="2iis短文件名漏洞的特点">2）IIS短文件名漏洞的特点</h3>
+<p>Subversion使用服务端—客户端的结构，当然服务端与客户端可以都运行在同一台服务器上。在服务端是存放着所有受控制数据的Subversion仓库，另一端是Subversion的客户端程序，管理着受控数据的一部分在本地的映射（称为“工作副本”）。在这两端之间，是通过各种仓库存取层（Repository Access，简称RA）的多条通道进行访问的。这些通道中，可以通过不同的网络协议，例如HTTP、SSH等，或本地文件的方式来对仓库进行操作。</p>
+
+<h3 id="2svn文件泄露的特点">2）SVN文件泄露的特点</h3>
 
 <ul>
-  <li>利用难度低</li>
-  <li>会产生很多请求</li>
+  <li>Web目录中存在<code class="highlighter-rouge">.svn</code>目录</li>
+  <li>Web中间件未限制客户端访问带<code class="highlighter-rouge">.</code>目录，例如:<code class="highlighter-rouge">.conf/、.svn/、.data/</code></li>
 </ul>
 
-<h2 id="0x01-iis短文件名漏洞---风险等级">0x01 IIS短文件名漏洞 - 风险等级</h2>
+<h2 id="0x01-svn文件泄露---风险等级">0x01 SVN文件泄露 - 风险等级</h2>
 
-<p><strong>低</strong></p>
+<p><strong>高</strong></p>
 
-<h2 id="0x02-iis短文件名漏洞---原理">0x02 IIS短文件名漏洞 - 原理</h2>
+<h2 id="0x02-svn文件泄露---原理">0x02 SVN文件泄露 - 原理</h2>
 
-<p>当我们访问一个长名称目录的时候：<code class="highlighter-rouge">http://192.168.1.1/administrator</code></p>
+<p>由于网站管理员在上线的时候使用了SVN服务，<code class="highlighter-rouge">checkout</code>完毕并没有删除<code class="highlighter-rouge">.svn</code>这个隐藏目录，并且中间件没有禁止客户端访问这一目录。</p>
 
-<p>这个<code class="highlighter-rouge">administrator</code>目录可以根据Windows 8.3格式简写为<code class="highlighter-rouge">admini~1</code></p>
-
-<p>根据这个上述格式，我们访问<code class="highlighter-rouge">/admini~1</code>也可以相当于访问<code class="highlighter-rouge">administrator</code></p>
-
-<h2 id="0x03-服务器端目录遍历---常见场景">0x03 服务器端目录遍历 - 常见场景</h2>
+<h2 id="0x03-svn文件泄露---常见场景">0x03 SVN文件泄露 - 常见场景</h2>
 
 <ul>
-  <li>IIS 中间件</li>
+  <li>存在<code class="highlighter-rouge">.svn</code>目录的Web应用</li>
 </ul>
 
 <h2 id="0x04-测试方案">0x04 测试方案</h2>
 
 <h3 id="方案一">方案一</h3>
 
-<p>使用<code class="highlighter-rouge">IIS_shortname_Scanner</code></p>
+<p>使用浏览器或CURL探测：http://target/.svn/entries，查看<code class="highlighter-rouge">entries</code>这个文件是否存在。</p>
 
-<p>命令：</p>
+<p>命令：curl -I http://target/.svn/entries</p>
 
-<ul>
-  <li><strong>git clone https://github.com/lijiejie/IIS_shortname_Scanner.git</strong></li>
-  <li><strong>cd IIS_shortname_Scanner</strong></li>
-  <li><strong>python iis_shortname_Scan.py http://target</strong></li>
-</ul>
+<p>例如：</p>
 
-<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2018-04-27/0x02.png" alt="0x02" /></p>
-
-<h3 id="方案二需服务器权限">方案二（需服务器权限）</h3>
-
-<p>执行命令（管理员权限）：</p>
-
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
-reg query HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem\ /v "NtfsDisable8dot3NameCreation"
-
------------------------------------------------------------------
-HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem
-    NtfsDisable8dot3NameCreation    REG_DWORD    0x0
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>➜  ~ curl -I http://10.211.55.12/.svn/entries
+HTTP/1.1 200 OK
+Date: Fri, 27 Apr 2018 08:12:54 GMT
+Last-Modified: Fri, 27 Apr 2018 07:43:25 GMT
+Accept-Ranges: bytes
+Content-Length: 3
 </code></pre></div></div>
 
-<p>若<code class="highlighter-rouge">NtfsDisable8dot3NameCreation</code>是<code class="highlighter-rouge">0x0</code>，存在此漏洞</p>
+<h3 id="方案二">方案二</h3>
+
+<p>使用检测工具</p>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2018-04-27/0x05.png" alt="SVN文件泄露" /></p>
+
+<h3 id="方案三">方案三</h3>
 
 <h2 id="0x05-修复方案">0x05 修复方案</h2>
 
-<h3 id="通用方案">通用方案</h3>
+<h3 id="方案一-1">方案一</h3>
 
-<p>执行命令（管理员权限）：</p>
+<p>删除<code class="highlighter-rouge">.svn</code>目录</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>reg add HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem\ /
-v "NtfsDisable8dot3NameCreation" /t REG_DWORD /d 1 /f
+<h3 id="方案二-1">方案二</h3>
+
+<p><strong>Nginx服务器</strong></p>
+
+<p>在<code class="highlighter-rouge">nginx.conf</code>中添加如下代码：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>location ~ ^(.*)\/\.svn\/
+{
+	return 404;
+}
 </code></pre></div></div>
+<p>重启nginx</p>
 
-<h3 id="windows-server-2008-r2">Windows Server 2008 R2</h3>
+<p><strong>Apache服务器</strong></p>
 
-<p>查询是否开启短文件名功能：<code class="highlighter-rouge">fsutil 8dot3name query</code></p>
+<p>在<code class="highlighter-rouge">httpd.conf</code>中添加如下代码：</p>
 
-<p>关闭该功能：<code class="highlighter-rouge">fsutil 8dot3name set 1</code></p>
-
-<h3 id="windows-server-2003">Windows Server 2003</h3>
-
-<p>关闭该功能：<code class="highlighter-rouge">fsutil behavior set disable8dot3 1</code></p>
-
-<h3 id="最后">最后</h3>
-
-<p>重启服务器</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;Directory "WEB绝对路径/.svn/"&gt;
+   Order deny,allow
+   Deny from all
+&lt;/Directory&gt;
+</code></pre></div></div>
 
 
   </article>

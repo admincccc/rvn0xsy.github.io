@@ -6,11 +6,11 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>IIS短文件名漏洞 « 倾旋的博客</title>
-  <meta name="description" content="《Web安全测试学习手册》- IIS短文件名漏洞">
+  <title>OpenSSL心脏滴血漏洞 « 倾旋的博客</title>
+  <meta name="description" content="《Web安全测试学习手册》- OpenSSL心脏滴血漏洞">
 
   <link rel="stylesheet" href="/css/main.css">
-  <link rel="canonical" href="http://localhost:4000/archivers/2018-04-27/2">
+  <link rel="canonical" href="http://localhost:4000/archivers/2018-04-27/5">
   <link rel="alternate" type="application/rss+xml" title="倾旋的博客" href="http://localhost:4000/feed.xml" />
   <link href="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/css/lightbox.min.css" rel="stylesheet">
 </head>
@@ -42,98 +42,75 @@
           <div class="post">
 
   <header class="post-header">
-    <h1 class="post-title">IIS短文件名漏洞</h1>
+    <h1 class="post-title">OpenSSL心脏滴血漏洞</h1>
     <p class="post-meta">Apr 27, 2018</p>
   </header>
 
   <article class="post-content">
-    <p>《Web安全测试学习手册》- IIS短文件名漏洞
+    <p>《Web安全测试学习手册》- OpenSSL心脏滴血漏洞
 <!--more--></p>
 
-<h2 id="0x00-iis短文件名漏洞">0x00 IIS短文件名漏洞</h2>
+<h2 id="0x00-openssl心脏滴血漏洞">0x00 OpenSSL心脏滴血漏洞</h2>
 
-<h3 id="1什么是iis短文件名漏洞">1）什么是IIS短文件名漏洞</h3>
+<h3 id="1什么是openssl心脏滴血漏洞">1）什么是OpenSSL心脏滴血漏洞</h3>
 
-<p>IIS短文件名是一个Windows系统为了兼容16位MS-DOS程序，Windows为文件名较长的文件（和文件夹）生成了对应的windows 8.3 短文件名。当这种特性被IIS中间件继承后，我们就可以使用短文件名进行目录猜解。</p>
+<p>2014年4月8日，互联网上曝出了严重一个漏洞称为Heartbleed，该漏洞由安全公司Codenomicon和谷歌安全工程师发现。Heartbleed漏洞，造成许任何人在互联网上阅读系统的内存保护脆弱的OpenSSL的软件版本。 这种妥协密钥用于识别服务提供者和加密流量,用户名和密码的和实际的内容。 这允许攻击者窃听通信、窃取数据直接从服务和用户和模拟服务和用户。</p>
 
-<h3 id="2iis短文件名漏洞的特点">2）IIS短文件名漏洞的特点</h3>
+<h3 id="2openssl心脏滴血漏洞的特点">2）OpenSSL心脏滴血漏洞的特点</h3>
 
 <ul>
-  <li>利用难度低</li>
-  <li>会产生很多请求</li>
+  <li>服务器端必须支持openssl加密协议，如：https</li>
+  <li>危害大</li>
 </ul>
 
-<h2 id="0x01-iis短文件名漏洞---风险等级">0x01 IIS短文件名漏洞 - 风险等级</h2>
+<h2 id="0x01-openssl心脏滴血漏洞---风险等级">0x01 OpenSSL心脏滴血漏洞 - 风险等级</h2>
 
-<p><strong>低</strong></p>
+<p><strong>高</strong></p>
 
-<h2 id="0x02-iis短文件名漏洞---原理">0x02 IIS短文件名漏洞 - 原理</h2>
+<h2 id="0x02-openssl心脏滴血漏洞---原理">0x02 OpenSSL心脏滴血漏洞 - 原理</h2>
 
-<p>当我们访问一个长名称目录的时候：<code class="highlighter-rouge">http://192.168.1.1/administrator</code></p>
+<p>2014年4月7日OpenSSL发布了安全公告，在OpenSSL1.0.1版本中存在严重漏洞（CVE-2014-0160），此次漏洞问题存在于ssl/dl_both.c文件中。</p>
 
-<p>这个<code class="highlighter-rouge">administrator</code>目录可以根据Windows 8.3格式简写为<code class="highlighter-rouge">admini~1</code></p>
+<p>OpenSSL在实现TLS和DTLS的心跳处理逻辑时，存在编码缺陷。OpenSSL的心跳处理逻辑没有检测心跳包中的长度字段是否和后续的数据字段相符合，攻击者可以利用这点，构造异常的数据包，来获取心跳数据所在的内存区域的后续数据。这些数据中可能包含了证书私钥、用户名、用户密码、用户邮箱等敏感信息。该漏洞允许攻击者，从内存中读取多达64KB的数据。</p>
 
-<p>根据这个上述格式，我们访问<code class="highlighter-rouge">/admini~1</code>也可以相当于访问<code class="highlighter-rouge">administrator</code></p>
-
-<h2 id="0x03-服务器端目录遍历---常见场景">0x03 服务器端目录遍历 - 常见场景</h2>
+<h2 id="0x03-openssl心脏滴血漏洞---常见场景">0x03 OpenSSL心脏滴血漏洞 - 常见场景</h2>
 
 <ul>
-  <li>IIS 中间件</li>
+  <li>使用了openssl扩展库加密的网络协议</li>
+  <li>https</li>
+  <li>SSL VPN</li>
+  <li>邮件服务器</li>
 </ul>
 
 <h2 id="0x04-测试方案">0x04 测试方案</h2>
 
 <h3 id="方案一">方案一</h3>
 
-<p>使用<code class="highlighter-rouge">IIS_shortname_Scanner</code></p>
+<p>使用Nmap扩展脚本进行扫描</p>
 
-<p>命令：</p>
+<p>命令：<code class="highlighter-rouge">nmap -sV -p 443 --script ssl-heartbleed.nse [Target]</code></p>
 
-<ul>
-  <li><strong>git clone https://github.com/lijiejie/IIS_shortname_Scanner.git</strong></li>
-  <li><strong>cd IIS_shortname_Scanner</strong></li>
-  <li><strong>python iis_shortname_Scan.py http://target</strong></li>
-</ul>
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2018-04-27/0x06.png" alt="OpenSSL心脏滴血漏洞" /></p>
 
-<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2018-04-27/0x02.png" alt="0x02" /></p>
+<h3 id="方案二">方案二</h3>
 
-<h3 id="方案二需服务器权限">方案二（需服务器权限）</h3>
+<p>https://filippo.io/Heartbleed/</p>
 
-<p>执行命令（管理员权限）：</p>
+<h3 id="方案三">方案三</h3>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
-reg query HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem\ /v "NtfsDisable8dot3NameCreation"
-
------------------------------------------------------------------
-HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem
-    NtfsDisable8dot3NameCreation    REG_DWORD    0x0
-</code></pre></div></div>
-
-<p>若<code class="highlighter-rouge">NtfsDisable8dot3NameCreation</code>是<code class="highlighter-rouge">0x0</code>，存在此漏洞</p>
+<p>http://wangzhan.360.cn/heartbleed/</p>
 
 <h2 id="0x05-修复方案">0x05 修复方案</h2>
 
-<h3 id="通用方案">通用方案</h3>
-
-<p>执行命令（管理员权限）：</p>
-
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>reg add HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem\ /
-v "NtfsDisable8dot3NameCreation" /t REG_DWORD /d 1 /f
-</code></pre></div></div>
-
-<h3 id="windows-server-2008-r2">Windows Server 2008 R2</h3>
-
-<p>查询是否开启短文件名功能：<code class="highlighter-rouge">fsutil 8dot3name query</code></p>
-
-<p>关闭该功能：<code class="highlighter-rouge">fsutil 8dot3name set 1</code></p>
-
-<h3 id="windows-server-2003">Windows Server 2003</h3>
-
-<p>关闭该功能：<code class="highlighter-rouge">fsutil behavior set disable8dot3 1</code></p>
-
-<h3 id="最后">最后</h3>
-
-<p>重启服务器</p>
+<ul>
+  <li>1.将受影响的服务器下线，避免它继续泄露敏感信息。</li>
+  <li>2.停止旧版的 openssl 服务，升级 openssl 到新版本，并重新启动。</li>
+  <li>3.生成新密钥。（因为攻击者可能通过漏洞获取私钥。）将新密钥提交给你的CA，获得新的认证之后在服务器上安装新密钥。</li>
+  <li>4.服务器上线。</li>
+  <li>5.撤销旧认证。</li>
+  <li>6.撤销现有的会话cookies。</li>
+  <li>7.要求用户修改密码。</li>
+</ul>
 
 
   </article>
