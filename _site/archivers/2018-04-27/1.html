@@ -6,11 +6,11 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Tomcat 开启 https支持 « 倾旋的博客</title>
-  <meta name="description" content="本文介绍一下tomcat 开启 https支持">
+  <title>服务器端目录遍历 « 倾旋的博客</title>
+  <meta name="description" content="《Web安全测试学习手册》- 服务器端目录遍历">
 
   <link rel="stylesheet" href="/css/main.css">
-  <link rel="canonical" href="http://localhost:4000/archivers/2017-08-21/1">
+  <link rel="canonical" href="http://localhost:4000/archivers/2018-04-27/1">
   <link rel="alternate" type="application/rss+xml" title="倾旋的博客" href="http://localhost:4000/feed.xml" />
   <link href="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/css/lightbox.min.css" rel="stylesheet">
 </head>
@@ -42,56 +42,139 @@
           <div class="post">
 
   <header class="post-header">
-    <h1 class="post-title">Tomcat 开启 https支持</h1>
-    <p class="post-meta">Aug 21, 2017</p>
+    <h1 class="post-title">服务器端目录遍历</h1>
+    <p class="post-meta">Apr 27, 2018</p>
   </header>
 
   <article class="post-content">
-    <p>本文介绍一下tomcat 开启 https支持
+    <p>《Web安全测试学习手册》- 服务器端目录遍历
 <!--more--></p>
-<h2 id="0x00-配置keystore">0x00 配置keystore</h2>
 
-<p>要使用ssl connector，必须先创建一个keystore。他包含了服务器中被客户端用于验证服务器的数字证书。一旦客户端接受了这个证书，客户端就可以使用public key去加密他们要发送的数据。而服务器，拥有一个private key，作为唯一解密数据的密钥。</p>
+<h2 id="0x00-服务器端目录遍历">0x00 服务器端目录遍历</h2>
 
-<p>进入JDK环境的bin目录，调用keytool来完成我们的证书生成：</p>
+<h3 id="1什么是服务器端目录遍历">1）什么是服务器端目录遍历</h3>
 
-<p><code class="highlighter-rouge">keytool -genkey -alias tomcat -keyalg RSA</code></p>
+<p>当客户端访问到一个目录时，Web服务中间件将会默认寻找一个<code class="highlighter-rouge">index list</code>中的文件，若文件不存在，则会列出当前目录下所有文件或返回403状态码，而列出目录下所有文件的行为称为目录遍历。</p>
+
+<h3 id="2服务器端目录遍历的特点">2）服务器端目录遍历的特点</h3>
+
+<p>中间件配置不得当</p>
+
+<h2 id="0x01-服务器端目录遍历---风险等级">0x01 服务器端目录遍历 - 风险等级</h2>
+
+<p><strong>高</strong></p>
+
+<h2 id="0x02-服务器端目录遍历---原理">0x02 服务器端目录遍历 - 原理</h2>
+
+<p>当客户端访问到一个目录时，Web服务中间件将会默认寻找一个<code class="highlighter-rouge">index list</code>中的文件，若文件不存在，则会列出当前目录下所有文件或返回403状态码。</p>
+
+<h2 id="0x03-服务器端目录遍历---常见场景">0x03 服务器端目录遍历 - 常见场景</h2>
 
 <ul>
-  <li>-genkey:创建一个public-private key pair</li>
-  <li>-alias tomcat：用户别名为tomcat</li>
-  <li>-keyalg RSA： 使用RSA算法。  MD5算法也是被支持的，但是建议使用RSA获得更好的兼容。</li>
+  <li>Tomcat</li>
+  <li>Nginx</li>
+  <li>Apache</li>
+  <li>IIS</li>
+  <li>… 均有此类现象</li>
 </ul>
 
-<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-08-21/0x00.jpg" alt="生成证书" /></p>
+<h2 id="0x04-测试方案">0x04 测试方案</h2>
 
-<p>生成证书后，此证书会被保存在当前用户主目录下。</p>
+<p>先使用dirb扫描一些存在的目录，再使用浏览器访问已存在的目录，查看是否能够列出目录下的文件</p>
 
-<h2 id="0x01-修改配置文件">0x01 修改配置文件</h2>
+<p>命令：<code class="highlighter-rouge">dirb http://target</code></p>
 
-<p>找到tomcat目录下的<code class="highlighter-rouge">conf/server.xml</code>，将原来的<code class="highlighter-rouge">Connector </code>更改一下即可。</p>
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2018-04-27/0x02.gif" alt="0x02" /></p>
 
-<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!--
+<h2 id="0x05-修复方案">0x05 修复方案</h2>
 
-    &lt;Connector port="8443" protocol="HTTP/1.1" SSLEnabled="true"
+<h4 id="apache">Apache</h4>
 
-               maxThreads="150" scheme="https" secure="true"
+<h5 id="修改站点目录对应的配置文件">修改站点目录对应的配置文件</h5>
 
-               clientAuth="false" sslProtocol="TLS" /&gt;
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-11-15/0x00.png" alt="列出目录索引" /></p>
 
-    --&gt;</span>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;Directory /&gt;
+    Options +Indexes +FollowSymLinks # 将 "+" 与 Indexes 去掉即可限制列出目录索引
+    AllowOverride All
+    Order allow,deny
+    Allow from all
+    Require all granted
+&lt;/Directory&gt;
 </code></pre></div></div>
 
-<p>改成：</p>
+<p>修改后：</p>
 
-<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;Connector</span> <span class="na">port=</span><span class="s">"端口"</span> <span class="na">protocol=</span><span class="s">"org.apache.coyote.http11.Http11Protocol"</span>  
-                <span class="na">maxThreads=</span><span class="s">"150"</span> <span class="na">SSLEnabled=</span><span class="s">"true"</span> <span class="na">scheme=</span><span class="s">"https"</span> <span class="na">secure=</span><span class="s">"true"</span>  
-                <span class="na">clientAuth=</span><span class="s">"false"</span> <span class="na">sslProtocol=</span><span class="s">"TLS"</span>  
-                <span class="na">keystoreFile=</span><span class="s">"keystore文件路径"</span>   
-          <span class="na">keystorePass=</span><span class="s">"口令"</span> <span class="nt">/&gt;</span>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;Directory /&gt;
+    Options FollowSymLinks
+    AllowOverride All
+    Order allow,deny
+    Allow from all
+    Require all granted
+&lt;/Directory&gt;
+</code></pre></div></div>
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-11-15/0x01.png" alt="不列出目录索引" /></p>
+
+<h5 id="创建directoryindex默认文件">创建DirectoryIndex默认文件</h5>
+
+<p>大家都见过很多框架的每个目录都有一个<code class="highlighter-rouge">index.html</code>文件，这个文件的存在是非常有意义的，很多线上的Web服务器都没有合格配置<code class="highlighter-rouge">列出目录索引</code>。导致网站内部许多文件都被攻击者查看到，泄漏大量信息。</p>
+
+<p>为了防止列出目录索引，我们可以在站点的每个文件夹中创建一个<code class="highlighter-rouge">index.html</code>，这个文件内容是什么都无所谓了。当攻击者想通过列目录的手法访问你站点文件夹的时候，Web服务器将会判断当前目录下有没有<code class="highlighter-rouge">DirectoryIndex</code>默认首页，如果存在就显示<code class="highlighter-rouge">DirectoryIndex</code>对应的文件名的内容，这样攻击者就无法查看该目录下有什么文件了。</p>
+
+<h4 id="tomcat">Tomcat</h4>
+
+<h5 id="修改confwebxml配置文件">修改conf/web.xml配置文件</h5>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-11-15/0x02.png" alt="列出目录索引" /></p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;init-param&gt;
+            &lt;param-name&gt;listings&lt;/param-name&gt; 
+            &lt;param-value&gt;true&lt;/param-value&gt; &lt;!-- 将true改为false --&gt;
+&lt;/init-param&gt;
 </code></pre></div></div>
 
-<p>重启tomcat后生效~</p>
+<p>修改后：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;init-param&gt;
+            &lt;param-name&gt;listings&lt;/param-name&gt; 
+            &lt;param-value&gt;false&lt;/param-value&gt;
+&lt;/init-param&gt;
+</code></pre></div></div>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-11-15/0x03.png" alt="不列出目录索引" /></p>
+
+<h4 id="nginx">Nginx</h4>
+
+<h5 id="修改confnginxconf配置文件">修改conf/nginx.conf配置文件</h5>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-11-15/0x05.png" alt="列出目录索引" /></p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>location / {
+            index  index.html index.htm index.php l.php;
+           autoindex on;  
+}
+</code></pre></div></div>
+
+<p>修改后：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>location / {
+            index  index.html index.htm index.php l.php;
+           autoindex off;  
+}
+</code></pre></div></div>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-11-15/0x04.png" alt="不列出目录索引" /></p>
+
+<h4 id="iis">IIS</h4>
+
+<h4 id="设置目录浏览权限">设置”目录浏览”权限</h4>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-11-15/0x06.png" alt="列出目录索引" /></p>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-11-15/0x08.png" alt="设置目录索引" /></p>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-11-15/0x07.png" alt="不列出目录索引" /></p>
+
 
   </article>
   

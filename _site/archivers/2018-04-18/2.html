@@ -50,6 +50,78 @@
     <p>《Web安全测试学习手册》- 中间件版本信息泄露
 <!--more--></p>
 
+<h2 id="0x00-中间件版本信息泄露">0x00 中间件版本信息泄露</h2>
+
+<h3 id="1什么是中间件版本信息泄露">1）什么是中间件版本信息泄露</h3>
+
+<p>通常在HTTP报文的响应头中存在的标志、版本号等信息均属于中间件的版本信息泄露。</p>
+
+<h3 id="2中间件版本信息泄露的特点">2）中间件版本信息泄露的特点</h3>
+
+<p>通常出现在默认安装好的Web中间件上，大部分管理员都不会修改这个标志。</p>
+
+<h2 id="0x01-中间件版本信息泄露---风险等级">0x01 中间件版本信息泄露 - 风险等级</h2>
+
+<p><strong>低</strong></p>
+
+<h2 id="0x02-中间件版本信息泄露---原理">0x02 中间件版本信息泄露 - 原理</h2>
+
+<p>由于各大Web服务中间件为了打造品牌效应而在HTTP响应头中添加了标志信息、版本号。</p>
+
+<h2 id="0x03-中间件版本信息泄露---常见场景">0x03 中间件版本信息泄露 - 常见场景</h2>
+
+<ul>
+  <li>Tomcat</li>
+  <li>Nginx</li>
+  <li>Apache</li>
+  <li>IIS</li>
+  <li>… 均有此类现象</li>
+</ul>
+
+<h2 id="0x04-测试方案">0x04 测试方案</h2>
+
+<p>使用CURL发送OPTIONS、GET、POST、HEAD等请求，查看响应头中的Server行</p>
+
+<p>命令：<code class="highlighter-rouge">curl -I -X GET http://payloads.online</code></p>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2018-04-27/0x01.gif" alt="0x01" /></p>
+
+<h2 id="0x05-修复方案">0x05 修复方案</h2>
+
+<h3 id="apache">Apache</h3>
+
+<p>将以下配置加入<code class="highlighter-rouge">conf/httpd.conf</code>：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ServerTokens Prod
+ServerSignature Off
+</code></pre></div></div>
+
+<h4 id="php">PHP</h4>
+
+<p>修改<code class="highlighter-rouge">php.ini</code>，将<code class="highlighter-rouge">expose_php On</code>改为：<code class="highlighter-rouge">expose_php Off</code></p>
+
+<h4 id="iis">IIS</h4>
+
+<p>找到<code class="highlighter-rouge">HTTP响应头</code>设置响应报文内容，可以将<code class="highlighter-rouge">ASP.NET</code>随意更改，甚至删除</p>
+
+<h4 id="nginx">Nginx</h4>
+
+<p>在加入<code class="highlighter-rouge">conf/nginx.conf</code>一行：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>server_tokens off;
+</code></pre></div></div>
+
+<h4 id="tomcat">Tomcat</h4>
+
+<p>到apache-tomcat安装目录下的lib子文件夹，找到catalina.jar这包，并进行解解压</p>
+
+<p>修改:<code class="highlighter-rouge">lib\catalina.zip\org\apache\catalina\util\ServerInfo.properties</code></p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>server.info=X
+server.number=5.5
+server.built=Dec 1 2015 22:30:46 UTC
+</code></pre></div></div>
+
 
   </article>
   
@@ -81,6 +153,10 @@
 <div class="col-box">
   <div class="col-box-title">Newest Posts</div>
   <ul class="post-list">
+    
+      <li><a class="post-link" href="/archivers/2018-04-27/1">服务器端目录遍历</a></li>
+    
+      <li><a class="post-link" href="/archivers/2018-04-27/2">IIS短文件名漏洞</a></li>
     
       <li><a class="post-link" href="/archivers/2018-04-20/1">新生活 - 上海，我来了</a></li>
     
@@ -157,10 +233,6 @@
       <li><a class="post-link" href="/archivers/2017-11-14/1">CTF - 美眉的手机号</a></li>
     
       <li><a class="post-link" href="/archivers/2017-11-13/1">高效-搭建一个Github静态博客</a></li>
-    
-      <li><a class="post-link" href="/tools/socat">socat 使用手册</a></li>
-    
-      <li><a class="post-link" href="/archivers/2017-11-09/1">DNS信息搜集工具小结</a></li>
     
   </ul>
 </div>

@@ -6,11 +6,11 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Tomcat 开启 https支持 « 倾旋的博客</title>
-  <meta name="description" content="本文介绍一下tomcat 开启 https支持">
+  <title>IIS短文件名漏洞 « 倾旋的博客</title>
+  <meta name="description" content="《Web安全测试学习手册》- IIS短文件名漏洞">
 
   <link rel="stylesheet" href="/css/main.css">
-  <link rel="canonical" href="http://localhost:4000/archivers/2017-08-21/1">
+  <link rel="canonical" href="http://localhost:4000/archivers/2018-04-27/2">
   <link rel="alternate" type="application/rss+xml" title="倾旋的博客" href="http://localhost:4000/feed.xml" />
   <link href="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/css/lightbox.min.css" rel="stylesheet">
 </head>
@@ -42,56 +42,84 @@
           <div class="post">
 
   <header class="post-header">
-    <h1 class="post-title">Tomcat 开启 https支持</h1>
-    <p class="post-meta">Aug 21, 2017</p>
+    <h1 class="post-title">IIS短文件名漏洞</h1>
+    <p class="post-meta">Apr 27, 2018</p>
   </header>
 
   <article class="post-content">
-    <p>本文介绍一下tomcat 开启 https支持
+    <p>《Web安全测试学习手册》- IIS短文件名漏洞
 <!--more--></p>
-<h2 id="0x00-配置keystore">0x00 配置keystore</h2>
 
-<p>要使用ssl connector，必须先创建一个keystore。他包含了服务器中被客户端用于验证服务器的数字证书。一旦客户端接受了这个证书，客户端就可以使用public key去加密他们要发送的数据。而服务器，拥有一个private key，作为唯一解密数据的密钥。</p>
+<h2 id="0x00-iis短文件名漏洞">0x00 IIS短文件名漏洞</h2>
 
-<p>进入JDK环境的bin目录，调用keytool来完成我们的证书生成：</p>
+<h3 id="1什么是iis短文件名漏洞">1）什么是IIS短文件名漏洞</h3>
 
-<p><code class="highlighter-rouge">keytool -genkey -alias tomcat -keyalg RSA</code></p>
+<p>IIS短文件名是一个Windows系统为了兼容16位MS-DOS程序，Windows为文件名较长的文件（和文件夹）生成了对应的windows 8.3 短文件名。当这种特性被IIS中间件继承后，我们就可以使用短文件名进行目录猜解。</p>
+
+<h3 id="2iis短文件名漏洞的特点">2）IIS短文件名漏洞的特点</h3>
 
 <ul>
-  <li>-genkey:创建一个public-private key pair</li>
-  <li>-alias tomcat：用户别名为tomcat</li>
-  <li>-keyalg RSA： 使用RSA算法。  MD5算法也是被支持的，但是建议使用RSA获得更好的兼容。</li>
+  <li>利用难度低</li>
+  <li>会产生很多请求</li>
 </ul>
 
-<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2017-08-21/0x00.jpg" alt="生成证书" /></p>
+<h2 id="0x01-iis短文件名漏洞---风险等级">0x01 IIS短文件名漏洞 - 风险等级</h2>
 
-<p>生成证书后，此证书会被保存在当前用户主目录下。</p>
+<p><strong>低</strong></p>
 
-<h2 id="0x01-修改配置文件">0x01 修改配置文件</h2>
+<h2 id="0x02-iis短文件名漏洞---原理">0x02 IIS短文件名漏洞 - 原理</h2>
 
-<p>找到tomcat目录下的<code class="highlighter-rouge">conf/server.xml</code>，将原来的<code class="highlighter-rouge">Connector </code>更改一下即可。</p>
+<p>当我们访问一个长名称目录的时候：<code class="highlighter-rouge">http://192.168.1.1/administrator</code></p>
 
-<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!--
+<p>这个<code class="highlighter-rouge">administrator</code>目录可以根据Windows 8.3格式简写为<code class="highlighter-rouge">admini~1</code></p>
 
-    &lt;Connector port="8443" protocol="HTTP/1.1" SSLEnabled="true"
+<p>根据这个上述格式，我们访问<code class="highlighter-rouge">/admini~1</code>也可以相当于访问<code class="highlighter-rouge">administrator</code></p>
 
-               maxThreads="150" scheme="https" secure="true"
+<h2 id="0x03-服务器端目录遍历---常见场景">0x03 服务器端目录遍历 - 常见场景</h2>
 
-               clientAuth="false" sslProtocol="TLS" /&gt;
+<ul>
+  <li>IIS 中间件</li>
+</ul>
 
-    --&gt;</span>
+<h2 id="0x04-测试方案">0x04 测试方案</h2>
+
+<h3 id="方案一">方案一</h3>
+
+<p>使用<code class="highlighter-rouge">IIS_shortname_Scanner</code></p>
+
+<p>命令：</p>
+
+<ul>
+  <li><strong>git clone https://github.com/lijiejie/IIS_shortname_Scanner.git</strong></li>
+  <li><strong>cd IIS_shortname_Scanner</strong></li>
+  <li><strong>python iis_shortname_Scan.py http://target</strong></li>
+</ul>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2018-04-27/0x02.png" alt="0x02" /></p>
+
+<h3 id="方案二需服务器权限">方案二（需服务器权限）</h3>
+
+<p>执行命令（管理员权限）：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+reg query HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem\ /v "NtfsDisable8dot3NameCreation"
+
+-----------------------------------------------------------------
+HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem
+    NtfsDisable8dot3NameCreation    REG_DWORD    0x0
 </code></pre></div></div>
 
-<p>改成：</p>
+<p>若<code class="highlighter-rouge">NtfsDisable8dot3NameCreation</code>是<code class="highlighter-rouge">0x0</code>，存在此漏洞</p>
 
-<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;Connector</span> <span class="na">port=</span><span class="s">"端口"</span> <span class="na">protocol=</span><span class="s">"org.apache.coyote.http11.Http11Protocol"</span>  
-                <span class="na">maxThreads=</span><span class="s">"150"</span> <span class="na">SSLEnabled=</span><span class="s">"true"</span> <span class="na">scheme=</span><span class="s">"https"</span> <span class="na">secure=</span><span class="s">"true"</span>  
-                <span class="na">clientAuth=</span><span class="s">"false"</span> <span class="na">sslProtocol=</span><span class="s">"TLS"</span>  
-                <span class="na">keystoreFile=</span><span class="s">"keystore文件路径"</span>   
-          <span class="na">keystorePass=</span><span class="s">"口令"</span> <span class="nt">/&gt;</span>
+<h2 id="0x05-修复方案">0x05 修复方案</h2>
+
+<p>执行命令（管理员权限）：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>reg add HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem\ /
+v "NtfsDisable8dot3NameCreation" /t REG_DWORD /d 1 /f
 </code></pre></div></div>
 
-<p>重启tomcat后生效~</p>
+<p>重启服务器</p>
 
   </article>
   
