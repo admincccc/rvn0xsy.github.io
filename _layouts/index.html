@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+
+  {% include head.html %}
+
+  <body>
+
+    {% include header.html %}
+
+    <div class="page-content">
+      <div class="wrapper">
+        <div class="col-main">
+          {{ content }}
+        </div>
+        <div class="col-second">
+          {% include newpost.html %}
+        </div>
+      </div>
+    </div>
+
+    {% include footer.html %}
+<script type="text/javascript" src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/js/lightbox-plus-jquery.min.js"></script>
+<script type="text/javascript" src="/js/global.js"></script>
+</body>
+</html>

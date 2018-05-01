@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: index
 ---
 
 <div class="home">
@@ -13,7 +13,7 @@ layout: default
           <a class="post-link" href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
         </h2>
         
-        <div class="post-meta">{{ post.date | date: "%b %-d, %Y" }}</div>
+        <div class="post-meta">{{ post.date | date: "%Y-%m-%d" }}</div>
 
         <div class="post-excerpt">
           {%   if post.content contains site.excerpt_separator or post.content != post.excerpt %}{{ post.excerpt }}

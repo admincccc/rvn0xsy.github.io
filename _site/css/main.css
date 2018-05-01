@@ -1,5 +1,5 @@
 @charset "UTF-8";
-body { margin: 0; font-family: "Open Sans", "Helvetica Neue", "DejaVu Sans", Arial, "PingFang SC", "Noto Sans CJK SC", "Hiragino Sans GB", "微软雅黑", Helvetica, sans-serif; font-size: 20px; line-height: 2; }
+body { margin: 0; font-family: Menlo, Consolas, "Courier New", Courier, "Liberation Mono", monospace; font-size: 20px; line-height: 2; }
 
 a { text-decoration: none; color: #036; }
 
@@ -9,7 +9,7 @@ blockquote { background: #FFF; margin: 0; padding: 5px 20px; border-left: 10px s
 
 code, pre { font-family: Menlo, Monaco, Consolas, "DejaVu Sans Mono", "Liberation Mono", "文泉驿等宽微米黑", "Courier New", Courier, SimSun, monospace; font-size: 20px; }
 
-code { color: #900; background-color: #fff; padding: 5px 10px; border-radius: 10px; word-break: break-all; word-wrap: break-word; }
+code { color: #66d9ef; background-color: #223; padding: 5px 10px; border-radius: 10px; word-break: break-all; word-wrap: break-word; }
 
 pre { overflow-x: auto; padding: 20px 50px; }
 
@@ -39,7 +39,7 @@ body { background-color: #e0e0e3; }
 .wrapper { margin: 0 auto; max-width: 1100px; }
 
 @media (max-width: 1120px) { .wrapper { max-width: 800px; } }
-.header { line-height: 40px; background-color: #607D8B; padding: 20px; margin: 0; }
+.header { line-height: 40px; background-color: #607D8B; padding: 10px; margin: 0; }
 .header:after { clear: both; content: ' '; display: block; }
 .header #sidebar-toggle { display: none; }
 .header .site-title { float: left; color: #FFF; text-decoration: none; font-size: 30px; line-height: 40px; }
@@ -92,8 +92,8 @@ body { background-color: #e0e0e3; }
 @media screen and (max-width: 600px) { .post .post-header .post-title { font-size: 34px; } }
 .post .post-header .post-meta { color: #999; font-size: 17.5px; margin: 0 -100px; }
 @media screen and (max-width: 600px) { .post .post-header { text-align: center; margin-bottom: 10px; padding: 10px; } }
-.post .post-content { color: #333; }
-.post .post-content h1, .post .post-content h2, .post .post-content h3, .post .post-content h4, .post .post-content h5, .post .post-content h6 { /*color: #000;*/ border-bottom: 1px solid #CCC; background: linear-gradient(to right, #666, #7FA3B4); color: white; border: 1px solid; border-radius: 10px; padding-left: 20px; }
+.post .post-content { color: black; }
+.post .post-content h1, .post .post-content h2, .post .post-content h3, .post .post-content h4, .post .post-content h5, .post .post-content h6 { border-bottom: 1px solid #CCC; background: linear-gradient(to right, #120000, #31586C); color: white; border-radius: 10px; padding-left: 20px; }
 .post .post-content h1, .post .post-content h2 { margin-bottom: 10px; margin-top: 30px; }
 .post .post-content h1, .post .post-content h2, .post .post-content h3 { border-bottom: 1px solid #CCC; }
 .post .post-content pre { margin: 0 -30px; }

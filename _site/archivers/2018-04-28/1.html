@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>分布式部署文件可读 « 倾旋的博客</title>
+  <meta name="description" content="《Web安全测试学习手册》- 分布式部署文件可读">
+
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="http://localhost:4000/archivers/2018-04-28/1">
+  <link rel="alternate" type="application/rss+xml" title="倾旋的博客" href="http://localhost:4000/feed.xml" />
+  <link href="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/css/lightbox.min.css" rel="stylesheet">
+</head>
+
+  <body>
+
+    <div class="header-placeholder"></div>
+<header class="header">
+  <div class="wrapper">
+    <div id="sidebar-toggle">TOC</div>
+    <a class="site-title" href="/">倾旋的博客</a>
+    <nav class="site-nav">
+      
+        
+        <a class="page-link" href="/about/">关于</a>
+      
+        
+        <a class="page-link" href="/category/">分类</a>
+      
+        
+        <a class="page-link" href="/posts/">所有文章</a>
+      
+        
+        <a class="page-link" href="/tools/">Web工具箱</a>
+      
+    </nav>
+  </div>
+</header>
+
+
+    <div class="page-content">
+      <div class="wrapper">
+        <div class="col-main">
+          <div class="post">
+            <header class="post-header">
+              <h1 class="post-title">分布式部署文件可读</h1>
+              <p class="post-meta">2018-04-28</p>
+            </header>
+            <article class="post-content">
+              <p>《Web安全测试学习手册》- 分布式部署文件可读
+<!--more--></p>
+
+<h2 id="0x00-分布式部署文件可读">0x00 分布式部署文件可读</h2>
+
+<h3 id="1什么是分布式部署文件可读">1）什么是分布式部署文件可读</h3>
+
+<p>Apache中的<code class="highlighter-rouge">.htaccess</code>或者”分布式配置”了针对目录改变配置的方法，即，在特定的文档目录中放置包含或多个指令的，以作用于此目录及其子目录。</p>
+
+<p>这个文件默认情况下客户端是不可读的，假设客户端能够读取此文件，攻击者利用这一特性可以获取分布式配置的指令，泄漏服务器端敏感信息。</p>
+
+<h3 id="2分布式部署文件可读的特点">2）分布式部署文件可读的特点</h3>
+
+<ul>
+  <li>.ht开头文件可读</li>
+</ul>
+
+<h2 id="0x01-分布式部署文件可读---风险等级">0x01 分布式部署文件可读 - 风险等级</h2>
+
+<p><strong>高</strong></p>
+
+<h2 id="0x02-分布式部署文件可读---原理">0x02 分布式部署文件可读 - 原理</h2>
+
+<p>客户端请求类似于如下URL：</p>
+
+<ul>
+  <li>http://payloads.online/.htaccess</li>
+</ul>
+
+<p>Web中间件将读取<code class="highlighter-rouge">.htaccess</code>文件内容响应给客户端，客户端能够获取分布式配置指令。</p>
+
+<h2 id="0x03-分布式部署文件可读---常见场景">0x03 分布式部署文件可读 - 常见场景</h2>
+
+<ul>
+  <li>Apache Web 服务器</li>
+</ul>
+
+<h2 id="0x04-测试方案">0x04 测试方案</h2>
+
+<p>使用CURL访问分布式配置文件</p>
+
+<p>命令：<code class="highlighter-rouge">curl -I http://payloads.online/.htaccess</code></p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>➜  ~ curl -I http://10.211.55.12/.htaccess
+HTTP/1.1 200 OK
+Date: Sat, 28 Apr 2018 02:31:02 GMT
+Last-Modified: Sat, 28 Apr 2018 02:30:16 GMT
+ETag: "17-56adf66b3a848"
+Accept-Ranges: bytes
+Content-Length: 23
+</code></pre></div></div>
+
+<p>若响应状态码为<code class="highlighter-rouge">200</code>则存在此风险</p>
+
+<h2 id="0x05-修复方案">0x05 修复方案</h2>
+
+<p>在Apache的配置文件httpd.conf中添加：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;Files ".ht*"&gt;
+    Require all denied
+&lt;/Files&gt;
+</code></pre></div></div>
+
+<p>修复后：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>➜  ~ curl -I http://10.211.55.12/.htaccess
+HTTP/1.1 403 Forbidden
+Date: Sat, 28 Apr 2018 02:35:22 GMT
+Content-Type: text/html; charset=iso-8859-1
+</code></pre></div></div>
+
+            </article>
+            
+
+
+
+          </div>
+        </div>
+        <div class="col-second">
+          <div class="col-box col-box-author">
+  <img class="avatar" src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/images/head.jpeg" alt="倾旋">
+  <div class="col-box-title name">倾旋</div>
+  <p>安全从业者，爱好安全产品开发，渗透测试，Web漏洞研究</p>
+  <p class="contact">
+    
+    <a href="https://github.com/rvn0xsy">GitHub</a>
+    
+    
+    <a href="javascript:document.write('payloads'+'@'+'aliyun.com');">Email</a>
+    
+    <div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_twi" data-cmd="twi" title="分享到Twitter"></a><a href="#" class="bds_fbook" data-cmd="fbook" title="分享到Facebook"></a><a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a><a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a><a href="#" class="bds_evernotecn" data-cmd="evernotecn" title="分享到印象笔记"></a><a href="#" class="bds_youdao" data-cmd="youdao" title="分享到有道云笔记"></a><a href="#" class="bds_sqq" data-cmd="sqq" title="分享到QQ好友"></a><a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a><a href="#" class="bds_tieba" data-cmd="tieba" title="分享到百度贴吧"></a><a href="#" class="bds_copy" data-cmd="copy" title="分享到复制网址"></a><a href="#" class="bds_print" data-cmd="print" title="分享到打印"></a></div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":["mshare","qzone","tsina","bdysc","weixin","sqq","youdao","mail","fbook","twi","linkedin","h163","evernotecn","copy","print"],"bdPic":"","bdStyle":"1","bdSize":"16"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+  </p>
+</div>
+
+
+
+<div class="col-box post-toc hide">
+  <div class="col-box-title">TOC</div>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+<div class="wrapper">
+&copy; 2018 倾旋
+</div>
+</footer>
+
+<script type="text/x-mathjax-config">MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$']]}});</script>
+<script src="/js/easybook.js"></script>
+
+<script type="text/javascript" src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/js/lightbox-plus-jquery.min.js"></script>
+<script type="text/javascript" src="/js/global.js"></script>
+</body>
+</html>
+

@@ -18,8 +18,10 @@ excerpt_separator: <!--more-->
 
 header:
   links: 
-    About: /about/
-    Category: /category/
+    关于: /about/
+    分类: /category/
+    所有文章: /posts/
+    Web工具箱: /tools/
 
 permalink: /archivers/:title
 plugins:

