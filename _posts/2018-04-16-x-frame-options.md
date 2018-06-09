@@ -121,3 +121,24 @@ add_header X-Frame-Options SAMEORIGIN;
 </system.webServer>
 ```
 
+### Tomcat
+
+在`conf/web.xml`中添加如下配置：
+
+```
+<filter>
+        <filter-name>httpHeaderSecurity</filter-name>
+        <filter-class>org.apache.catalina.filters.HttpHeaderSecurityFilter</filter-class>
+        <init-param>
+            <param-name>antiClickJackingOption</param-name>
+            <param-value>SAMEORIGIN</param-value>
+        </init-param>
+        <async-supported>true</async-supported>
+    </filter>
+<filter-mapping>
+        <filter-name>httpHeaderSecurity</filter-name>
+        <url-pattern>/*</url-pattern>
+    <dispatcher>REQUEST</dispatcher>
+    <dispatcher>FORWARD</dispatcher>
+</filter-mapping>
+```
